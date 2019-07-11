@@ -1,0 +1,3 @@
+create chain of three
+second has extensions including extended usage, for example server auth
+openssl verify -purpose sslclient  -CAfile ca.crt -untrusted subca.crt user.crt

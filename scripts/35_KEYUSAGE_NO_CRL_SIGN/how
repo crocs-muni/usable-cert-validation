@@ -1,0 +1,6 @@
+create ca
+then subca with extensions as in extfile,  keyusage without crlsign
+then usercert sign with subca
+generate crl of subca with ca.conf 
+
+openssl verify -CAfile ca.crt -untrusted subca.crt -CRLfile subca.crl -crl_check user.crt
