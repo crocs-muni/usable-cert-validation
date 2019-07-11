@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="description" content="">
+
+    <title>X.509 Errors</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Open+Sans:400,bold,900,600">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+
+    <link rel="stylesheet" href="x509errors.min.css" type='text/css'>
+
+    <link rel="shortcut icon" href="favicon.ico">
+    
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 text-justify">
+          <h1 class="display-4 text-left">X.509 errors</h1>
+          <p class="lead">Certificate validation errors explained in a simple way.</p>
+          <br />
+          <p>Validation of public key certificates (standard X.509) is a complicated matter. This website aims to simply explain the most common errors, their causes and risks involved. So far, only a subset of errors is done:</p>
+          <ul>
+            <li><a href="#ok">X509_OK</a></li>
+            <li><a href="#expired">X509_ERR_EXPIRED</a></li>
+            <li><a href="#hostname_mismatch">X509_ERR_HOSTNAME_MISMATCH</a></li>
+            <li><a href="#self_signed">X509_ERR_SELF_SIGNED</a></li>
+            <li><a href="#name_constraints">X509_ERR_NAME_CONSTRAINTS_VIOLATION</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 faq">
+          <h2 id="ok">X509_OK</h2>
+	<p>All performed check passed.</p>
+	<h4>Explanation</h4>
+	<p>No errors occurred during the performed validation tasks. Make sure to everything you wanted to check was checked.</p>
+	<h4>Security perspective</h4>
+	<p>Everything seems OK.</p>
+	<h4>Next steps</h4>
+	<p>Check the hostname, the revocation status (by the means of CRL or OCSP) check having appropriate verification flags.</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 faq">
+          <h2 id="expired">X509_ERR_EXPIRED</h2>
+	<p>The certificate has expired or is not yet valid.</p>
+	<h4>Explanation</h4>
+	<p>Most of the certificates have a defined period of validity (the "not before" and "not after" validity fields). The expiration date is specified by the issuing certificate authority, usually for 1&ndash;2 years (there could be cases with shorter or longer validity).</p>
+	<h4>Security perspective</h4>
+	<p>Your communication will be encrypted, but the identity of the server stated in the certificate is now no longer guaranteed by the trusted certificate authority.</p>
+<p>However, the certificate revocation status is no longer published. That is, the certificate might have been revoked long ago, but it will no longer be included in the CRL. That means you cannot know if the certificate is already revoked or not.</p>
+	<h4>Next steps</h4>
+	<p>In some cases, the error may caused by the misconfiguration on the client side -- make sure your local time settings are correct. If you are responsible for the certificate, contact the company that issued it to learn how to renew it. If not, inform the appropriate administrator.</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 faq">
+          <h2 id="hostname_mismatch">X509_ERR_HOSTNAME_MISMATCH</h2>
+	<p>The server hostname does not match the certificate subject name.</p>
+	<h4>Explanation</h4>
+	<p>The domain name provided by the server you are connecting to does not match the subject name of the certificate.</p>
+	<h4>Security perspective</h4>
+	<p>Your communication will be encrypted, but you communicate with different (maybe malicious) server than is listed in certificate. However, It can also be caused by malicious attackers pretending to be the server you are connecting to.</p>
+	<h4>Next steps</h4>
+	<p>See the Common Name (CN) or the Subject Alternative Name extension (SAN) in the certificate and compare the value with the domain name of the server. In case of web servers, the error can be caused improper redirect configuration between valid web aliases (e.g. the version of the site without the "www" in domain name).</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 faq">
+          <h2 id="self_signed">X509_ERR_SELF_SIGNED</h2>
+	<p>The certificate is self-signed and not found in the trust store.</p>
+	<h4>Explanation</h4>
+	<p>A self-signed certificate is signed by the same entity whose identity it certifies. In technical terms, a self-signed certificate is one signed with its own private key. This is common for root keys (usually pre-installed on your system).</p>
+	<h4>Security perspective</h4>
+<p>No certificate authority issued the certificate. Basically anyone can create certificate with these parameters. It means really low level of security and trust. Since this self-signed certificate is not "managed" by a CA, there is no possible revocation.</p>
+	<p>It can be trusted only if you control every machine between you and the server or you check that the keys in the certificate are what you expect them to be. However, It can also be caused by malicious attackers pretending to be the server you are connecting to.</p>
+	<h4>Next steps</h4>
+	<p>If you can, try to validate the certificate in a different way &ndash; compare the fingerprint with what is expected, compare it with the certificate obtained on previous visits, etc.</p>
+        </div>
+      </div>
+
+      <hr />
+
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 faq">
+          <h2 id="name_constraints">X509_ERR_NAME_CONSTRAINTS_VIOLATION</h2>
+	<p>The subject name violates constraints set by CA.</p>
+	<h4>Explanation</h4>
+	<p>Be default, all certificate authorities can issue certificates for any subjects. One way to constrain this risk of issuing a malicious certificate is to limit CAs to issue only for certain names, using the "name constraints" extension for X.509 certificates. The occurred errors says that the authority in the chain was prohibited to issue the certificate for that particular subject.</p>
+	<h4>Security perspective</h4>
+	<p>The certificate authority was not allowed to issue the certificate it issued. This suggests suspicious activity at the authority level.</p>
+	<h4>Next steps</h4>
+	<p>See the Name Constraints extension in the certificate authority and compare the allowed/restricted name ranges with the Common Name (CN) or the Subject Alternative Name extension (SAN) in the issued certificate. Report the certificate to the issuing authority. </p>
+        </div>
+      </div>
+
+    </div>
+
+    <footer class="container">
+      <div class="row">
+        <div class="col-12">
+          <div class="d-flex flex-row justify-content-between copyright">
+            <div class="p-2">
+            <p>
+              &copy; 2018 All Rights Reserved.
+            </p>
+            </div>
+            <div class="p-2">
+              <!-- <p>Usable security research by <a href="https://crocs.fi.muni.cz" target="_blank">CRoCS FI MU</a></p> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+

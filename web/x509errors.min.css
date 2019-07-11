@@ -1,0 +1,140 @@
+.row,img.card-img-top{
+    margin-top:2em
+}
+h1,h2,h3{
+    font-weight:600
+}
+body,h1,h2,h3,h4,h5,h6,p{
+    font-family:Montserrat,sans-serif
+}
+body{
+    background-color:#fefefe;
+    color:#111;
+    letter-spacing:0
+}
+.logo-wrapper{
+    height:300px
+}
+.meltdown img.card-img-top{
+    max-width:160px
+}
+.spectre img.card-img-top{
+    margin-top:70px;
+    max-height:200px
+}
+.card.meltdown .card-title,.card.spectre .card-title{
+    text-align:center;
+    font-size:2.4rem
+}
+.fa-sm{
+    -webkit-transform:scale(.8,.8);
+    -ms-transform:scale(.8,.8);
+    transform:scale(.8,.8);
+    vertical-align:middle
+}
+.card.meltdown{
+    background-color:#f8f8f8
+}
+.card.spectre{
+    background-color:#f8f8ff
+}
+footer{
+    margin-top:1em;
+    margin-bottom:1em
+}
+h1{
+    font-size:2em;
+    text-align:center
+}
+h2{
+    font-size:1.5em;
+    margin:1em 0
+}
+.faq h4,h3{
+    margin:2em 0 .5em
+}
+h3{
+    font-size:1.2em
+}
+h4{
+    font-size:1em;
+    font-weight:500
+}
+.faq p{
+    margin-left:1em
+}
+p{
+    font-weight:300
+}
+p.lead{
+    margin-top:.5em;
+    font-weight:400
+}
+@media (min-width:1200px){
+    h4,p{
+        font-size:1.15em;
+        line-height:1.5em
+    }
+}
+a.company{
+    color:#7f7f7f;
+    text-decoration:underline;
+    text-decoration-style:dotted
+}
+.copyright,.copyright p{
+    color:#888;
+    font-size:.9em
+}
+.timestamp{
+    color:#888;
+    font-size:.8em
+}
+.btn,.card{
+    border-radius:0
+}
+.card-body a.btn i.fa,.card-body a.btn svg{
+    margin-right:.5em
+}
+.card-footer{
+    background:0 0;
+    border-top:0
+}
+@media (max-width:767px){
+    .card{
+        margin-bottom:1em
+    }
+    .timestamp,footer{
+        text-align:center
+    }
+}
+.acknowledgements h2{
+    font-size:.9em
+}
+.acknowledgements p{
+    font-size:.8em
+}
+footer .row{
+    margin-top:0
+}
+@media (max-width:575.99px){
+    .card{
+        border-left:0;
+        border-right:0
+    }
+}
+table#logos,table#logos tr{
+    border-bottom:1px solid #aaa;
+    border-collapse:collapse;
+    margin-left:1em
+}
+table#logos td,table#logos th{
+    padding:.3em
+}
+table#logos td{
+    padding-right:3em
+}
+h2 a,h2 a:hover,h2 a:visited,h4 a,h4 a:hover,h4 a:visited{
+    color:#000;
+    text-decoration:none
+}
+ 
