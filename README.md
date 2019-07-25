@@ -20,6 +20,10 @@ In the ideal case, we aim for a unified, accessible, widely-used and academicall
   * If a developer is trying to understand an error, they end up finding our resources -- and our resources help them understand and solve the problem.
   * We have published a USENIX paper about it and made multiple talks for developers.
   
+## Local build
+
+The website is build using [Jekyll](https://jekyllrb.com/). To develop locally, install Jekyll (e.g. according to [this guide](https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll). Then run `make web-local` and see the website served at `localhost:4000`.
+
 ## Authors
 
-The project is developed at the [Centre for Research on Cryptography and Security (formerly Laboratory of Security and Applied Cryptography)](https://www.fi.muni.cz/research/crocs/), [Masaryk University](http://www.muni.cz/), Brno, Czech Republic.
+The project is developed at the [Centre for Research on Cryptography and Security](https://www.fi.muni.cz/research/crocs/) of [Masaryk University](http://www.muni.cz/) in Brno, Czech Republic.

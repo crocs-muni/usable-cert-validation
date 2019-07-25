@@ -1,2 +1,10 @@
+# Automatically generated files
+web/_includes/version.html
+web/assets/certificates
+
 # Build web page
-web-build
+web/_site
+
+# Temporary files
+web/Gemfile.lock
+*~

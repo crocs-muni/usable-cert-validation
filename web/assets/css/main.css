@@ -1,0 +1,76 @@
+/* Common HTML tags */
+
+body {
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+    font-family: 'Source Sans Pro', sans-serif !important;
+    font-size: 1.0rem;
+    background: #F7F7F7;
+    position: relative;
+    min-height: 100vh;
+    text-align: justify;
+}
+
+h1 {
+    font-weight: bold !important;
+}
+
+h2 {
+    font-size: 1.2rem;
+    font-weight: bold !important;
+    text-transform: uppercase;
+}
+
+a {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* Core design: sectioning, header, footer, buttons */
+
+.section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.section:nth-of-type(odd) {
+    background: white;
+}
+
+.navbar-scrolled {
+    box-shadow: 0 3px 10px #e2e2ff;
+}
+
+.navbar a {
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.navbar-light .navbar-nav .active > .nav-link, .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .nav-link.show, .navbar-light .navbar-nav .show > .nav-link {
+    font-weight: bold;
+}
+
+.navbar-expand-md .navbar-nav .nav-link {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+.bg-custom {
+    background: #F7F7F7;
+}
+
+.page-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    background: #E7E7E7;
+    color: #303030;
+    font-size: 80%;
+}
+
+.page-footer a {
+    color: #303030;
+    text-decoration: none;
+}

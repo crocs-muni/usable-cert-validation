@@ -1,9 +1,10 @@
+dist: xenial
 language: minimal
 script: make web
 deploy:
   provider: pages
   skip_cleanup: true
-  local_dir: web-build
+  local_dir: web
   target_branch: gh-pages
   keep_history: false
   verbose: false
