@@ -1,4 +1,7 @@
-# Automatically generated files
+# Generated certificates
+scripts/*/files
+
+# Automatically generated website files
 web/_includes/version.html
 web/assets/certificates
 

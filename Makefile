@@ -1,4 +1,12 @@
-all: web
+ERRORS=$(notdir $(wildcard scripts/[0-9][0-9]_*) )
+
+all: certs web
+
+certs:
+	for ERROR in $(ERRORS); do cd scripts/$$ERROR && ./create.sh; cd ../..; done
+
+certs-clean:
+	rm -rf scripts/*/files
 
 web: web-version
 
@@ -17,4 +25,4 @@ web-local: web
 web-clean:
 	rm -rf web/_site
 
-.PHONY: all web web-clean web-local web-version
+.PHONY: all web web-clean web-local web-version certs certs-clean
