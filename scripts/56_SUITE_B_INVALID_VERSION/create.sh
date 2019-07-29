@@ -1,4 +1,6 @@
 #!/bin/bash
+mkdir -p files
+
 certtool --generate-privkey --outfile files/ca.key --ecdsa --curve secp521r1
 certtool --generate-self-signed --load-privkey files/ca.key --outfile files/ca.crt --template ca.cfg --ecdsa 
 certtool --generate-privkey --outfile files/user.key --ecdsa --curve secp521r1
