@@ -20,9 +20,11 @@ then
 fi
 
 echo "---"
-echo -n "error-code: "
+echo -n "title: "
 make --silent --directory=$CERTS_SCRIPTS_FOLDER error-code
+echo -n "slug: "
+make --silent --directory=$CERTS_SCRIPTS_FOLDER error-code | sed 's/[A-Z]/\L&/g' | sed 's/_/-/g'
 echo "verify-openssl: |"
-make --silent --directory=$CERTS_SCRIPTS_FOLDER --just-print --always-make verify-openssl
+make --silent --directory=$CERTS_SCRIPTS_FOLDER --just-print --always-make verify-openssl | sed 's/^/    /' | sed 's|_certs/||g'
 echo "---"
 echo "Extra text or documentation here."

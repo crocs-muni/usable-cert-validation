@@ -45,7 +45,7 @@ WEB_CERTS=$(addsuffix .zip, $(addprefix $(WEB_CERTS_PREFIX)/,$(ERROR_CODES)) )
 
 web: $(WEB_ERRORINFO) $(WEB_CERTS) web-version
 
-$(WEB_ERRORINFO_PREFIX)/%.md: $(CERTS_SCRIPTS_PREFIX)/%/Makefile
+$(WEB_ERRORINFO_PREFIX)/%.md: $(CERTS_SCRIPTS_PREFIX)/%/Makefile utils/web-cert-data.sh
 	@echo -n "Generating error info for "$(*F)" ..."
 	@mkdir -p $(WEB_ERRORINFO_PREFIX)
 	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) >$@
@@ -61,7 +61,7 @@ web-version:
 	utils/web-version.sh $(REPO_URL) >$(WEB_VERSION_FILE)
 
 web-local: web
-	cd web && jekyll serve
+	cd web && bundle exec jekyll serve
 
 web-clean:
 	rm -rf $(WEB_ERRORINFO_PREFIX)

@@ -9,7 +9,18 @@ Research initiative to make TLS certificate validation usable.
 
 ## Errors
 
-To be added.
+Bellow are all OpenSSL errors with documentation, some with example certificate causing them.
+
+{% for error in site.errors %}
+### {{ error.title }}
+
+{{ error.content }}
+
+Verification in OpenSSL:
+```
+{{ error.verify-openssl }}
+```
+{% endfor %}
 
 ## Authors
 
