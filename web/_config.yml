@@ -1,6 +1,5 @@
 # Site settings
 title: Usable certificate validation
-email: info@faktaoklimatu.cz
 author: Centre for Research on Cryptography and Security, Masaryk University, Czechia
 description: Research initiative to make TLS certificate validation usable.
 url: https://x509errors.cz/
