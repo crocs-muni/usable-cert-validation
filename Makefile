@@ -14,7 +14,7 @@ all: certs $(CERTS) web
 clean: certs-clean certs-new-clean web-clean
 
 $(CERTS_BUILD_PREFIX)/%: $(CERTS_SCRIPTS_PREFIX)/%/*
-	@echo -n "Geceerating certs for "$(*F)" ..."
+	@echo -n "Generating certs for "$(*F)" ..."
 	@mkdir -p $@
 	@$(MAKE) --silent --directory=$(CERTS_SCRIPTS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
 	@echo -e "\t\t[ OK ]"
@@ -46,13 +46,13 @@ WEB_CERTS=$(addsuffix .zip, $(addprefix $(WEB_CERTS_PREFIX)/,$(ERROR_CODES)) )
 web: $(WEB_ERRORINFO) $(WEB_CERTS) web-version
 
 $(WEB_ERRORINFO_PREFIX)/%.md: $(CERTS_SCRIPTS_PREFIX)/%/Makefile
-	@echo -n "Geceerating error info for "$(*F)" ..."
+	@echo -n "Generating error info for "$(*F)" ..."
 	@mkdir -p $(WEB_ERRORINFO_PREFIX)
 	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) >$@
 	@echo -e "\t\t[ OK ]"
 
 $(WEB_CERTS_PREFIX)/%.zip: $(CERTS_BUILD_PREFIX)/%
-	@echo -n "Geceerating certs zip for "$(*F)" ..."
+	@echo -n "Generating certs zip for "$(*F)" ..."
 	@mkdir -p $(WEB_CERTS_PREFIX)
 	@zip --quiet $@ $(CERTS_BUILD_PREFIX)/$(*F)/*
 	@echo -e "\t\t[ OK ]"
