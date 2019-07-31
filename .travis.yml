@@ -1,5 +1,8 @@
 dist: xenial
 language: minimal
+install: 
+  - sudo apt update
+  - sudo apt install -y gnutls-bin
 script: make web
 deploy:
   provider: pages
