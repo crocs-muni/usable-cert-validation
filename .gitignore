@@ -1,9 +1,12 @@
 # Generated certificates
 scripts/*/files
+errors/*/_certs
+_certs
 
 # Automatically generated website files
 web/_includes/version.html
-web/assets/certificates
+web/assets/certs
+web/_errors
 
 # Build web page
 web/_site
