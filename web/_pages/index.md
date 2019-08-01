@@ -18,8 +18,8 @@ Bellow are all OpenSSL errors with documentation, some with example certificate 
 <div class="collapse" id="{{ error.slug }}">
     <div class="card card-body">
         {{ error.content }}   
-        <button class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ error.title }}">Generating script here</button>
-        <button class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ error.title }}.zip">Ready certs here</button>
+        <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ error.title }}">Generating script here</a>
+        <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ error.title }}.zip">Ready certs here</a>
         <br>
         Verification in OpenSSL: {{ error.verify-openssl }}
   </div>
