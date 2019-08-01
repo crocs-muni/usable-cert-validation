@@ -23,11 +23,9 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 			 --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg $(VERBOSITY)
 
 verify-openssl:
-	@echo "### OpenSSL verify on "$(ERROR_CODE):
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt $(BUILD_DIR)/user.crt
 
 verify-gnutls:
-	@echo "### GnuTLS verify on "$(ERROR_CODE):
 	-certtool --verify --load-ca-certificate $(BUILD_DIR)/ca.crt --infile $(BUILD_DIR)/user.crt
 
 .PHONY: all error-code generate-cert verify-openssl verify-gnutls
