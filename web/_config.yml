@@ -3,6 +3,7 @@ title: Usable certificate validation
 author: Centre for Research on Cryptography and Security, Masaryk University, Czechia
 description: Research initiative to make TLS certificate validation usable.
 url: https://x509errors.cz/
+repo-url: https://github.com/crocs-muni/usable-cert-validation
 
 # Build settings
 collections:

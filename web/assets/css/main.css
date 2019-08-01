@@ -15,10 +15,8 @@ h1 {
     font-weight: bold !important;
 }
 
-h2 {
-    font-size: 1.2rem;
-    font-weight: bold !important;
-    text-transform: uppercase;
+h3 {
+    font-size: 1.4rem;
 }
 
 a {
@@ -73,4 +71,24 @@ a {
 .page-footer a {
     color: #303030;
     text-decoration: none;
+}
+
+/* Testing and temporary */
+
+.card {
+    display: block;
+}
+
+.card-header.collapsed .fa-chevron-down,
+.card-header .fa-chevron-right {
+  display: none;
+}
+
+.card-header.collapsed .fa-chevron-right,
+.card-header .fa-chevron-down {
+  display: inline-block;
+}
+
+i.fa {
+  cursor: pointer;
 }
