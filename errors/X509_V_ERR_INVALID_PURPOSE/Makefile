@@ -20,7 +20,7 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 	         --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg $(VERBOSITY)
 
 verify-openssl:
-	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -purpose sslserver $(BUILD_DIR)/endpoint.crt verify-purpose 1.3.6.1.5.5.7.3.4
+	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -purpose sslserver $(BUILD_DIR)/endpoint.crt
 
 verify-gnutls:
 	-certtool --verify --load-ca-certificate $(BUILD_DIR)/ca.crt --infile $(BUILD_DIR)/endpoint.crt --verify-purpose 1.3.6.1.5.5.7.3.1 
