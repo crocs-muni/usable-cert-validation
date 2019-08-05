@@ -1,6 +1,3 @@
-# Error code name
-ERROR_CODE="X509_V_ERR_INVALID_PURPOSE"
-
 # Environment varibales (may be overriden crom CLI)
 BUILD_DIR=_certs
 VERBOSITY=
@@ -8,7 +5,7 @@ VERBOSITY=
 all: error-code generate-cert verify-openssl verify-gnutls
 
 error-code:
-	@echo $(ERROR_CODE)
+	@basename $$PWD
 
 generate-cert: $(BUILD_DIR)/endpoint.crt
 
