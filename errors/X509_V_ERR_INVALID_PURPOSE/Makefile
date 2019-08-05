@@ -23,6 +23,6 @@ verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -purpose sslserver $(BUILD_DIR)/endpoint.crt verify-purpose 1.3.6.1.5.5.7.3.4
 
 verify-gnutls:
-	certtool --verify --load-ca-certificate $(BUILD_DIR)/ca.crt --infile $(BUILD_DIR)/endpoint.crt --verify-purpose 1.3.6.1.5.5.7.3.1 
+	-certtool --verify --load-ca-certificate $(BUILD_DIR)/ca.crt --infile $(BUILD_DIR)/endpoint.crt --verify-purpose 1.3.6.1.5.5.7.3.1 
 
 .PHONY: all error-code generate-cert verify-openssl verify-gnutls
