@@ -8,7 +8,7 @@ CERTS_BUILD_PREFIX=_certs
 WEB_ERRORINFO_PREFIX=web/_errors
 WEB_CERTS_PREFIX=web/assets/certs
 VERBOSITY=">/dev/null 2>&1"
-ERROR_CODES=$(shell cat $(ERROR_LIST_FILE) | grep --invert-match #)
+ERROR_CODES=$(shell cat $(ERROR_LIST_FILE) | grep --invert-match // )
 ERROR_CODES_SCRIPTS=$(notdir $(wildcard $(CERTS_SCRIPTS_PREFIX)/*) )
 
 all: certs web
