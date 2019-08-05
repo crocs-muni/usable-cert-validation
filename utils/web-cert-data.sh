@@ -37,7 +37,7 @@ then
 fi
 
 echo "---"
-echo "## OpenSSL documentation"
+echo "### OpenSSL documentation"
 if [ -f $CERTS_DOCS_FOLDER/$OPENSSL_DOC ]
 then
     cat $CERTS_DOCS_FOLDER/$OPENSSL_DOC
@@ -45,7 +45,7 @@ else
     echo "OpenSSL documentation not yet imported."
 fi
 echo -e "\n"
-echo "## GnuTLS documentation"
+echo "### GnuTLS documentation"
 if [ -f $CERTS_DOCS_FOLDER/$GNUTLS_DOC ]
 then
     cat $CERTS_DOCS_FOLDER/$GNUTLS_DOC

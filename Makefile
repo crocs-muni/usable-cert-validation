@@ -36,7 +36,8 @@ WEB_CERTS=$(addsuffix .zip, $(addprefix $(WEB_CERTS_PREFIX)/, $(ERROR_CODES_SCRI
 
 web: $(WEB_ERRORINFO) $(WEB_CERTS) web-version
 
-$(WEB_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh
+.SECONDEXPANSION:
+$(WEB_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(CERTS_DOCS_PREFIX)/%/*)
 	@echo -n "Generating error info for "$(*F)" ..."
 	@mkdir -p $(WEB_ERRORINFO_PREFIX)
 	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) \

@@ -18,7 +18,7 @@ Bellow are all OpenSSL errors with documentation, some with example certificate 
 </div>
 <div class="collapse" id="{{ error.slug }}">
     <div class="card card-body">
-        {{ error.content }}   
+        {{ error.content | markdownify }}   
         <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ error.title }}">Generating script here</a>
         <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ error.title }}.zip">Ready certs here</a>
         <br>
