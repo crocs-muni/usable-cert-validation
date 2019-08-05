@@ -1,0 +1,2 @@
+X509_V_ERR_INVALID_PURPOSE: unsupported certificate purpose
+the supplied certificate cannot be used for the specified purpose.

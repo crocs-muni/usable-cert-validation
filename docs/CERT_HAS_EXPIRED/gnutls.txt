@@ -1,0 +1,2 @@
+GNUTLS_CERT_EXPIRED
+The certificate has expired.
