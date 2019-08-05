@@ -20,11 +20,12 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 			 --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg $(VERBOSITY)
 	certtool --generate-crl --load-ca-certificate $(BUILD_DIR)/ca.crt --load-ca-privkey $(BUILD_DIR)/ca.key --outfile $(BUILD_DIR)/ca.crl --template crl.cfg --load-certificate $(BUILD_DIR)/endpoint.crt $(VERBOSITY)
 
+
 verify-openssl:
-	-openssl verify $(BUILD_DIR)/endpoint.crt
-	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -crl_check $(BUILD_DIR)/endpoint.crt
+	openssl verify -CAfile $(BUILD_DIR)/ca.crt -CRLfile $(BUILD_DIR)/ca.crl -crl_check $(BUILD_DIR)/endpoint.crt
 
 verify-gnutls:
-	-certtool --verify --infile $(BUILD_DIR)/endpoint.crt
+	cat $(BUILD_DIR)/ca.crl >> $(BUILD_DIR)/ca.crt
+	certtool --verify --load-ca-certificate $(BUILD_DIR)/ca.crt --load-certificate $(BUILD_DIR)/endpoint.crt
 
 .PHONY: all error-code generate-cert verify-openssl verify-gnutls
