@@ -2,6 +2,7 @@
 REPO_URL=https://github.com/crocs-muni/usable-cert-validation
 WEB_VERSION_FILE=web/_includes/version.html
 CERTS_SCRIPTS_PREFIX=errors
+CERTS_DOCS_PREFIX=docs
 CERTS_BUILD_PREFIX=_certs
 WEB_ERRORINFO_PREFIX=web/_errors
 WEB_CERTS_PREFIX=web/assets/certs
@@ -48,7 +49,7 @@ web: $(WEB_ERRORINFO) $(WEB_CERTS) web-version
 $(WEB_ERRORINFO_PREFIX)/%.md: $(CERTS_SCRIPTS_PREFIX)/%/Makefile utils/web-cert-data.sh
 	@echo -n "Generating error info for "$(*F)" ..."
 	@mkdir -p $(WEB_ERRORINFO_PREFIX)
-	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) >$@
+	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) $(CERTS_DOCS_PREFIX)/$(*F) >$@
 	@echo -e "\t\t[ OK ]"
 
 $(WEB_CERTS_PREFIX)/%.zip: $(CERTS_BUILD_PREFIX)/%
