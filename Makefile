@@ -46,7 +46,7 @@ $(WEB_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(CERTS_DOCS_PR
 							>$@
 	@echo -e "\t\t[ OK ]"
 
-$(WEB_CERTS_PREFIX)/%.zip: $$(wildcard $(CERTS_BUILD_PREFIX)/%/*)
+$(WEB_CERTS_PREFIX)/%.zip: $(CERTS_BUILD_PREFIX)/% $$(wildcard $(CERTS_BUILD_PREFIX)/%/*)
 	@echo -n "Generating certs zip for "$(*F)" ..."
 	@mkdir -p $(WEB_CERTS_PREFIX)
 	@zip --quiet $@ $(CERTS_BUILD_PREFIX)/$(*F)/*
