@@ -11,7 +11,8 @@ Research initiative to make TLS certificate validation usable.
 
 Bellow are all OpenSSL errors with documentation, some with example certificate causing them.
 
-{% for error in site.errors %}
+{% assign sorted_errors = site.errors | sort: 'weight' %}
+{% for error in sorted_errors %}
 <div class="card-header collapsed" data-toggle="collapse" href="#{{ error.slug }}" role="button" aria-expanded="false" aria-controls="collapseExample">
     <h3><i class="fa fa-fw fa-chevron-down"></i> <i class="fa fa-fw fa-chevron-right"></i> {{ error.title }}</h3>
 </div>
