@@ -1,5 +1,5 @@
 # Error code name
-ERROR_CODE="CERT_HAS_EXPIRED"
+ERROR_CODE="X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY"
 
 # Environment varibales (may be overriden crom CLI)
 BUILD_DIR=_certs
@@ -23,9 +23,9 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 			 --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg $(VERBOSITY)
 
 verify-openssl:
-	-openssl verify -CAfile $(BUILD_DIR)/ca.crt $(BUILD_DIR)/user.crt
+	-openssl verify $(BUILD_DIR)/user.crt
 
 verify-gnutls:
-	-certtool --verify --load-ca-certificate $(BUILD_DIR)/ca.crt --infile $(BUILD_DIR)/user.crt
+	-certtool --verify --infile $(BUILD_DIR)/user.crt
 
 .PHONY: all error-code generate-cert verify-openssl verify-gnutls

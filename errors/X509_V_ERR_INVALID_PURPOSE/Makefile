@@ -1,5 +1,5 @@
 # Error code name
-ERROR_CODE="INVALID_PURPOSE"
+ERROR_CODE="X509_V_ERR_INVALID_PURPOSE"
 
 # Environment varibales (may be overriden crom CLI)
 BUILD_DIR=_certs
