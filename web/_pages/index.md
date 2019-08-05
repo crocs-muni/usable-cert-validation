@@ -9,7 +9,7 @@ Research initiative to make TLS certificate validation usable.
 
 ## Errors
 
-Bellow are all OpenSSL errors with documentation, some with example certificate causing them.
+Below are all OpenSSL errors with documentation, some with example certificate causing them.
 
 {% assign sorted_errors = site.errors | sort: 'weight' %}
 {% for error in sorted_errors %}
