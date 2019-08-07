@@ -2,32 +2,31 @@
     <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
     <span>{{ include.page.title }}</span>
     {% if include.page.verify-openssl %}
-    <span class="fa fa-fw fa-certificate float-right" title="Example certificate available"></span>
+    {% include icon.html icon="certificate" float="float-right" %}
     {% endif %}
     {% if include.page.gnutls-docs %}
-    <span class="fa fa-fw fa-book float-right" style="color: cornflowerblue" title="GnuTLS documentation available"></span>
+    {% include icon.html icon="gnutls-docs" float="float-right" %}
     {% endif %}
     {% if include.page.openssl-docs %}
-    <span class="fa fa-fw fa-book float-right" style="color: firebrick" title="OpenSSL documentation available"></span>
+    {% include icon.html icon="openssl-docs" float="float-right" %}
     {% endif %}
 </div>
 <div class="collapse" id="{{ include.page.slug }}">
     <div class="card card-body">
+        {% if include.page.verify-openssl %}
+        <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
+        <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ include.page.title }}">Generating script here</a>
+        <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ include.page.title }}.zip">Ready certs here</a>
+        <br>
+        Verification in OpenSSL: {{ include.page.verify-openssl }}
+        {% endif %}
         {% if include.page.openssl-docs %}
-        <h3>OpenSSL documentation</h3>
+        <h3>{% include icon.html icon="openssl-docs" %} OpenSSL: {{ include.page.title }}</h3>
             {{ include.page.openssl-docs }}
         {% endif %}
         {% if include.page.gnutls-code %}
-        <h3>GnuTLS: {{ include.page.gnutls-code }}</h3>
+        <h3>{% include icon.html icon="gnutls-docs" %} GnuTLS: {{ include.page.gnutls-code }}</h3>
             {{ include.page.gnutls-docs }}
-        {% endif %}
-        {% if include.page.verify-openssl %}
-        <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ include.page.title }}">Generating script here</a>
-        <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ include.page.title }}.zip">Ready certs here</a>
-        {% endif %}
-        {% if include.page.verify-openssl %}
-        <br>
-        Verification in OpenSSL: {{ include.page.verify-openssl }}
         {% endif %}
   </div>
 </div>

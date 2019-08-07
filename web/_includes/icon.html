@@ -1,0 +1,10 @@
+{% case include.icon %}
+  {% when 'openssl-docs' %}
+    <span class="fa fa-fw fa-book {{ include.float }}" style="color: firebrick" title="OpenSSL documentation"></span>
+  {% when 'gnutls-docs' %}
+    <span class="fa fa-fw fa-book {{ include.float }}" style="color: cornflowerblue" title="GnuTLS documentation"></span>
+  {% when 'certificate' %}
+    <span class="fa fa-fw fa-certificate {{ include.float }}" style="color: #303030" title="Example certificate"></span>
+  {% else %}
+     This is not a cake nor a cookie
+{% endcase %}
