@@ -15,17 +15,31 @@
     <div class="card card-body">
         {% if include.page.verify-openssl %}
         <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
-        <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ include.page.title }}">Generating script here</a>
-        <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ include.page.title }}.zip">Ready certs here</a>
-        <br>
-        Verification in OpenSSL: {{ include.page.verify-openssl }}
+
+        Download <a href="{{ site.url }}/assets/certs/{{ include.page.title }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/errors/{{ include.page.title }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.
+        <ul>
+            {% if include.page.verify-openssl %}
+            <li>OpenSSL: <code class="highlighter-rouge">{{ include.page.verify-openssl }}</code></li>
+            {% endif %}
+            {% if include.page.verify-gnutls %}
+            <li>GnuTLS: <code class="highlighter-rouge">{{ include.page.verify-gnutls }}</code></li>
+            {% endif %}
+        </ul>
         {% endif %}
         {% if include.page.openssl-docs %}
-        <h3>{% include icon.html icon="openssl-docs" %} OpenSSL: {{ include.page.title }}</h3>
+            <h3>
+            {% include icon.html icon="openssl-docs" %}
+            OpenSSL: {{ include.page.title }}
+            {% include icon.html icon="link" href="https://www.openssl.org/docs/manmaster/man1/verify.html" %}
+            </h3>
             {{ include.page.openssl-docs }}
         {% endif %}
         {% if include.page.gnutls-code %}
-        <h3>{% include icon.html icon="gnutls-docs" %} GnuTLS: {{ include.page.gnutls-code }}</h3>
+            <h3>
+            {% include icon.html icon="gnutls-docs" %}
+            GnuTLS: {{ include.page.gnutls-code }}
+            {% include icon.html icon="link" href="https://www.gnutls.org/manual/gnutls.html#index-verifying-certificate-paths" %}
+            </h3>
             {{ include.page.gnutls-docs }}
         {% endif %}
   </div>

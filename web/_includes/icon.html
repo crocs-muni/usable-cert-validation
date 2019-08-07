@@ -1,10 +1,16 @@
 {% case include.icon %}
   {% when 'openssl-docs' %}
-    <span class="fa fa-fw fa-book {{ include.float }}" style="color: firebrick" title="OpenSSL documentation"></span>
+    <span class="fas fa-fw fa-book {{ include.float }} color-firebrick" title="OpenSSL documentation"></span>
   {% when 'gnutls-docs' %}
-    <span class="fa fa-fw fa-book {{ include.float }}" style="color: cornflowerblue" title="GnuTLS documentation"></span>
+    <span class="fas fa-fw fa-book {{ include.float }} color-cornflowerblue" title="GnuTLS documentation"></span>
   {% when 'certificate' %}
-    <span class="fa fa-fw fa-certificate {{ include.float }}" style="color: #303030" title="Example certificate"></span>
+    <span class="fas fa-fw fa-certificate {{ include.float }} color-verydarkgrey" title="Example certificate"></span>
+  {% when 'zip' %}
+    <span class="fas fa-file-archive {{ include.float }} color-verydarkgrey"></span>
+  {% when 'github' %}
+    <span class="fab fa-github {{ include.float }} color-verydarkgrey"></span>
+  {% when 'link' %}
+    <a class="fas fa-external-link-alt {{ include.float }} color-darkgrey"  href="{{ include.href }}" target="_blank" style="font-size: 0.65em;" title="Link to source"></a>
   {% else %}
-     This is not a cake nor a cookie
+    <span class="fas fa-fw fa-question {{ include.float }} color-red" title="Icon error"></span>
 {% endcase %}
