@@ -1,0 +1,21 @@
+<div class="card-header collapsed" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+    <h3><i class="fa fa-fw fa-chevron-down"></i> <i class="fa fa-fw fa-chevron-right"></i> {{ include.page.title }}</h3>
+</div>
+<div class="collapse" id="{{ include.page.slug }}">
+    <div class="card card-body">
+        {% if include.page.openssl-docs %}
+        <h4>OpenSSL documentation</h4>
+            {{ include.page.openssl-docs }}
+        {% endif %}
+        {% if include.page.gnutls-code %}
+        <h4>GnuTLS: {{ include.page.gnutls-code }}</h4>
+            {{ include.page.gnutls-docs }}
+        {% endif %} 
+        <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ include.page.title }}">Generating script here</a>
+        <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ include.page.title }}.zip">Ready certs here</a>
+        <br>
+        {% if include.page.verify-openssl %}
+        Verification in OpenSSL: {{ include.page.verify-openssl }}
+        {% endif %}
+  </div>
+</div>
