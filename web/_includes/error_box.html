@@ -20,11 +20,13 @@
         {% if include.page.gnutls-code %}
         <h4>GnuTLS: {{ include.page.gnutls-code }}</h4>
             {{ include.page.gnutls-docs }}
-        {% endif %} 
+        {% endif %}
+        {% if include.page.verify-openssl %}
         <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ include.page.title }}">Generating script here</a>
         <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ include.page.title }}.zip">Ready certs here</a>
-        <br>
+        {% endif %}
         {% if include.page.verify-openssl %}
+        <br>
         Verification in OpenSSL: {{ include.page.verify-openssl }}
         {% endif %}
   </div>
