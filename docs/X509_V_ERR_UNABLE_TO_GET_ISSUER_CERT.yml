@@ -1,0 +1,3 @@
+tags: [ openssl, chaining ]
+openssl-docs: |
+  The issuer certificate of a looked up certificate could not be found. This normally means the list of trusted certificates is not complete.

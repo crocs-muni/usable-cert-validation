@@ -1,0 +1,3 @@
+tags: [ openssl, chaining ]
+openssl-docs: |
+  Path loop.

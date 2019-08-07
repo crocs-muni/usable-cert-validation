@@ -1,0 +1,3 @@
+tags: [ openssl, chaining ]
+openssl-docs: |
+  The issuer certificate could not be found: this occurs if the issuer certificate of an untrusted certificate cannot be found.
