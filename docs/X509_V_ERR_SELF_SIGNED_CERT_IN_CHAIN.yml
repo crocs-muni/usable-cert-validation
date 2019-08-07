@@ -1,0 +1,3 @@
+tags: [ openssl, chaining ]
+openssl-docs: |
+  The certificate chain could be built up using the untrusted certificates but the root could not be found locally.

@@ -1,0 +1,3 @@
+tags: [ openssl, chaining ]
+openssl-docs: |
+  The certificate chain length is greater than the supplied maximum depth. Unused.

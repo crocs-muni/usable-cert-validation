@@ -30,7 +30,7 @@ Research initiative to make TLS certificate validation usable.
 {% include error_box.html page=error %}
 {% endfor %}
 
-More categories will come soon...
+## More categories will come soon...
 
 ---
 

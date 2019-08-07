@@ -1,0 +1,3 @@
+tags: [ openssl, chaining ]
+openssl-docs: |
+  The passed certificate is self-signed and the same certificate cannot be found in the list of trusted certificates.

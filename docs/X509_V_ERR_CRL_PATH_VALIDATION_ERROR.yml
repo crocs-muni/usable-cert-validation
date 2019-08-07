@@ -1,0 +1,3 @@
+tags: [ openssl, crl ]
+openssl-docs: |
+  CRL path validation error.

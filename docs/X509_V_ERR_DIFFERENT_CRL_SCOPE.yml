@@ -1,0 +1,3 @@
+tags: [ openssl, crl ]
+openssl-docs: |
+  Different CRL scope.

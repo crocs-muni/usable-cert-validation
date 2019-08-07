@@ -1,0 +1,3 @@
+tags: [ openssl, validity ]
+openssl-docs: |
+  The certificate is not yet valid: the notBefore date is after the current time.
