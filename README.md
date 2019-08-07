@@ -1,4 +1,5 @@
-# Usable certificate validation
+# Usable certificate validation 
+[![Build Status](https://travis-ci.org/crocs-muni/usable-cert-validation.svg?branch=master)](https://travis-ci.org/crocs-muni/usable-cert-validation)
 
 A research initiative to make TLS certificate validation usable.
 
