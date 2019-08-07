@@ -1,5 +1,15 @@
-<div class="card-header collapsed" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="false" aria-controls="collapseExample">
-    <h3><i class="fa fa-fw fa-chevron-down"></i> <i class="fa fa-fw fa-chevron-right"></i> {{ include.page.title }}</h3>
+<div class="error-box-header card-header collapsed" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span>{{ include.page.title }}</span>
+    {% if include.page.verify-openssl %}
+    <span class="fa fa-fw fa-certificate float-right" title="Example certificate available"></span>
+    {% endif %}
+    {% if include.page.gnutls-docs %}
+    <span class="fa fa-fw fa-book float-right" style="color: cornflowerblue" title="GnuTLS documentation available"></span>
+    {% endif %}
+    {% if include.page.openssl-docs %}
+    <span class="fa fa-fw fa-book float-right" style="color: firebrick" title="OpenSSL documentation available"></span>
+    {% endif %}
 </div>
 <div class="collapse" id="{{ include.page.slug }}">
     <div class="card card-body">

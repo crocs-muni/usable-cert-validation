@@ -88,6 +88,11 @@ a {
   display: inline-block;
 }
 
-i.fa {
-  cursor: pointer;
+.error-box-header {
+    cursor: pointer;
+    font-size: 1.4rem;
+}
+
+.error-box-header .float-right {
+    line-height: 2rem;
 }
