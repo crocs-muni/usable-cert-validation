@@ -13,7 +13,7 @@ CERT_CONFIGS=$(wildcard *.cfg)
 $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 	mkdir -p $(BUILD_DIR)
 	certtool --generate-privkey --outfile $(BUILD_DIR)/endpoint.key $(VERBOSITY)
-	certtool --generate-self-signed --load-privkey $(BUILD_DIR)/endpoint.key --outfile $(BUILD_DIR)/endpoint.crt --template endpoint. $(VERBOSITY)
+	certtool --generate-self-signed --load-privkey $(BUILD_DIR)/endpoint.key --outfile $(BUILD_DIR)/endpoint.crt --template endpoint.cfg $(VERBOSITY)
 
 verify-openssl:
 	-openssl verify $(BUILD_DIR)/endpoint.crt
