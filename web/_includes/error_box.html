@@ -14,11 +14,11 @@
 <div class="collapse" id="{{ include.page.slug }}">
     <div class="card card-body">
         {% if include.page.openssl-docs %}
-        <h4>OpenSSL documentation</h4>
+        <h3>OpenSSL documentation</h3>
             {{ include.page.openssl-docs }}
         {% endif %}
         {% if include.page.gnutls-code %}
-        <h4>GnuTLS: {{ include.page.gnutls-code }}</h4>
+        <h3>GnuTLS: {{ include.page.gnutls-code }}</h3>
             {{ include.page.gnutls-docs }}
         {% endif %}
         {% if include.page.verify-openssl %}

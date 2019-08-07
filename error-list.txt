@@ -1,4 +1,4 @@
-// errors related to invalid certificate chaining
+// chaining: errors related to invalid certificate chaining
 X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT
 X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
 X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT
@@ -7,11 +7,11 @@ X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE
 X509_V_ERR_CERT_CHAIN_TOO_LONG
 X509_V_ERR_PATH_LOOP
 
-// certificate validity errors
+// validity: certificate validity errors
 X509_V_ERR_CERT_NOT_YET_VALID
 X509_V_ERR_CERT_HAS_EXPIRED
 
-// crl related errors
+// crl: CRL-related errors
 X509_V_ERR_UNABLE_TO_GET_CRL
 X509_V_ERR_CERT_REVOKED
 X509_V_ERR_CRL_NOT_YET_VALID

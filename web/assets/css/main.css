@@ -15,6 +15,11 @@ h1 {
     font-weight: bold !important;
 }
 
+h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
 h3 {
     font-size: 1.4rem;
 }
