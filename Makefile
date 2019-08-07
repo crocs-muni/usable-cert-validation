@@ -20,10 +20,10 @@ clean: certs-clean certs-new-clean web-clean
 certs: $(addprefix $(CERTS_BUILD_PREFIX)/,$(ERROR_CODES_SCRIPTS))
 
 $(CERTS_BUILD_PREFIX)/%: $(CERTS_SCRIPTS_PREFIX)/%/*
-	@echo -n "Generating certs for "$(*F)" ..."
+	@printf "Generating certs for %-50s" $(*F)
 	@mkdir -p $@
 	@$(MAKE) --silent --directory=$(CERTS_SCRIPTS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
-	@echo -e "\t\t[ OK ]"
+	@printf "[ OK ]\n"
 
 certs-new-clean:
 	rm -rf errors/*/_certs
@@ -38,19 +38,19 @@ web: $(WEB_ERRORINFO) $(WEB_CERTS) web-version
 
 .SECONDEXPANSION:
 $(WEB_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(CERTS_DOCS_PREFIX)/%.yml*) # wildcard handles non-existent cases
-	@echo -n "Generating error info for "$(*F)" ..."
+	@printf "Generating info for %-51s" $(*F)
 	@mkdir -p $(WEB_ERRORINFO_PREFIX)
 	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) \
 	                        $(CERTS_DOCS_PREFIX)/$(*F).yml \
 							`cat $(ERROR_LIST_FILE) | grep -n ^$(*F)$$ | cut --delimiter=: --fields=1` \
 							>$@
-	@echo -e "\t\t[ OK ]"
+	@printf "[ OK ]\n"
 
 $(WEB_CERTS_PREFIX)/%.zip: $(CERTS_BUILD_PREFIX)/% $$(wildcard $(CERTS_BUILD_PREFIX)/%/*)
-	@echo -n "Generating certs zip for "$(*F)" ..."
+	@printf "Generating zip for %-52s" $(*F)
 	@mkdir -p $(WEB_CERTS_PREFIX)
 	@zip --quiet $@ $(CERTS_BUILD_PREFIX)/$(*F)/*
-	@echo -e "\t\t[ OK ]"
+	@printf "[ OK ]\n"
 
 web-version:
 	utils/web-version.sh $(REPO_URL) >$(WEB_VERSION_FILE)
