@@ -18,11 +18,20 @@ Below are all OpenSSL errors with documentation, some with example certificate c
 </div>
 <div class="collapse" id="{{ error.slug }}">
     <div class="card card-body">
-        {{ error.content | markdownify }}   
+        {% if error.openssl-docs %}
+        <h4>OpenSSL documentation</h4>
+            {{ error.openssl-docs }}
+        {% endif %}
+        {% if error.gnutls-code %}
+        <h4>GnuTLS: {{ error.gnutls-code }}</h4>
+            {{ error.gnutls-docs }}
+        {% endif %} 
         <a class="btn btn-secondary" target="_blank" href="{{ site.repo-url }}/tree/master/errors/{{ error.title }}">Generating script here</a>
         <a class="btn btn-secondary" target="_blank" href="{{ site.url }}/assets/certs/{{ error.title }}.zip">Ready certs here</a>
         <br>
+        {% if error.verify-openssl %}
         Verification in OpenSSL: {{ error.verify-openssl }}
+        {% endif %}
   </div>
 </div>
 {% endfor %}

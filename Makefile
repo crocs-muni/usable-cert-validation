@@ -41,7 +41,7 @@ $(WEB_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(CERTS_DOCS_PR
 	@echo -n "Generating error info for "$(*F)" ..."
 	@mkdir -p $(WEB_ERRORINFO_PREFIX)
 	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) \
-	                        $(CERTS_DOCS_PREFIX)/$(*F) \
+	                        $(CERTS_DOCS_PREFIX)/$(*F).yml \
 							`cat $(ERROR_LIST_FILE) | grep -n ^$(*F)$$ | cut --delimiter=: --fields=1` \
 							>$@
 	@echo -e "\t\t[ OK ]"

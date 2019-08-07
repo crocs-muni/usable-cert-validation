@@ -1,0 +1,3 @@
+tags: [ openssl, key-usage ]
+openssl-docs: |
+  the supplied certificate cannot be used for the specified purpose.
