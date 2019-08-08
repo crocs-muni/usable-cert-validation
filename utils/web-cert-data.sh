@@ -23,7 +23,7 @@ CODE_WEIGHT=$3
 ERROR_CODE=`basename $CERTS_SCRIPTS_FOLDER`
 
 echo "---"
-echo "title: "$ERROR_CODE
+echo "title: "`echo $ERROR_CODE | sed 's/_/_\&shy;/g'`
 echo -n "slug: "
 echo $ERROR_CODE | sed 's/[A-Z]/\L&/g' | sed 's/_/-/g'
 echo "weight: "$CODE_WEIGHT
