@@ -5,10 +5,16 @@ body {
     padding-bottom: 2rem;
     font-family: 'Source Sans Pro', sans-serif !important;
     font-size: 1.0rem;
-    background: #F7F7F7;
+/*  background: #F7F7F7; */
     position: relative;
     min-height: 100vh;
     text-align: justify;
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        text-align: left;
+    }
 }
 
 h1 {
@@ -34,7 +40,7 @@ a.fas:hover {
     color: #303030;
 }
 
-a .fas, a .fab {
+ .card a .fas, .card a .fab {
     margin-left: 0.3em;
     margin-right: 0.1em;
 }
@@ -46,6 +52,7 @@ a .fas, a .fab {
 .color-verydarkgrey { color: #505050; }
 .color-darkgrey { color: darkgrey; }
 .color-red { color: red; }
+.color-white { color: white; }
 
 .section {
     padding-top: 3rem;
@@ -54,6 +61,14 @@ a .fas, a .fab {
 
 .navbar-scrolled {
     box-shadow: 0 3px 10px #e2e2ff;
+}
+
+.navbar-brand .fa-stack {
+    width: 1.5em;
+}
+
+.navbar-scrolled {
+    box-shadow: 0 3px 10px #e2e2e2;
 }
 
 .navbar a {

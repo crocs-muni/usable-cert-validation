@@ -1,6 +1,12 @@
 <nav class="navbar navbar-expand-md navbar-light bg-custom fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="/">{{ site.title }}</a>
+        <a class="navbar-brand" href="/">
+            <span class="fa-stack">
+                <span class="fas fa-fw fa-lg fa-certificate fa-stack-1x color-verydarkgrey"></span>
+                <span class="fas fa-fw fa-xs fa-check fa-stack-1x color-white"></span>
+            </span>
+            {{ site.title }}
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarDefault" aria-controls="navbarDefault" aria-expanded="false" aria-label="Show/hide navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
