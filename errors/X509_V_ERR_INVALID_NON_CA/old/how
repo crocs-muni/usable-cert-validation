@@ -1,2 +1,0 @@
-with gnutls generate proxy from a cert with ca:true
-verify with allow_proxy_certs
