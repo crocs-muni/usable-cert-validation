@@ -7,13 +7,15 @@ title: Usable X.509 errors
     <h1>{{ page.title }}</h1>
     <div class="tagline">Research initiative to make X.509 certificate validation usable</div>
 
-    <div class="row">
+    <p>Intro text about what we do and why (very shortly).</p>
+
+    <div class="row intro">
     <div class="col-sm-4">
         <div class="card">
         <div class="card-body">
             <h5 class="card-title">Special title treatment</h5>
             <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <a href="#" class="btn btn-primary">{% include icon.html icon="button-methodology" %} Detailed methodology</a>
         </div>
         </div>
     </div>
@@ -22,7 +24,7 @@ title: Usable X.509 errors
         <div class="card-body">
             <h5 class="card-title">Special title treatment</h5>
             <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <a href="https://docs.google.com/spreadsheets/d/1AYX02k49lBhrZ7fLoh5UsEaXU-OND27zX4LexnzVR-k/edit?usp=sharing" target="_blank" class="btn btn-primary">{% include icon.html icon="button-table" %} Error mapping</a>
         </div>
         </div>
     </div>
@@ -31,7 +33,7 @@ title: Usable X.509 errors
         <div class="card-body">
             <h5 class="card-title">Special title treatment</h5>
             <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <a href="{{ site.repo-url }}" target="_blank" class="btn btn-primary">{% include icon.html icon="button-github" %} Project repository</a>
         </div>
         </div>
     </div>

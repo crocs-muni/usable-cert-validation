@@ -34,7 +34,7 @@ a.fas:hover {
     color: #303030;
 }
 
- .card a .fas, .card a .fab {
+ .error-box a .fas, .error-box a .fab {
     margin-left: 0.3em;
     margin-right: 0.1em;
 }
@@ -103,34 +103,38 @@ a.fas:hover {
     text-decoration: none;
 }
 
-/* Error box */
-
-.card-header {
-    cursor: pointer;
-    font-size: 1.4rem;
-    background: none;
-}
-
-.card-header .float-right {
-    line-height: 2rem;
-}
-
 .card {
     display: block;
     background-color: rgba(0, 0, 0, 0.02)
 }
 
-.card h3:first-child { 
+/* Error box */
+
+.error-box .card-header {
+    cursor: pointer;
+    font-size: 1.4rem;
+    background: none;
+}
+
+.error-box .card-header .float-right {
+    line-height: 2rem;
+}
+
+.error-box .card h3:first-child { 
     margin-top: 0px;
 }
 
-.card-header.collapsed .fa-chevron-down,
-.card-header .fa-chevron-right {
+.error-box:last-child .card-header {
+    border: none;
+}
+
+.error-box .card-header.collapsed .fa-chevron-down,
+.error-box .card-header .fa-chevron-right {
   display: none;
 }
 
-.card-header.collapsed .fa-chevron-right,
-.card-header .fa-chevron-down {
+.error-box .card-header.collapsed .fa-chevron-right,
+.error-box .card-header .fa-chevron-down {
   display: inline-block;
 }
 
@@ -141,4 +145,8 @@ a.fas:hover {
     margin-top: 0.5rem;
     margin-bottom: 1.5rem;
     font-size: 1.2rem;
+}
+
+.intro {
+    text-align: left;
 }

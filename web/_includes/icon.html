@@ -11,6 +11,12 @@
     <span class="fab fa-github {{ include.float }} color-verydarkgrey"></span>
   {% when 'link' %}
     <a class="fas fa-external-link-alt {{ include.float }} color-darkgrey"  href="{{ include.href }}" target="_blank" style="font-size: 0.65em;" title="Link to source"></a>
+  {% when 'button-github' %}
+    <span class="fab fa-fw fa-github color-white"></span>
+  {% when 'button-table' %}
+    <span class="fas fa-fw fa-table color-white"></span>
+  {% when 'button-methodology' %}
+    <span class="fas fa-fw fa-project-diagram color-white"></span>
   {% else %}
     <span class="fas fa-fw fa-question {{ include.float }} color-red" title="Icon error"></span>
 {% endcase %}
