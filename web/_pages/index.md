@@ -68,14 +68,19 @@ title: Usable X.509 errors
 </div></div>
 
 <div class="section"><div class="container" markdown="1">
-More categories will come soon...
+## Errors yet uncategorizes
+
+{% assign errors_uncategorized = sorted_errors | where:"tags","uncategorized" %}
+{% for error in errors_uncategorized %}
+{% include error_box.html page=error %}
+{% endfor %}
 </div></div>
 
 <div class="section"><div class="container" markdown="1">
-## All errors
+## Unused, deprecated or never occurring errors
 
-{% assign sorted_errors = site.errors | sort: 'weight' %}
-{% for error in sorted_errors %}
+{% assign errors_unused = sorted_errors | where:"tags","unused" %}
+{% for error in errors_unused %}
 {% include error_box.html page=error %}
 {% endfor %}
 </div></div>
