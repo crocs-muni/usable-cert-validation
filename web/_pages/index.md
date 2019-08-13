@@ -91,5 +91,6 @@ title: Usable X.509 errors
 The project is developed at the [Centre for Research on Cryptography and Security](https://www.fi.muni.cz/research/crocs/), [Masaryk University](http://www.muni.cz/), Brno, Czech Republic.
 
 * Add author names (Martin, Pavol)
+* Thanks to [Kiwi.com](https://www.kiwi.com) and [Red Hat Czech](https://research.redhat.com/) for supporting the project.
 * Add link to old [DevConf 2018 experiment site](/devconf-2018-experiment)
 </div></div>
