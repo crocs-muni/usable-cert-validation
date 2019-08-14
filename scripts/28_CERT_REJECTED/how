@@ -1,7 +1,0 @@
-create root ca
-reject trust for smth, eg serverAuth
-sign a user cert with the new modified ca
-try to verify with serverAuth
-
-
-same issue as with 27, certtool cannot work with this
