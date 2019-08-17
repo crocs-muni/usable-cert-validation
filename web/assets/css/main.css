@@ -140,13 +140,29 @@ a.fas:hover {
 
 /* Other style elements */
 
-.tagline {
-    text-transform: uppercase;
-    margin-top: 0.5rem;
-    margin-bottom: 1.5rem;
-    font-size: 1.2rem;
+.lead {
+    font-size: 150%;
+    margin-top: 1rem;
+    margin-bottom: 2.5rem;
 }
 
 .intro {
     text-align: left;
+}
+
+.intro h4 {
+    margin-bottom: 0.75rem;
+}
+
+.intro p {
+    margin-bottom: 0.5rem;
+}
+
+.intro p:last-child {
+    margin-bottom: 0;
+}
+
+.intro .btn {
+    margin-top: 1rem;
+    display: block;
 }
