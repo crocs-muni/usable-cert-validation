@@ -1,0 +1,14 @@
+- tag: chaining
+  title: "Errors related to invalid certificate chaining"
+
+- tag: validity
+  title: "Certificate validity errors"
+
+- tag: crl
+  title: "CRL-related errors"
+
+- tag: uncategorized
+  title: "Errors yet uncategorizes"
+
+- tag: unused
+  title: "Unused, deprecated or never occurring errors"

@@ -5,7 +5,7 @@ title: Usable X.509 errors
 
 <div class="section"><div class="container">
     <h1>{{ page.title }}</h1>
-    <div class="tagline">Research initiative to make X.509 certificate validation usable</div>
+    <div class="tagline">{{ site.description }}</div>
 
     <p>Intro text about what we do and why (very shortly).</p>
 
@@ -40,52 +40,18 @@ title: Usable X.509 errors
     </div>
 </div></div>
 
-{% assign sorted_errors = site.errors | sort: 'weight' %}
+{% for category in site.data.errors %}
 
 <div class="section"><div class="container" markdown="1">
-## Errors related to invalid certificate chaining
+## {{ category.title }}
 
-{% assign errors_chaining = sorted_errors | where:"tags","chaining" %}
-{% for error in errors_chaining %}
+{% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
+{% for error in errors %}
 {% include error_box.html page=error %}
 {% endfor %}
 </div></div>
 
-<div class="section"><div class="container" markdown="1">
-## Certificate validity errors
-
-{% assign errors_validity = sorted_errors | where:"tags","validity" %}
-{% for error in errors_validity %}
-{% include error_box.html page=error %}
 {% endfor %}
-</div></div>
-
-<div class="section"><div class="container" markdown="1">
-## CRL-related errors
-
-{% assign errors_crl = sorted_errors | where:"tags","crl" %}
-{% for error in errors_crl %}
-{% include error_box.html page=error %}
-{% endfor %}
-</div></div>
-
-<div class="section"><div class="container" markdown="1">
-## Errors yet uncategorizes
-
-{% assign errors_uncategorized = sorted_errors | where:"tags","uncategorized" %}
-{% for error in errors_uncategorized %}
-{% include error_box.html page=error %}
-{% endfor %}
-</div></div>
-
-<div class="section"><div class="container" markdown="1">
-## Unused, deprecated or never occurring errors
-
-{% assign errors_unused = sorted_errors | where:"tags","unused" %}
-{% for error in errors_unused %}
-{% include error_box.html page=error %}
-{% endfor %}
-</div></div>
 
 <div class="section"><div class="container" markdown="1">
 ## Authors
