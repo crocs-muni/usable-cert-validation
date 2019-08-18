@@ -2,7 +2,6 @@
 layout: default
 title: Usable X.509 errors
 ---
-
 <div class="section"><div class="container">
     <h1>Making X.509 errors usable.</h1>
     <div class="lead">
@@ -37,23 +36,23 @@ title: Usable X.509 errors
 {% for category in site.data.errors %}
 
 <div class="section"><div class="container" markdown="1">
-## {{ category.title }}
+    <h2>{{ category.title }}</h2>
 
-{% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
-{% for error in errors %}
-{% include error_box.html page=error %}
-{% endfor %}
+    {% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
+    {% for error in errors %}
+    {% include error_box.html page=error %}
+    {% endfor %}
 </div></div>
 
 {% endfor %}
 
-<div class="section"><div class="container" markdown="1">
-# Authors
-
-The project is developed at the [Centre for Research on Cryptography and Security](https://www.fi.muni.cz/research/crocs/), [Masaryk University](http://www.muni.cz/), Brno, Czech Republic.
-
-* Add author names (Martin, Pavol)
-* Thanks to [Kiwi.com](https://www.kiwi.com) and [Red Hat Czech](https://research.redhat.com/) for supporting the project.
-* Add link to old [DevConf 2018 experiment site](/devconf-2018-experiment)
-
+<div class="section"><div class="container clearfix">
+    <h2>About the project</h2>
+    <div class="col-lg-3 col-md-4 col-6 float-right">
+        <a href="https://crocs.fi.muni.cz" target="_blank">
+            <img class="crocs" src="/assets/img/crocs.png" alt="CRoCS FI MU" title="CRoCS FI MU">
+        </a>
+    </div>
+    <p>The project is developed at the <a href="https://www.fi.muni.cz/research/crocs/" target="_blank">Centre for Research on Cryptography and Security (CRoCS)</a> at <a href="http://www.muni.cz/" target="_blank">Masaryk University</a>, Brno, Czech Republic by <a href="https://crocs.fi.muni.cz/people/mukrop" target="_blank">Martin Ukrop</a> and Pavol Žáčik.</p>
+    <p>The authors are grateful for the financial support by and <a href="https://research.redhat.com/" target="_blank">Red Hat Czech</a> and <a href="https://www.kiwi.com" target="_blank">Kiwi.com</a>.
 </div></div>
