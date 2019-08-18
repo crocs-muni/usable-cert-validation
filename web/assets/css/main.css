@@ -26,6 +26,12 @@ h3 {
     margin-bottom: 0.7rem;
 }
 
+h1:target,
+h2:target {
+    padding-top: 5rem;
+    margin-top: -5rem;
+}
+
 a {
     cursor: pointer;
 }
