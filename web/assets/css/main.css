@@ -156,6 +156,12 @@ a.fas:hover {
     text-align: left;
 }
 
+@media screen and (max-width: 768px) {
+    .intro .card {
+        margin-bottom: 20px;
+    }
+}
+
 .intro h4 {
     margin-bottom: 0.75rem;
 }
