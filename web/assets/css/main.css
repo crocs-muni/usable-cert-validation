@@ -53,6 +53,13 @@ a.fas:hover {
     padding-bottom: 3rem;
 }
 
+@media screen and (max-width: 576px) {
+    .section {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+}
+
 .section:nth-of-type(even) {
     background: #FAFAFA;
 }
