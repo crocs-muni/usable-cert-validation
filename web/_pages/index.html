@@ -1,10 +1,10 @@
 ---
 layout: default
-title: Usable X.509 errors
+title:  Usable X.509 errors
+slug:   index
 ---
-<a id="home"></a>
 <div class="section"><div class="container">
-    <h1>Making X.509 errors usable.</h1>
+    <h1 id="home">Making X.509 errors usable.</h1>
     <div class="lead">
     <p>Validating X.509 certificates correctly turns out to be pretty complicated (e.g. <a href="http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf" target="_blank">Georgiev2012</a>). Yet certificate validation is absolutely crucial for secure communication on the Internet (think <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank">TLS</a>).</p>
     <p>Our goal is to simplify the ecosystem by consolidating the errors and their documentation (similarly to <a href="https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/" target="_blank">web documentation</a>) and by explaining better what the validation errors mean.</p>
@@ -34,11 +34,10 @@ title: Usable X.509 errors
     </div>
 </div></div>
 
-<a id="errors"></a>
 {% for category in site.data.errors %}
 
 <div class="section"><div class="container" markdown="1">
-    <h2>{{ category.title }}</h2>
+    <h2 id="errors">{{ category.title }}</h2>
 
     {% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
     {% for error in errors %}
@@ -48,9 +47,8 @@ title: Usable X.509 errors
 
 {% endfor %}
 
-<a id="about"></a>
 <div class="section"><div class="container clearfix">
-    <h2>About the project</h2>
+    <h2 id="about">About the project</h2>
     <div class="col-lg-3 col-md-4 col-6 float-right">
         <a href="https://crocs.fi.muni.cz" target="_blank">
             <img class="crocs" src="/assets/img/crocs.png" alt="CRoCS FI MU" title="CRoCS FI MU">

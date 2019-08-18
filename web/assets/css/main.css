@@ -57,6 +57,10 @@ a.fas:hover {
     background: #FAFAFA;
 }
 
+.navbar {
+    background: #F7F7F7;
+}
+
 .navbar-scrolled {
     box-shadow: 0 3px 10px #e2e2ff;
 }
@@ -65,26 +69,21 @@ a.fas:hover {
     width: 1.5em;
 }
 
-.navbar-scrolled {
-    box-shadow: 0 3px 10px #e2e2e2;
-}
-
 .navbar a {
     text-transform: uppercase;
     text-decoration: none;
 }
 
-.navbar-light .navbar-nav .active > .nav-link, .navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .nav-link.show, .navbar-light .navbar-nav .show > .nav-link {
+.navbar .nav-link.active, 
+.navbar .nav-link.show, 
+.navbar .active > .nav-link, 
+.navbar .show > .nav-link {
     font-weight: bold;
 }
 
 .navbar-expand-md .navbar-nav .nav-link {
     padding-left: 1rem;
     padding-right: 1rem;
-}
-
-.bg-custom {
-    background: #F7F7F7;
 }
 
 .page-footer {

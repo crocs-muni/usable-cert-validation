@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md navbar-light bg-custom fixed-top">
+<nav class="navbar navbar-expand-md navbar-light fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/">
             <span class="fa-stack">
@@ -7,23 +7,23 @@
             </span>
             {{ site.title }}
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarDefault" aria-controls="navbarDefault" aria-expanded="false" aria-label="Show/hide navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Show/hide navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="navbarDefault">
+        <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav ml-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="/#home">Intro</a>
+                    <a class="nav-link" href="{% if page.slug == 'index' %}#home{% else %}/#home{% endif %}">Intro</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/#errors">Errors</a>
+                    <a class="nav-link" href="{% if page.slug == 'index' %}#errors{% else %}/#errors{% endif %}">Errors</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/methodology#">Methodology</a>
+                    <a class="nav-link" href="{% if page.slug == 'index' %}/methodology{% else %}#methodology{% endif %}">Methodology</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="/#about">About</a>
+                    <a class="nav-link" href="{% if page.slug == 'index' %}#about{% else %}/#about{% endif %}">About</a>
                 </li>
             </ul>
         </div>
