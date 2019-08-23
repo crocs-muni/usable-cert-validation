@@ -1,1 +1,3 @@
 tags: [ openssl, unused ]
+openssl-docs: |
+  An error occurred trying to allocate memory. This should never happen.

@@ -1,1 +1,3 @@
 tags: [ openssl, uncategorized ]
+openssl-docs: |
+  Subject signature algorithm and issuer public key algorithm mismatch

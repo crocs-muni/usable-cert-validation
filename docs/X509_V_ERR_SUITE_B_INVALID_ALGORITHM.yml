@@ -1,1 +1,3 @@
 tags: [ openssl, uncategorized ]
+openssl-docs: |
+  Suite B: invalid public key algorithm.

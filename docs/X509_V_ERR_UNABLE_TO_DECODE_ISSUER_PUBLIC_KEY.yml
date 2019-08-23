@@ -1,1 +1,3 @@
 tags: [ openssl, unused ]
+openssl-docs: |
+  The public key in the certificate SubjectPublicKeyInfo could not be read.

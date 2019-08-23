@@ -1,1 +1,3 @@
 tags: [ openssl, uncategorized ]
+openssl-docs: |
+  Suite B: curve not allowed for this LOS.

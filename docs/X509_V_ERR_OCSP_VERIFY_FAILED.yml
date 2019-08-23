@@ -1,1 +1,3 @@
 tags: [ openssl, uncategorized ]
+openssl-docs: |
+  Returned by the verify callback to indicate OCSP verification failed.
