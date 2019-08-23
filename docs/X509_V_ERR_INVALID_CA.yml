@@ -1,1 +1,3 @@
 tags: [ openssl, uncategorized ]
+openssl-docs: |
+  A CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
