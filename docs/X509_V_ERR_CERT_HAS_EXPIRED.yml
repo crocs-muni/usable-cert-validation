@@ -1,6 +1,6 @@
 tags: [ openssl, validity ]
 openssl-docs: |
-  the certificate has expired: that is the notAfter date is before the current time.
+  The certificate has expired: that is the notAfter date is before the current time.
 gnutls-code: GNUTLS_CERT_EXPIRED
 gnutls-docs: |
   The certificate has expired.
