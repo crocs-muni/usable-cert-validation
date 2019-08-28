@@ -1,14 +1,23 @@
-- tag: chaining
-  title: "Errors related to invalid certificate chaining"
+- tag: time
+  title: "Time validity errors"
 
-- tag: validity
-  title: "Certificate validity errors"
+- tag: trust
+  title: "Trust or chain related errors"
 
-- tag: crl
-  title: "CRL-related errors"
+- tag: extension
+  title: "General extension and basic constraint errors"
+
+- tag: name
+  title: "Name related errors"
+
+- tag: usage
+  title: "Usage and policy errors"
+
+- tag: algorithm
+  title: "Algoritm related errors"
+
+- tag: format
+  title: "Formatting errors"
 
 - tag: uncategorized
-  title: "Errors yet uncategorizes"
-
-- tag: unused
-  title: "Unused, deprecated or never occurring errors"
+  title: "Uncategorized errors"
