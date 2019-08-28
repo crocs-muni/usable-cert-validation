@@ -1,2 +1,4 @@
-tags: [ openssl, uncategorized ]
+tags: [ openssl, name ]
 openssl-docs: |
+  Hostname mismatch.
+weight: 401

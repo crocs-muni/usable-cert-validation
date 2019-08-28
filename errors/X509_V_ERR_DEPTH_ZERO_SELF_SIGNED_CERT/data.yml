@@ -1,3 +1,5 @@
-tags: [ openssl, chaining ]
+tags: [ openssl, trust ]
 openssl-docs: |
   The passed certificate is self-signed and the same certificate cannot be found in the list of trusted certificates.
+weight: 203
+ 

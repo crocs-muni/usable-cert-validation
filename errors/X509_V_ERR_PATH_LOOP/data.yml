@@ -1,3 +1,5 @@
-tags: [ openssl, chaining ]
+tags: [ openssl, trust ]
 openssl-docs: |
   Path loop.
+weight: 211
+ 
