@@ -20,7 +20,7 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 			 --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg --hash SHA1 $(VERBOSITY)
 
 verify-openssl:
-	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -auth_level 2 $(BUILD_DIR)/endpoint.crt
+	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -auth_level 3 $(BUILD_DIR)/endpoint.crt
 
 verify-gnutls:
 	
