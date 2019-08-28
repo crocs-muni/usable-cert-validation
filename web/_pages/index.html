@@ -37,7 +37,7 @@ slug:   index
 {% for category in site.data.errors %}
 
 <div class="section"><div class="container" markdown="1">
-    <h2 id="errors">{{ category.title }}</h2>
+    <h2 id="{{ category.title | slugify }}">{{ category.title }}</h2>
 
     {% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
     {% for error in errors %}
