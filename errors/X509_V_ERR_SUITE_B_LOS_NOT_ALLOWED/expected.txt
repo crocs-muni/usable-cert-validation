@@ -1,0 +1,1 @@
+error 60 at 0 depth lookup: Suite B: curve not allowed for this LOS
