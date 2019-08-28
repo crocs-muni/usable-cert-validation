@@ -1,55 +1,51 @@
 # Environment settiongs
 REPO_URL=https://github.com/crocs-muni/usable-cert-validation
 WEB_VERSION_FILE=web/_includes/version.html
-ERROR_LIST_FILE=error-list.txt
-CERTS_SCRIPTS_PREFIX=errors
-CERTS_DOCS_PREFIX=docs
-CERTS_BUILD_PREFIX=_certs
-WEB_ERRORINFO_PREFIX=web/_errors
-WEB_CERTS_PREFIX=web/assets/certs
+ERRORS_PREFIX=errors
+BUILD_CERTS_PREFIX=_certs
+BUILD_ERRORINFO_PREFIX=web/_errors
+BUILD_CERTZIP_PREFIX=web/assets/certs
 VERBOSITY=">/dev/null 2>&1"
-ERROR_CODES=$(shell cat $(ERROR_LIST_FILE) | grep --invert-match // )
-ERROR_CODES_SCRIPTS=$(notdir $(wildcard $(CERTS_SCRIPTS_PREFIX)/*) )
+ERROR_CODES_ALL=$(notdir $(wildcard $(ERRORS_PREFIX)/*) )
+ERROR_CODES_DATA=$(notdir $(subst /data.yml,,$(wildcard $(ERRORS_PREFIX)/*/data.yml)) )
+ERROR_CODES_SCRIPTS=$(notdir $(subst /Makefile,,$(wildcard $(ERRORS_PREFIX)/*/Makefile)) )
 
 all: certs web
 
-clean: certs-clean certs-new-clean web-clean
+clean: certs-clean web-clean
 
 # Generating certificates
 
-certs: $(addprefix $(CERTS_BUILD_PREFIX)/,$(ERROR_CODES_SCRIPTS))
+certs: $(addprefix $(BUILD_CERTS_PREFIX)/,$(ERROR_CODES_SCRIPTS))
 
-$(CERTS_BUILD_PREFIX)/%: $(CERTS_SCRIPTS_PREFIX)/%/*
+$(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(ERRORS_PREFIX)/%/*.cfg
 	@printf "Generating certs for %-50s" $(*F)
 	@mkdir -p $@
-	@$(MAKE) --silent --directory=$(CERTS_SCRIPTS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
+	@$(MAKE) --silent --directory=$(ERRORS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
 	@printf "[ OK ]\n"
 
-certs-new-clean:
+certs-clean:
 	rm -rf errors/*/_certs
-	rm -rf $(CERTS_BUILD_PREFIX)
+	rm -rf $(BUILD_CERTS_PREFIX)
 
 # Web building targets
 
-WEB_ERRORINFO=$(addsuffix .md, $(addprefix $(WEB_ERRORINFO_PREFIX)/,$(ERROR_CODES)) )
-WEB_CERTS=$(addsuffix .zip, $(addprefix $(WEB_CERTS_PREFIX)/, $(ERROR_CODES_SCRIPTS)) )
+WEB_ERRORINFO=$(addsuffix .md, $(addprefix $(BUILD_ERRORINFO_PREFIX)/,$(ERROR_CODES_DATA)) )
+WEB_CERTS=$(addsuffix .zip, $(addprefix $(BUILD_CERTZIP_PREFIX)/, $(ERROR_CODES_SCRIPTS)) )
 
 web: $(WEB_ERRORINFO) $(WEB_CERTS) web-version
 
 .SECONDEXPANSION:
-$(WEB_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(CERTS_DOCS_PREFIX)/%.yml*) # wildcard handles non-existent cases
+$(BUILD_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(ERRORS_PREFIX)/%/data.yml)
 	@printf "Generating info for %-51s" $(*F)
-	@mkdir -p $(WEB_ERRORINFO_PREFIX)
-	@utils/web-cert-data.sh $(CERTS_SCRIPTS_PREFIX)/$(*F) \
-	                        $(CERTS_DOCS_PREFIX)/$(*F).yml \
-							`cat $(ERROR_LIST_FILE) | grep -n ^$(*F)$$ | cut --delimiter=: --fields=1` \
-							>$@
+	@mkdir -p $(BUILD_ERRORINFO_PREFIX)
+	@utils/web-cert-data.sh $(ERRORS_PREFIX)/$(*F) >$@
 	@printf "[ OK ]\n"
 
-$(WEB_CERTS_PREFIX)/%.zip: $(CERTS_BUILD_PREFIX)/% $$(wildcard $(CERTS_BUILD_PREFIX)/%/*)
+$(BUILD_CERTZIP_PREFIX)/%.zip: $(BUILD_CERTS_PREFIX)/% $$(wildcard $(BUILD_CERTS_PREFIX)/%/*)
 	@printf "Generating zip for %-52s" $(*F)
-	@mkdir -p $(WEB_CERTS_PREFIX)
-	@zip --quiet $@ $(CERTS_BUILD_PREFIX)/$(*F)/*
+	@mkdir -p $(BUILD_CERTZIP_PREFIX)
+	@zip --quiet $@ $(BUILD_CERTS_PREFIX)/$(*F)/*
 	@printf "[ OK ]\n"
 
 web-version:
@@ -59,8 +55,8 @@ web-local: web
 	cd web && bundle exec jekyll serve
 
 web-clean:
-	rm -rf $(WEB_ERRORINFO_PREFIX)
-	rm -rf $(WEB_CERTS_PREFIX)
+	rm -rf $(BUILD_ERRORINFO_PREFIX)
+	rm -rf $(BUILD_CERTZIP_PREFIX)
 	rm -rf web/_site
 
-.PHONY: all clean web web-clean web-local web-version certs certs-clean certs-new-clean
+.PHONY: all clean web web-clean web-local web-version certs certs-clean
