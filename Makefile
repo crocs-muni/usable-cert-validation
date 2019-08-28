@@ -19,9 +19,12 @@ clean: certs-clean web-clean
 certs: $(addprefix $(BUILD_CERTS_PREFIX)/,$(ERROR_CODES_SCRIPTS))
 
 $(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(ERRORS_PREFIX)/%/*.cfg
-	@printf "Generating certs for %-50s" $(*F)
+	@printf "Generating certs for %-60s" $(*F)
 	@mkdir -p $@
 	@$(MAKE) --silent --directory=$(ERRORS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
+	@printf "[ OK ]\n"
+	@printf "Testing OpenSSL validation for %-50s" $(*F)
+	@utils/test-cert-validation.sh $(ERRORS_PREFIX)/$(@F) $(CURDIR)/$@
 	@printf "[ OK ]\n"
 
 certs-clean:
@@ -43,7 +46,7 @@ $(BUILD_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(ERRORS_PREF
 	@printf "[ OK ]\n"
 
 $(BUILD_CERTZIP_PREFIX)/%.zip: $(BUILD_CERTS_PREFIX)/% $$(wildcard $(BUILD_CERTS_PREFIX)/%/*)
-	@printf "Generating zip for %-52s" $(*F)
+	@printf "Generating zip for %-62s" $(*F)
 	@mkdir -p $(BUILD_CERTZIP_PREFIX)
 	@zip --quiet $@ $(BUILD_CERTS_PREFIX)/$(*F)/*
 	@printf "[ OK ]\n"
@@ -63,4 +66,4 @@ check: web
 	cd web && bundle exec jekyll build
 	cd web && bundle exec htmlproofer --assume-extension --check_favicon --check_html --check_img_http --url_ignore "/$(REPO_URL)/" ./_site
 
-.PHONY: all clean web web-clean web-local web-version certs certs-clean
+.PHONY: all clean check web web-clean web-local web-version certs certs-clean
