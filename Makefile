@@ -59,4 +59,8 @@ web-clean:
 	rm -rf $(BUILD_CERTZIP_PREFIX)
 	rm -rf web/_site
 
+check: web
+	cd web && bundle exec jekyll build
+	cd web && bundle exec htmlproofer --assume-extension --check_favicon --check_html --check_img_http --url_ignore "/$(REPO_URL)/" ./_site
+
 .PHONY: all clean web web-clean web-local web-version certs certs-clean

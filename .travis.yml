@@ -1,9 +1,18 @@
-dist: xenial
-language: minimal
-install: 
+language: ruby
+gemfile: web/Gemfile
+
+before_install: 
   - sudo apt update
   - sudo apt install -y gnutls-bin
-script: make web
+
+script: make check
+
+env:
+  global:
+  - NOKOGIRI_USE_SYSTEM_LIBRARIES=true # speeds up installation of html-proofer
+
+# cache: bundler # caching bundler gem packages will speed up build
+
 deploy:
   provider: pages
   skip_cleanup: true
@@ -14,3 +23,4 @@ deploy:
   github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   on:
     branch: master
+
