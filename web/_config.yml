@@ -2,7 +2,7 @@
 title: Usable X.509 errors
 description: Let's make the validation of TLS certificates usable.
 author: Centre for Research on Cryptography and Security, Masaryk University, Czechia
-url: https://x509errors.cz/
+url: https://x509errors.cz
 repo-url: https://github.com/crocs-muni/usable-cert-validation
 
 # Build settings
