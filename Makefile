@@ -23,9 +23,9 @@ $(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(ERRORS_PREFIX)/%/*.cfg
 	@mkdir -p $@
 	@$(MAKE) --silent --directory=$(ERRORS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
 	@printf "[ OK ]\n"
-	@printf "Testing OpenSSL validation for %-50s" $(*F)
-	@utils/test-cert-validation.sh $(ERRORS_PREFIX)/$(@F) $(CURDIR)/$@
-	@printf "[ OK ]\n"
+	#@printf "Testing OpenSSL validation for %-50s" $(*F)
+	#@utils/test-cert-validation.sh $(ERRORS_PREFIX)/$(@F) $(CURDIR)/$@
+	#@printf "[ OK ]\n"
 
 certs-clean:
 	rm -rf errors/*/_certs
