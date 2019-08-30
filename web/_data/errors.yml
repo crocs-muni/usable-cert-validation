@@ -5,7 +5,7 @@
   title: "Trust or chain related errors"
 
 - tag: extension
-  title: "General extension and basic constraint errors"
+  title: "Extension or basicConstraints errors"
 
 - tag: name
   title: "Name related errors"
@@ -14,7 +14,7 @@
   title: "Usage and policy errors"
 
 - tag: algorithm
-  title: "Algoritm related errors"
+  title: "Algorithm related errors"
 
 - tag: format
   title: "Formatting errors"
