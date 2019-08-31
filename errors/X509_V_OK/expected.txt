@@ -1,1 +1,1 @@
-OK
+_certs/endpoint.crt: OK
