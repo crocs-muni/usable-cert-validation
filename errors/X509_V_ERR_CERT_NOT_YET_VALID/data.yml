@@ -1,5 +1,8 @@
 tags: [ openssl, time ]
 openssl-docs: |
   The certificate is not yet valid: the notBefore date is after the current time.
+gnutls-code: GNUTLS_CERT_NOT_ACTIVATED
+gnutls-docs: |
+  The certificate is not yet activated.
 weight: 101
  

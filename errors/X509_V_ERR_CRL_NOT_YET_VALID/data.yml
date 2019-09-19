@@ -1,5 +1,8 @@
 tags: [ openssl, time ]
 openssl-docs: |
   The CRL is not yet valid.
+gnutls-code: GNUTLS_CERT_REVOCATION_DATA_ISSUED_IN_FUTURE
+gnutls-docs: |
+  The revocation data have a future issue date.  
 weight: 103
 

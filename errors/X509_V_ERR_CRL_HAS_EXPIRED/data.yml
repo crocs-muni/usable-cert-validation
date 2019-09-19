@@ -1,5 +1,8 @@
 tags: [ openssl, time ]
 openssl-docs: |
   The CRL has expired.
+gnutls-code: GNUTLS_CERT_REVOCATION_DATA_SUPERSEDED
+gnutls-docs: |
+  The revocation data are old and have been superseded. 
 weight: 104
  
