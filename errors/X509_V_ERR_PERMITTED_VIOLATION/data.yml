@@ -1,5 +1,8 @@
 tags: [ openssl, name ]
 openssl-docs: |
   Permitted subtree violation.
+gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
+gnutls-docs: |
+  The certificate’s signer constraints were violated. 
 weight: 404
 

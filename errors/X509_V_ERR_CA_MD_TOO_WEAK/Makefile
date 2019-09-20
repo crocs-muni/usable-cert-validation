@@ -23,6 +23,5 @@ verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -auth_level 3 $(BUILD_DIR)/endpoint.crt
 
 verify-gnutls:
-	
 
 .PHONY: all error-code generate-cert verify-openssl verify-gnutls

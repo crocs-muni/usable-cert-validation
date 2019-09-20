@@ -1,5 +1,8 @@
 tags: [ openssl, trust ]
 openssl-docs: |
   The passed certificate is self-signed and the same certificate cannot be found in the list of trusted certificates.
+gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
+gnutls-docs: |
+  The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list.
 weight: 203
  

@@ -1,5 +1,8 @@
 tags: [ openssl, trust]
 openssl-docs: |
   The issuer certificate could not be found: this occurs if the issuer certificate of an untrusted certificate cannot be found.
+gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
+gnutls-docs: |
+  The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list. 
 weight: 202
  
