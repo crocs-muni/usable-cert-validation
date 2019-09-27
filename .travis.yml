@@ -1,5 +1,6 @@
 language: ruby
 gemfile: web/Gemfile
+dist: bionic
 
 before_install: 
   - sudo apt update
