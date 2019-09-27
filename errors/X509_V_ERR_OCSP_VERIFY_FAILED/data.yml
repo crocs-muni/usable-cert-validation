@@ -1,5 +1,6 @@
-tags: [ openssl, uncategorized ]
+tags: [ openssl, trust ]
 openssl-docs: |
   Returned by the verify callback to indicate OCSP verification failed.
-weight: 106
+weight: 216
+
 
