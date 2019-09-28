@@ -20,7 +20,7 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 			 --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg $(VERBOSITY)
 	certtool --generate-crl --load-ca-certificate $(BUILD_DIR)/ca.crt --load-ca-privkey $(BUILD_DIR)/ca.key --outfile $(BUILD_DIR)/ca.crl --template crl.cfg --load-certificate $(BUILD_DIR)/endpoint.crt $(VERBOSITY)
 	# needs improvement
-	sed -i 's/.=/Q=/g' $(BUILD_DIR)/ca.crl
+	sed -i 's/......=/QQQQQQ=/g' $(BUILD_DIR)/ca.crl
 
 verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -CRLfile $(BUILD_DIR)/ca.crl -crl_check $(BUILD_DIR)/endpoint.crt
