@@ -1,23 +1,64 @@
 - tag: time
   title: "Time validity errors"
+  description: "Errors occuring when a certificate is outside its validity period or when it is revoked by its CA."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.5">Certificate Validity</a> (RFC 5280), 
+    <a href="https://tools.ietf.org/html/rfc5280#section-3.3">Certificate Revocation</a> (RFC 5280)
 
 - tag: trust
   title: "Trust or chain related errors"
+  description: "These errors occur when the trust chain to the root certificate is not built correctly or fails."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc5280#section-3.2">Certificate Paths</a> (RFC 5280),
+    <a href="https://tools.ietf.org/html/rfc5280#section-5">Certificate Revocation Lists</a> (RFC 5280), 
+    <a href="https://tools.ietf.org/html/rfc2560">OCSP</a> (RFC 2560)
 
 - tag: extension
-  title: "Extension or basicConstraints errors"
-
+  title: "Basic extension errors"
+  description: "Errors related to extensions in general or to the BasicConstraints standard extension."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.2">Certificate Extensions</a> (RFC 5280),
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.9">BasicConstraints Extension</a> (RFC 5280)
+    
 - tag: name
   title: "Name related errors"
+  description: "Errors signalizing problems with either hostname verification, NameConstaints standard extension
+  or IP Address Delegation extension."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.10">NameConstaints extension</a> (RFC 5280), 
+    <a href="https://tools.ietf.org/html/rfc3779#section-2">IP Address Delegation extension</a> (RFC 3779), 
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.6">Certificate Common Name</a> (RFC 5280)
 
 - tag: usage
   title: "Usage and policy errors"
+  description: "Errors related to standard extensions CertificatePolicies, KeyUsage and ExtendedKeyUsage."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.3">KeyUsage extension</a> (RFC5280), 
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.12">ExtendedKeyUsage extension</a> (RFC5280), 
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.4">CertificatePolicies extension</a> (RFC5280)
 
 - tag: algorithm
   title: "Algorithm related errors"
+  description: "Various errors signalizing usage of invalid or deprecated algorithms."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc7935">Algorithm and Key Size Profile for PKI</a> (RFC 7935), 
+    <a href="https://tools.ietf.org/html/rfc6460">Suite B Profile for TLS</a> (RFC 6460)
 
 - tag: format
   title: "Formatting errors"
+  description: "These errors occur when a field of the certificate/CRL contains invalid values or is badly formatted."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.1.1.3">Certificate Signature</a> (RFC 5280), 
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.5.1">Certificate Time formatting</a> (RFC 5280),
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.1.1.2">Certificate Signature Algorithm</a> (RFC 5280)
 
 - tag: uncategorized
   title: "Uncategorized errors"
+  description: "These errors are not yet categorized, deprecated or not used at all."

@@ -38,6 +38,10 @@ slug:   index
 
 <div class="section"><div class="container" markdown="1">
     <h2 id="{{ category.title | slugify }}">{{ category.title }}</h2>
+    <p>
+    {{ category.description }} <br/>
+    {{ category.links }}
+    </p>
 
     {% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
     {% for error in errors %}
