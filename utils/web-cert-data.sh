@@ -26,12 +26,23 @@ if [ -f $ERROR_DATA_FILE ]
 then
     cat $ERROR_DATA_FILE
 fi
-echo
 
 if [ -f $ERROR_FOLDER/Makefile ]
 then
-    echo "verify-openssl: |"
-    make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-openssl | sed 's/^/    /' | sed 's|_certs/||g'
+    make --directory=$ERROR_FOLDER --question verify-openssl 2>/dev/null
+    RET=$?
+    if [ $RET -ne 2 ]
+    then
+        echo "verify-openssl: |"
+        make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-openssl | sed 's/^/    /' | sed 's|_certs/||g'
+    fi
+    make --directory=$ERROR_FOLDER --question verify-gnutls 2>/dev/null
+    RET=$?
+    if [ $RET -ne 2 ]
+    then
+        echo "verify-gnutls: |"
+        make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-gnutls | sed 's/^/    /' | sed 's|_certs/||g'
+    fi
 fi
 
 echo "---"
