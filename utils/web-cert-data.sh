@@ -34,14 +34,14 @@ then
     if [ $RET -ne 2 ]
     then
         echo "verify-openssl: |"
-        make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-openssl | sed 's/^/    /' | sed 's|_certs/||g'
+        make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-openssl | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
     fi
     make --directory=$ERROR_FOLDER --question verify-gnutls 2>/dev/null
     RET=$?
     if [ $RET -ne 2 ]
     then
         echo "verify-gnutls: |"
-        make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-gnutls | sed 's/^/    /' | sed 's|_certs/||g'
+        make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-gnutls | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
     fi
 fi
 
