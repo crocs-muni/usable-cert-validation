@@ -24,7 +24,6 @@ verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -CRLfile $(BUILD_DIR)/ca.crl -crl_check $(BUILD_DIR)/endpoint.crt
 
 verify-gnutls:
-	-certtool --verify --infile $(BUILD_DIR)/endpoint.crt
-	-certtool --load-ca-certificate $(BUILD_DIR)/ca.crt < $(BUILD_DIR)/ca.crl --verify-crl
+	-certtool --load-ca-certificate $(BUILD_DIR)/ca.crt --infile $(BUILD_DIR)/ca.crl --verify-crl
 
 .PHONY: all error-code generate-cert verify-openssl verify-gnutls

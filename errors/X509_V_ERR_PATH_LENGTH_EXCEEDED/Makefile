@@ -27,12 +27,13 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 	certtool --generate-request --load-privkey $(BUILD_DIR)/endpoint.key --outfile $(BUILD_DIR)/endpoint.csr --template endpoint.cfg $(VERBOSITY)
 	certtool --generate-certificate --load-request $(BUILD_DIR)/endpoint.csr --outfile $(BUILD_DIR)/endpoint.crt --load-ca-certificate $(BUILD_DIR)/subca2.crt --load-ca-privkey $(BUILD_DIR)/subca2.key --template endpoint.cfg $(VERBOSITY)
 
+	cat $(BUILD_DIR)/endpoint.crt $(BUILD_DIR)/subca1.crt $(BUILD_DIR)/subca2.crt > $(BUILD_DIR)/chain.crt
+
 verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -untrusted $(BUILD_DIR)/subca1.crt -untrusted $(BUILD_DIR)/subca2.crt $(BUILD_DIR)/endpoint.crt
 	
 
 verify-gnutls:
-	cat $(BUILD_DIR)/endpoint.crt $(BUILD_DIR)/subca1.crt $(BUILD_DIR)/subca2.crt > $(BUILD_DIR)/chain.crt
 	-certtool --verify --load-ca-certificate $(BUILD_DIR)/ca.crt --infile $(BUILD_DIR)/chain.crt 
 	
 
