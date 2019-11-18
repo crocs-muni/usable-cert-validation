@@ -2,7 +2,7 @@
 BUILD_DIR=_certs
 VERBOSITY=
 
-all: error-code generate-cert verify-openssl verify-gnutls
+all: error-code generate-cert verify-openssl verify-gnutls verify-botan
 
 error-code:
 	@basename $$PWD
@@ -23,5 +23,8 @@ verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -auth_level 3 $(BUILD_DIR)/endpoint.crt
 
 verify-gnutls:
+
+verify-botan:
+	-botan cert_verify $(BUILD_DIR)/endpoint.crt $(BUILD_DIR)/ca.crt
 
 .PHONY: all error-code generate-cert verify-openssl verify-gnutls
