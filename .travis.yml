@@ -21,6 +21,7 @@ cache:
   - $TRAVIS_BUILD_DIR/.cache  # Enable caching link checks
   - $TRAVIS_BUILD_DIR/_certs  # Enable caching of generated certificates
   - $TRAVIS_BUILD_DIR/web/_errors # Enable caching of generated error metadata
+  - $TRAVIS_BUILD_DIR/web/assets/certs # Enable caching of generated certificates
 
 deploy:
   provider: pages
