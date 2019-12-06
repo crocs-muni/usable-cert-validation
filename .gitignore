@@ -12,4 +12,5 @@ web/_site
 
 # Temporary files
 web/Gemfile.lock
+web/.cache
 *~
