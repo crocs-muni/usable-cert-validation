@@ -1,6 +1,4 @@
 # Environment settiongs
-REPO_URL=https://github.com/crocs-muni/usable-cert-validation
-WEB_VERSION_FILE=web/_includes/version.html
 ERRORS_PREFIX=errors
 BUILD_CERTS_PREFIX=_certs
 BUILD_ERRORINFO_PREFIX=web/_errors
@@ -60,7 +58,9 @@ web-clean:
 	rm -rf web/_site
 
 check: web
-	cd web && bundle exec jekyll build
-	cd web && bundle exec htmlproofer --assume-extension --check_favicon --check_html --check_img_http --url_ignore "/$(REPO_URL)/" ./_site
+	@echo "Building the website using Jekyll ..."
+	@cd web && bundle exec jekyll build
+	@echo "Running tests on the generated sites using html-proofer ..."
+	@cd web && bundle exec ruby ../utils/web-test.rb
 
 .PHONY: all clean check web web-clean web-local certs certs-clean
