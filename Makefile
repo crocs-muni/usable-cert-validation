@@ -36,7 +36,7 @@ certs-clean:
 WEB_ERRORINFO=$(addsuffix .md, $(addprefix $(BUILD_ERRORINFO_PREFIX)/,$(ERROR_CODES_DATA)) )
 WEB_CERTS=$(addsuffix .zip, $(addprefix $(BUILD_CERTZIP_PREFIX)/, $(ERROR_CODES_SCRIPTS)) )
 
-web: $(WEB_ERRORINFO) $(WEB_CERTS) web-version
+web: $(WEB_ERRORINFO) $(WEB_CERTS)
 
 .SECONDEXPANSION:
 $(BUILD_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(ERRORS_PREFIX)/%/data.yml)
@@ -51,9 +51,6 @@ $(BUILD_CERTZIP_PREFIX)/%.zip: $(BUILD_CERTS_PREFIX)/% $$(wildcard $(BUILD_CERTS
 	@zip --quiet $@ $(BUILD_CERTS_PREFIX)/$(*F)/*
 	@printf "[ OK ]\n"
 
-web-version:
-	utils/web-version.sh $(REPO_URL) >$(WEB_VERSION_FILE)
-
 web-local: web
 	cd web && bundle exec jekyll serve
 
@@ -66,4 +63,4 @@ check: web
 	cd web && bundle exec jekyll build
 	cd web && bundle exec htmlproofer --assume-extension --check_favicon --check_html --check_img_http --url_ignore "/$(REPO_URL)/" ./_site
 
-.PHONY: all clean check web web-clean web-local web-version certs certs-clean
+.PHONY: all clean check web web-clean web-local certs certs-clean

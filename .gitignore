@@ -3,7 +3,6 @@ errors/*/_certs
 _certs
 
 # Automatically generated website files
-web/_includes/version.html
 web/assets/certs
 web/_errors
 
