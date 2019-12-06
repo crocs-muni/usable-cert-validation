@@ -1,12 +1,15 @@
+dist: bionic    # Ubuntu 18.04 LTS
 language: ruby
 gemfile: web/Gemfile
-dist: bionic
 
 before_install: 
   - sudo apt update
   - sudo apt install -y gnutls-bin
+  - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
 
-script: make check
+script: 
+  - ./git-tools/git-restore-mtime
+  - make check
 
 env:
   global:
@@ -24,4 +27,3 @@ deploy:
   github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
   on:
     branch: master
-
