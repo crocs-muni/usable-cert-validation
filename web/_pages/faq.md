@@ -17,11 +17,11 @@ Our apologies. This section is not yet finished. A very crude list of notes foll
 </div></div>
 
 <div class="section"><div class="container" markdown="1">
-## Our related work
+# Our related work
 
 Below we list our current and past related work on the usability of X.509 certificate ecosystem.
 
-### Ongoing improvements for x509errors.org
+## Ongoing improvements for x509errors.org
 
 * Adding reproducible certificate examples for more cases.
 * Adding more libraries to the mapping and documentation (see above).
@@ -29,7 +29,7 @@ Below we list our current and past related work on the usability of X.509 certif
 * Conducting experiments regarding the developers' preferences on documentation content. This will allow us to design a version that fits the developers' needs.
 * Investigating the occurrence of individual errors in the wild by analyzing the existing certificate databases (think [crt.sh](https://crt.sh/), [Censys](https://censys.io/) or [Rapid7 datasets](https://opendata.rapid7.com/)).
 
-### Trust perceptions in flawed TLS certificates
+## Trust perceptions in flawed TLS certificates
 
 Our paper [Will You Trust This TLS Certificate? Perceptions of People Working in IT](https://crocs.fi.muni.cz/public/papers/acsac2019) was published at the Annual Computer Security Applications Conference (ACSAC) 2019.
 
@@ -37,13 +37,13 @@ Our paper [Will You Trust This TLS Certificate? Perceptions of People Working in
 >
 > To shed light on these issues, we observed 75 attendees of an industrial IT conference investigating, different certificate validation errors. Furthermore, we focused on the influence of re-worded error messages and redesigned documentation. We find that people working in IT have very nuanced opinions regarding the tested certificate flaws with trust decisions being far from binary. The self-signed and the name constrained certificates seem to be over-trusted (the latter also being poorly understood). We show that even small changes in existing error messages and documentation can positively influence resource use, comprehension, and trust assessment. Our conclusions can be directly used in practice by adopting the re-worded error messages and documentation.
 
-### The usability of certificate-manipulation tools
+## The usability of certificate-manipulation tools
 
 Our paper [Why Johnny the Developer Can't Work with Public Key Certificates](https://crocs.fi.muni.cz/public/papers/rsa2018) was published at RSA Cryptographers' Track 2018.
 
 > **Abstract:** There have been many studies exposing poor usability of security software for the common end user. However, only a few inspect the usability challenges faced by more knowledgeable users. We conducted an experiment to empirically assess usability of the command line interface of OpenSSL, a well known and widely used cryptographic library. Based on the results, we try to propose specific improvements that would encourage more secure behavior. We observed 87 developers/administrators at two certificate-related tasks in a controlled environment. Furthermore, we collected participant opinions on both the tool interface and available documentation. Based on the overall results, we deem the OpenSSL usability insufficient according to both user opinions and standardized measures. Moreover, the perceived usability seems to be correlated with previous experience and used resources. There was a great disproportion between the participant views of a successful task accomplishment and the reality. A general dissatisfaction with both OpenSSL interface and its manual page was shared among the majority of the participants. As hinted by a participant, OpenSSL gradually “turned into a complicated set of sharp kitchen knives” – it can perform various jobs very well, but laymen risk stabbing themselves in the process. This highlights the necessity of a usable design even for tools targeted at experienced users.
 
-### The evolution of TLS warnings in browsers
+## The evolution of TLS warnings in browsers
 
 Our paper in collaboration with our colleague [Lydia Kraus](https://crocs.fi.muni.cz/people/lkraus) entitled [Evolution of SSL/TLS Indicators and Warnings in Web Browsers](https://crocs.fi.muni.cz/public/papers/spw2019) was published at the Security Protocols Workshop (SPW) of 2019.
 
