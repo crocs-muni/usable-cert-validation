@@ -1,12 +1,12 @@
 ---
 layout: default
-title:  Project methodology
-slug:   methodology
+title:  Frequently asked questions
+slug:   faq
 ---
 <div class="section"><div class="container" markdown="1">
-<h1 id="methodology">{{ page.title }}</h1>
+<h1 id="faq">{{ page.title }}</h1>
 
-### **Methodology page coming soon.**
+### **FAQ page coming soon.**
 
 Our apologies. This section is not yet finished. A very crude list of notes follows.
 
