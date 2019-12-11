@@ -57,9 +57,15 @@ a.fas:hover {
     color: #303030;
 }
 
- .error-box a .fas, .error-box a .fab {
+.error-box a .fas, .error-box a .fab {
     margin-left: 0.3em;
     margin-right: 0.1em;
+}
+
+blockquote {
+    margin: 0 1em 0 1em;
+    font-style: italic;
+    color: #6c757d;
 }
 
 /* Core design: sectioning, header, footer, buttons */
