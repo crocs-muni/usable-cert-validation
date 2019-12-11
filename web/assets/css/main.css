@@ -49,6 +49,10 @@ a.ext-link:after {
     top: -0.15em;
 }
 
+a.no-ext-link-icon:after {
+    content: none;
+}
+
 a.fas:hover {
     color: #303030;
 }
@@ -66,6 +70,7 @@ a.fas:hover {
 .color-darkgrey { color: darkgrey; }
 .color-red { color: red; }
 .color-white { color: white; }
+.color-reset { color: inherit !important; }
 
 .section {
     padding-top: 3rem;
