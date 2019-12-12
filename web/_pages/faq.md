@@ -6,28 +6,43 @@ slug:   faq
 <div class="section"><div class="container" markdown="1">
 <h1 id="faq">{{ page.title }}</h1>
 
-### **FAQ page coming soon.**
+Here you can find further details on our project in the question-and-answer format.  
+Should you have other questions or feedback, feel free to email the project team at [webmaster@x509errors.org](mailto:webmaster@x509errors.org).
 
-Our apologies. This section is not yet finished. A very crude list of notes follows.
+## Is certificate validation really that problematic?
 
-* The common libraries to analyze were chosen based on the paper [Measuring Popularity of Cryptographic Libraries in Internet-Wide Scans](https://crocs.fi.muni.cz/public/papers/acsac2017)
-* Standardization parallel in the web world: [Mozilla blog post](https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/)
-* Relevant related work: [The Most Dangerous Code in the World: Validating SSL Certificates in Non-Browser Software](http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf)
+Yes, it is.
 
-</div></div>
+And there are multiple real-world examples. Many of the can be found in the excellent paper [The Most Dangerous Code in the World: Validating SSL Certificates in Non-Browser Software](http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf). Quoting the authors of the paper: _"[...] SSL certificate validation is completely broken in many security-critical applications and libraries. Vulnerable software includes Amazon’s EC2 Java library and all cloud clients based on it; Amazon’s and PayPal’s merchant SDKs responsible for transmitting payment details from e-commerce sites to payment gateways; integrated shopping carts such as osCommerce, ZenCart, Ubercart, and PrestaShop; AdMob code used by mobile websites; Chase mobile banking and several other Android apps and libraries; Java Web-services middleware—including Apache Axis, Axis 2, Codehaus XFire, and Pusher library for Android—and all applications employing this middleware. Any SSL connection from any of these programs is insecure against a man-in-the-middle attack."_
 
-<div class="section"><div class="container" markdown="1">
-# Our related work
+## What libraries do we plan to include into the comparison?
 
-Below we list our current and past related work on the usability of X.509 certificate ecosystem.
+Ultimately, we plan to include [OpenSSL](https://www.openssl.org/), [GnuTLS](https://www.gnutls.org/), [OpenJKD](https://openjdk.java.net/), [Botan](https://botan.randombit.net/), [mBedTLS](https://tls.mbed.org/), [WolfSSL](https://www.wolfssl.com/) (previously named PolarSSL), [libgcrypt](https://www.gnupg.org/software/libgcrypt/index.html) (used in GPG) and [Microsoft Crypto API](https://docs.microsoft.com/en-us/windows/win32/seccrypto/cryptoapi-system-architecture) (with the follow-up API [CNG](https://docs.microsoft.com/en-us/windows/win32/seccng/cng-portal)).
 
-## Ongoing improvements for x509errors.org
+The selection is based on the Internet-wide popularity analysis of of key-generating libraries. The research shows that OpenSSL is _by far_ the most widely used (that's why we start building our taxonomy from OpenSSL errors). For details, see the original publication of Nemec et al.:  [Measuring Popularity of Cryptographic Libraries in Internet-Wide Scans](https://crocs.fi.muni.cz/public/papers/acsac2017).
+
+## Has a similar consolidation effort appeared before?
+
+Not in the X.509 certificate world (as far as we know). If we speak about APIs in general, [POSIX](https://en.wikipedia.org/wiki/POSIX) is a great example of API standardization. More recently, an effort similar to ours tries to consolidate the documentation on web development across multiple browsers (see the [Mozilla blog post](https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/) for further details).
+
+## What further improvements do we plan?
 
 * Adding reproducible certificate examples for more cases.
 * Adding more libraries to the mapping and documentation (see above).
 * Developing a public repository of code examples performing the secure TLS connection.
 * Conducting experiments regarding the developers' preferences on documentation content. This will allow us to design a version that fits the developers' needs.
 * Investigating the occurrence of individual errors in the wild by analyzing the existing certificate databases (think [crt.sh](https://crt.sh/), [Censys](https://censys.io/) or [Rapid7 datasets](https://opendata.rapid7.com/)).
+
+## Has there been any real-world impact so far?
+
+As of late 2019, we are gradually contacting the library developers to collect feedback. Furthermore, research that led to this problem is gradually getting published on various venues (see below). Last but not lest, as we find smaller issues, we directly file issues and pull requests in the library repositories (e.g. OpenSSL [man invocation improvement](https://github.com/openssl/openssl/issues/4548), [web documentation fix](https://github.com/openssl/web/issues/24#issuecomment-353961715) or [error documentation fix](https://github.com/openssl/openssl/pull/9529)).
+
+</div></div>
+
+<div class="section"><div class="container" markdown="1">
+# Our related work
+
+Below we list our current and past related work (in the form of academic papers) on the usability of X.509 certificate ecosystem.
 
 ## Trust perceptions in flawed TLS certificates
 
