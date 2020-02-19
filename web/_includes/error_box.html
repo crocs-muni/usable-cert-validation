@@ -3,13 +3,16 @@
     <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
     <span>{{ include.page.title }}</span>
     {% if include.page.verify-openssl %}
-    {% include icon.html icon="certificate" float="float-right" %}
+        {% include icon.html icon="certificate" float="float-right" %}
     {% endif %}
-    {% if include.page.gnutls-docs %}
-    {% include icon.html icon="gnutls-docs" float="float-right" %}
+    {% if include.page.botan-code %}
+        {% include icon.html icon="botan-docs" float="float-right" %}
+    {% endif %}
+    {% if include.page.gnutls-code %}
+        {% include icon.html icon="gnutls-docs" float="float-right" %}
     {% endif %}
     {% if include.page.openssl-docs %}
-    {% include icon.html icon="openssl-docs" float="float-right" %}
+        {% include icon.html icon="openssl-docs" float="float-right" %}
     {% endif %}
 </div>
 <div class="collapse" id="{{ include.page.slug }}">
@@ -33,7 +36,9 @@
             OpenSSL: {{ include.page.title }}
             <span class="text-muted small">(<a class="color-reset" href="https://www.openssl.org/docs/man1.1.1/man1/openssl-verify.html">source</a>)</span>
             </h3>
-            {{ include.page.openssl-docs }}
+            {% if include.page.openssl-docs %}
+                {{ include.page.openssl-docs }}
+            {% endif %}
         {% endif %}
         {% if include.page.gnutls-code %}
             <h3>
@@ -41,7 +46,19 @@
             GnuTLS: {{ include.page.gnutls-code }}
             <span class="text-muted small">(<a class="color-reset" href="https://www.gnutls.org/manual/gnutls.html#index-verifying-certificate-paths">source</a>)</span>
             </h3>
-            {{ include.page.gnutls-docs }}
+            {% if include.page.gnutls-docs %}
+                {{ include.page.gnutls-docs }}
+            {% endif %}
+        {% endif %}
+        {% if include.page.botan-code %}
+            <h3>
+            {% include icon.html icon="botan-docs" %}
+            Botan: {{ include.page.botan-code }}
+            <span class="text-muted small">(<a class="color-reset" href="https://botan.randombit.net/doxygen/cert__status_8h_source.html">source</a>)</span>
+            </h3>
+            {% if include.page.botan-docs %}
+                {{ include.page.botan-docs }}
+            {% endif %}
         {% endif %}
   </div>
 </div>
