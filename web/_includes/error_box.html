@@ -6,21 +6,20 @@
         {% include icon.html icon="certificate" float="float-right" %}
     {% endif %}
     {% if include.page.botan-code %}
-        {% include icon.html icon="botan-docs" float="float-right" %}
+        {% include icon.html icon="botan-book" float="float-right" %}
     {% endif %}
     {% if include.page.gnutls-code %}
-        {% include icon.html icon="gnutls-docs" float="float-right" %}
+        {% include icon.html icon="gnutls-book" float="float-right" %}
     {% endif %}
-    {% if include.page.openssl-docs %}
-        {% include icon.html icon="openssl-docs" float="float-right" %}
+    {% if include.page.openssl-code %}
+        {% include icon.html icon="openssl-book" float="float-right" %}
     {% endif %}
 </div>
 <div class="collapse" id="{{ include.page.slug }}">
     <div class="card card-body">
         {% if include.page.verify-openssl %}
         <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
-
-        Download <a href="/assets/certs/{{ include.page.error-code }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/errors/{{ include.page.error-code }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.
+        <p>Download <a href="/assets/certs/{{ include.page.openssl-code }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/errors/{{ include.page.openssl-code }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
         <ul>
             {% if include.page.verify-openssl %}
             <li>OpenSSL: <code class="highlighter-rouge">{{ include.page.verify-openssl }}</code></li>
@@ -30,34 +29,40 @@
             {% endif %}
         </ul>
         {% endif %}
-        {% if include.page.openssl-docs %}
+        {% if include.page.openssl-code %}
             <h3>
-            {% include icon.html icon="openssl-docs" %}
+            {% include icon.html icon="openssl-book" %}
             OpenSSL: {{ include.page.title }}
             <span class="text-muted small">(<a class="color-reset" href="https://www.openssl.org/docs/man1.1.1/man1/openssl-verify.html">source</a>)</span>
             </h3>
             {% if include.page.openssl-docs %}
-                {{ include.page.openssl-docs }}
+                <p>{{ include.page.openssl-docs }}</p>
+            {% else %}
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
             {% endif %}
         {% endif %}
         {% if include.page.gnutls-code %}
             <h3>
-            {% include icon.html icon="gnutls-docs" %}
+            {% include icon.html icon="gnutls-book" %}
             GnuTLS: {{ include.page.gnutls-code }}
             <span class="text-muted small">(<a class="color-reset" href="https://www.gnutls.org/manual/gnutls.html#index-verifying-certificate-paths">source</a>)</span>
             </h3>
             {% if include.page.gnutls-docs %}
-                {{ include.page.gnutls-docs }}
+                <p>{{ include.page.gnutls-docs }}</p>
+            {% else %}
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
             {% endif %}
         {% endif %}
         {% if include.page.botan-code %}
             <h3>
-            {% include icon.html icon="botan-docs" %}
+            {% include icon.html icon="botan-book" %}
             Botan: {{ include.page.botan-code }}
             <span class="text-muted small">(<a class="color-reset" href="https://botan.randombit.net/doxygen/cert__status_8h_source.html">source</a>)</span>
             </h3>
             {% if include.page.botan-docs %}
-                {{ include.page.botan-docs }}
+                <p>{{ include.page.botan-docs }}</p>
+            {% else %}
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
             {% endif %}
         {% endif %}
   </div>

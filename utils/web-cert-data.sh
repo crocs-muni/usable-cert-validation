@@ -18,7 +18,7 @@ ERROR_DATA_FILE=$ERROR_FOLDER/data.yml
 
 echo "---"
 echo "title: "`echo $ERROR_CODE | sed 's/_/_\&shy;/g'`
-echo "error-code: "$ERROR_CODE
+echo "openssl-code: "$ERROR_CODE
 echo -n "slug: "
 echo $ERROR_CODE | sed 's/[A-Z]/\L&/g' | sed 's/_/-/g'
 
