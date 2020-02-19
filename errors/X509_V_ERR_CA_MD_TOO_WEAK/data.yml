@@ -1,5 +1,6 @@
 tags: [ openssl, algorithm ]
 openssl-docs: |
   CA signature digest algorithm too weak.
+botan-code: UNTRUSTED_HASH
 weight: 603
 

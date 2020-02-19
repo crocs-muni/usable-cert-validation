@@ -1,5 +1,6 @@
 tags: [ openssl, algorithm ]
 openssl-docs: |
   CA certificate key too weak.
+botan-code: SIGNATURE_METHOD_TOO_WEAK
 weight: 602
 

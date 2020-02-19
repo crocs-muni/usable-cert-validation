@@ -4,5 +4,6 @@ openssl-docs: |
 gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
 gnutls-docs: |
   The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list. 
+botan-code: CERT_ISSUER_NOT_FOUND
 weight: 202
  

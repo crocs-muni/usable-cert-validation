@@ -3,6 +3,7 @@ openssl-docs: |
   The basicConstraints pathlength parameter has been exceeded.
 gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
 gnutls-docs: |
-  The certificate’s signer constraints were violated. 
+  The certificate’s signer constraints were violated.
+botan-code: CERT_CHAIN_TOO_LONG
 weight: 302
 

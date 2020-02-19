@@ -3,5 +3,6 @@ openssl-docs: |
   A CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
 gnutls-code: GNUTLS_CERT_SIGNER_NOT_CA
 gnutls-docs: |
-  The certificate’s signer was not a CA. This may happen if this was a version 1 certificate, which is common with some CAs, or a version 3 certificate without the basic constrains extension. 
+  The certificate’s signer was not a CA. This may happen if this was a version 1 certificate, which is common with some CAs, or a version 3 certificate without the basic constrains extension.
+botan-code: CA_CERT_NOT_FOR_CERT_ISSUER
 weight: 301

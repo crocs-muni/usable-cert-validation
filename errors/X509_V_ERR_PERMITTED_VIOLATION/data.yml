@@ -3,6 +3,7 @@ openssl-docs: |
   Permitted subtree violation.
 gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
 gnutls-docs: |
-  The certificate’s signer constraints were violated. 
+  The certificate’s signer constraints were violated.
+botan-code: NAME_CONSTRAINT_ERROR
 weight: 404
 

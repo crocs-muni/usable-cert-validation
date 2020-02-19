@@ -4,5 +4,6 @@ openssl-docs: |
 gnutls-code: GNUTLS_CERT_EXPIRED
 gnutls-docs: |
   The certificate has expired.
+botan-code: CERT_HAS_EXPIRED
 weight: 102
 

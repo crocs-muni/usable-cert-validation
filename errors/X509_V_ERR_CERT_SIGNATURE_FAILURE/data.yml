@@ -3,6 +3,7 @@ openssl-docs: |
   The signature of the certificate is invalid.
 gnutls-code: GNUTLS_CERT_SIGNATURE_FAILURE
 gnutls-docs: |
-  The signature verification failed. 
+  The signature verification failed.
+botan-code: SIGNATURE_ERROR
 weight: 701
 
