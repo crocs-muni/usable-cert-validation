@@ -5,6 +5,9 @@
     {% if include.page.verify-openssl %}
         {% include icon.html icon="certificate" float="float-right" %}
     {% endif %}
+    {% if include.page.mbed-code %}
+        {% include icon.html icon="mbed-book" float="float-right" %}
+    {% endif %}
     {% if include.page.botan-code %}
         {% include icon.html icon="botan-book" float="float-right" %}
     {% endif %}
@@ -61,6 +64,18 @@
             </h3>
             {% if include.page.botan-docs %}
                 <p>{{ include.page.botan-docs }}</p>
+            {% else %}
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            {% endif %}
+        {% endif %}
+        {% if include.page.mbed-code %}
+            <h3>
+            {% include icon.html icon="mbed-book" %}
+            mbedTLS: {{ include.page.mbed-code }}
+            <span class="text-muted small">(<a class="color-reset" href="https://github.com/ARMmbed/mbedtls/blob/master/library/x509_crt.c#L1666">source</a>)</span>
+            </h3>
+            {% if include.page.mbed-docs %}
+                <p>{{ include.page.mbed-docs }}</p>
             {% else %}
                 <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
             {% endif %}
