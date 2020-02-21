@@ -9,4 +9,3 @@ mbed-code: MBEDTLS_X509_BADCERT_REVOKED
 mbed-docs: |
   The certificate has been revoked (is on a CRL)
 weight: 105
- 

@@ -9,4 +9,3 @@ mbed-code: MBEDTLS_X509_BADCERT_FUTURE
 mbed-docs: |
   The certificate validity starts in the future
 weight: 101
- 

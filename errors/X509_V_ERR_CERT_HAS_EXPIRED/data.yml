@@ -9,4 +9,3 @@ mbed-code: MBEDTLS_X509_BADCERT_EXPIRED
 mbed-docs: |
   The certificate validity has expired
 weight: 102
-

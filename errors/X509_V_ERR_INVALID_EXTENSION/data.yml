@@ -2,4 +2,3 @@ tags: [ openssl, extension ]
 openssl-docs: |
   Invalid or inconsistent certificate extension.
 weight: 305
-

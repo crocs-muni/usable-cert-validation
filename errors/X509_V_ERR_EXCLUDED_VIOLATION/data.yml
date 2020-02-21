@@ -8,4 +8,3 @@ mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 mbed-docs: |
   The certificate is not correctly signed by the trusted CA
 weight: 405
-

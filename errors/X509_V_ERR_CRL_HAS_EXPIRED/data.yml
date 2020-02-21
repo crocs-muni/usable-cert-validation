@@ -8,4 +8,3 @@ mbed-code: MBEDTLS_X509_BADCRL_EXPIRED
 mbed-docs: |
   The CRL is expired
 weight: 104
- 

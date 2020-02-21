@@ -6,4 +6,3 @@ mbed-code: MBEDTLS_X509_BADCERT_BAD_KEY
 mbed-docs: |
   The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
 weight: 602
-

@@ -8,4 +8,3 @@ mbed-code: MBEDTLS_X509_BADCRL_FUTURE
 mbed-docs: |
   The CRL is from the future
 weight: 103
-

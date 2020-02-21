@@ -3,6 +3,5 @@ openssl-docs: |
   The supplied certificate cannot be used for the specified purpose.
 gnutls-code: GNUTLS_CERT_PURPOSE_MISMATCH
 gnutls-docs: |
-  The certificate or an intermediate does not match the intended purpose (extended key usage). 
+  The certificate or an intermediate does not match the intended purpose (extended key usage).
 weight: 501
-

@@ -6,4 +6,3 @@ gnutls-docs: |
   The certificate has extensions marked as critical which are not supported.
 botan-code: UNKNOWN_CRITICAL_EXTENSION
 weight: 303
-
