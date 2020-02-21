@@ -2,5 +2,8 @@ tags: [ openssl, algorithm ]
 openssl-docs: |
   CA signature digest algorithm too weak.
 botan-code: UNTRUSTED_HASH
+mbed-code: MBEDTLS_X509_BADCERT_BAD_MD
+mbed-docs: |
+  The certificate is signed with an unacceptable hash.
 weight: 603
 

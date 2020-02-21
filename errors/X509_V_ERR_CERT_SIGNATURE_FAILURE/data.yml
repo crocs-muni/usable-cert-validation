@@ -5,5 +5,8 @@ gnutls-code: GNUTLS_CERT_SIGNATURE_FAILURE
 gnutls-docs: |
   The signature verification failed.
 botan-code: SIGNATURE_ERROR
+mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
+mbed-docs: |
+  The certificate is not correctly signed by the trusted CA
 weight: 701
 

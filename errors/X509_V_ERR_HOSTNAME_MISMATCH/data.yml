@@ -2,4 +2,7 @@ tags: [ openssl, name ]
 openssl-docs: |
   Hostname mismatch.
 botan-code: CERT_NAME_NO_MATCH
+mbed-code: MBEDTLS_X509_BADCERT_CN_MISMATCH
+mbed-docs: |
+  The certificate Common Name (CN) does not match with the expected CN
 weight: 401

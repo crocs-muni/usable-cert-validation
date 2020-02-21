@@ -5,5 +5,8 @@ gnutls-code: GNUTLS_CERT_EXPIRED
 gnutls-docs: |
   The certificate has expired.
 botan-code: CERT_HAS_EXPIRED
+mbed-code: MBEDTLS_X509_BADCERT_EXPIRED
+mbed-docs: |
+  The certificate validity has expired
 weight: 102
 
