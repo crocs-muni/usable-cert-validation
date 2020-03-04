@@ -61,6 +61,6 @@ check: web
 	@echo "Building the website using Jekyll ..."
 	@cd web && bundle exec jekyll build
 	@echo "Running tests on the generated sites using html-proofer ..."
-	@cd web && bundle exec ruby ../utils/web-test.rb
+	-@cd web && bundle exec ruby ../utils/web-test.rb
 
 .PHONY: all clean check web web-clean web-local certs certs-clean
