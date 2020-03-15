@@ -5,6 +5,8 @@ gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
 gnutls-docs: |
   The certificate’s signer constraints were violated.
 botan-code: CERT_CHAIN_TOO_LONG
+botan-docs: |
+  Certificate chain too long
 mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 mbed-docs: |
   The certificate is not correctly signed by the trusted CA

@@ -5,6 +5,8 @@ gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
 gnutls-docs: |
   The certificate’s signer constraints were violated.
 botan-code: NAME_CONSTRAINT_ERROR
+botan-docs: |
+  Certificate does not pass name constraint
 mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 mbed-docs: |
   The certificate is not correctly signed by the trusted CA

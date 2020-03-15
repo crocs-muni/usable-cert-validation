@@ -5,4 +5,6 @@ gnutls-code: GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS
 gnutls-docs: |
   The certificate has extensions marked as critical which are not supported.
 botan-code: UNKNOWN_CRITICAL_EXTENSION
+botan-docs: |
+  Unknown critical extension encountered
 weight: 303

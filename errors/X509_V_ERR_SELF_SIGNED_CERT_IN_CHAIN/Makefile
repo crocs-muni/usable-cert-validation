@@ -2,7 +2,7 @@
 BUILD_DIR=_certs
 VERBOSITY=
 
-all: error-code generate-cert verify-openssl verify-gnutls
+all: error-code generate-cert verify-openssl verify-gnutls verify-botan
 
 error-code:
 	@basename $$PWD
@@ -26,4 +26,7 @@ verify-openssl:
 verify-gnutls:
 	-certtool --verify --infile $(BUILD_DIR)/chain.crt
 
-.PHONY: all error-code generate-cert verify-openssl verify-gnutls
+verify-botan:
+	-botan cert_verify $(BUILD_DIR)/chain.crt
+
+.PHONY: all error-code generate-cert verify-openssl verify-gnutls verify-botan

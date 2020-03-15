@@ -38,6 +38,5 @@ verify-gnutls:
 
 verify-botan:
 	-botan cert_verify $(BUILD_DIR)/endpoint.crt $(BUILD_DIR)/subca1.crt $(BUILD_DIR)/subca2.crt $(BUILD_DIR)/ca.crt
-	
 
-.PHONY: all error-code generate-cert verify-openssl verify-gnutls
+.PHONY: all error-code generate-cert verify-openssl verify-gnutls verify-botan

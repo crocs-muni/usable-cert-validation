@@ -22,4 +22,6 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt -policy_check -explicit_policy -policy 1.3.6.1.4.1.5484.1.10.99.1.0 $(BUILD_DIR)/endpoint.crt
 
-.PHONY: all error-code generate-cert verify-openssl verify-gnutls
+verify-botan:
+
+.PHONY: all error-code generate-cert verify-openssl verify-gnutls verify-botan
