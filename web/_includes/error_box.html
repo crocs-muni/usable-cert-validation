@@ -30,6 +30,9 @@
             {% if include.page.verify-gnutls %}
             <li>GnuTLS: <code class="highlighter-rouge">{{ include.page.verify-gnutls }}</code></li>
             {% endif %}
+            {% if include.page.verify-botan %}
+            <li>Botan: <code class="highlighter-rouge">{{ include.page.verify-botan }}</code></li>
+            {% endif %}
         </ul>
         {% endif %}
         {% if include.page.openssl-code %}
