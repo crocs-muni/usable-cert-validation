@@ -2,7 +2,7 @@
 BUILD_DIR=_certs
 VERBOSITY=
 
-all: error-code generate-cert verify-openssl verify-gnutls verify-botan
+all: error-code generate-cert verify-openssl verify-gnutls verify-botan verify-mbedtls
 
 error-code:
 	@basename $$PWD
@@ -30,4 +30,7 @@ verify-botan:
 
 verify-botan:
 
-.PHONY: all error-code generate-cert verify-openssl verify-gnutls verify-botan
+verify-mbedtls:
+	-mbedtls/programs/x509/cert_app mode=file filename=$(BUILDDIR)/endpoint.crt ca_file=$(BUILDDIR)/ca.crt
+
+.PHONY: all error-code generate-cert verify-openssl verify-gnutls verify-botan verify-mbedtls

@@ -33,6 +33,10 @@
             {% if include.page.verify-botan %}
             <li>Botan: <code class="highlighter-rouge">{{ include.page.verify-botan }}</code></li>
             {% endif %}
+            {% if include.page.verify-mbedtls %}
+            <li>mbedTLS: <code class="highlighter-rouge">{{ include.page.verify-mbedtls }}</code></li>
+            {% endif %}
+
         </ul>
         {% endif %}
         {% if include.page.openssl-code %}

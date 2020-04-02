@@ -50,6 +50,13 @@ then
         echo "verify-botan: |"
         make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-botan | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
     fi
+    make --directory=$ERROR_FOLDER --question verify-mbedtls 2>/dev/null
+    RET=$?
+    if [ $RET -ne 2 ]
+    then
+        echo "verify-mbedtls: |"
+        make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-mbedtls | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
+    fi
 fi
 
 echo "---"
