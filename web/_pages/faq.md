@@ -17,7 +17,7 @@ And there are multiple real-world examples. Many of the can be found in the exce
 
 ## What libraries do we plan to include into the comparison?
 
-Ultimately, we plan to include [OpenSSL](https://www.openssl.org/), [GnuTLS](https://www.gnutls.org/), [OpenJKD](https://openjdk.java.net/), [Botan](https://botan.randombit.net/), [mBedTLS](https://tls.mbed.org/), [WolfSSL](https://www.wolfssl.com/) (previously named PolarSSL), [libgcrypt](https://www.gnupg.org/software/libgcrypt/index.html) (used in GPG) and [Microsoft Crypto API](https://docs.microsoft.com/en-us/windows/win32/seccrypto/cryptoapi-system-architecture) (with the follow-up API [CNG](https://docs.microsoft.com/en-us/windows/win32/seccng/cng-portal)).
+Ultimately, we plan to include [OpenSSL](https://www.openssl.org/), [GnuTLS](https://www.gnutls.org/), [OpenJDK](https://openjdk.java.net/), [Botan](https://botan.randombit.net/), [mBedTLS](https://tls.mbed.org/), [WolfSSL](https://www.wolfssl.com/) (previously named PolarSSL), [libgcrypt](https://www.gnupg.org/software/libgcrypt/index.html) (used in GPG) and [Microsoft Crypto API](https://docs.microsoft.com/en-us/windows/win32/seccrypto/cryptoapi-system-architecture) (with the follow-up API [CNG](https://docs.microsoft.com/en-us/windows/win32/seccng/cng-portal)).
 
 The selection is based on the Internet-wide popularity analysis of of key-generating libraries. The research shows that OpenSSL is _by far_ the most widely used (that's why we start building our taxonomy from OpenSSL errors). For details, see the original publication of Nemec et al.:  [Measuring Popularity of Cryptographic Libraries in Internet-Wide Scans](https://crocs.fi.muni.cz/public/papers/acsac2017).
 
