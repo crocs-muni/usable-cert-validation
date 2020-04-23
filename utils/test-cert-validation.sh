@@ -23,5 +23,9 @@ GREP_RESULT=`grep -f $ERROR_PATH/expected.txt $VERIFY_OUTPUT_FILE | wc -l`
 if [ ! $GREP_RESULT -eq 1 ]
 then
     echo "### Validation with unexpected results for $ERROR! ###"
+    echo "## Expected:"
+    cat $ERROR_PATH/expected.txt
+    echo "## Observed:"
+    cat $VERIFY_OUTPUT_FILE
     exit -2
 fi
