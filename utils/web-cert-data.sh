@@ -31,28 +31,28 @@ if [ -f $ERROR_FOLDER/Makefile ]
 then
     make --directory=$ERROR_FOLDER --question verify-openssl 2>/dev/null
     RET=$?
-    if [ $RET -ne 2 ]
+    if [ $RET -eq 1 ]
     then
         echo "verify-openssl: |"
         make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-openssl | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
     fi
     make --directory=$ERROR_FOLDER --question verify-gnutls 2>/dev/null
     RET=$?
-    if [ $RET -ne 2 ]
+    if [ $RET -eq 1 ]
     then
         echo "verify-gnutls: |"
         make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-gnutls | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
     fi
     make --directory=$ERROR_FOLDER --question verify-botan 2>/dev/null
     RET=$?
-    if [ $RET -ne 2 ]
+    if [ $RET -eq 1 ]
     then
         echo "verify-botan: |"
         make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-botan | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
     fi
     make --directory=$ERROR_FOLDER --question verify-mbedtls 2>/dev/null
     RET=$?
-    if [ $RET -ne 2 ]
+    if [ $RET -eq 1 ]
     then
         echo "verify-mbedtls: |"
         make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-mbedtls | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
