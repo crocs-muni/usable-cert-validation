@@ -1,5 +1,5 @@
 <div class="error-box">
-<div class="card-header collapsed clearfix" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="false" aria-controls="collapseExample">
+<div class="card-header clearfix" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="true" aria-controls="#{{ include.page.slug }}">
     <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
     <span class="openssl-code" title="{{ include.page.openssl-code }}">{{ include.page.title }}</span>
     {% if include.page.verify-openssl %}
@@ -18,7 +18,7 @@
         {% include icon.html icon="openssl-book" float="float-right" %}
     {% endif %}
 </div>
-<div class="collapse" id="{{ include.page.slug }}">
+<div class="collapse show" id="{{ include.page.slug }}">
     <div class="card card-body">
         {% if include.page.verify-openssl %}
         <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
