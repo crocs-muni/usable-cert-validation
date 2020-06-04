@@ -24,6 +24,7 @@ $(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(ERRORS_PREFIX)/%/*.cfg
 	@printf "Testing OpenSSL validation for %-50s" $(*F)
 	@utils/test-cert-validation.sh $(ERRORS_PREFIX)/$(@F) $(CURDIR)/$@
 	@printf "[ OK ]\n"
+	@rm -f $(BUILD_CERTS_PREFIX)/$(@F)/*.key $(BUILD_CERTS_PREFIX)/$(@F)/*.csr $(BUILD_CERTS_PREFIX)/$(@F)/*.openssl-verify
 
 certs-clean:
 	rm -rf errors/*/_certs
