@@ -24,7 +24,6 @@ $(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(ERRORS_PREFIX)/%/*.cfg
 	@printf "Testing OpenSSL validation for %-50s" $(*F)
 	@utils/test-cert-validation.sh $(ERRORS_PREFIX)/$(@F) $(CURDIR)/$@
 	@printf "[ OK ]\n"
-	@rm -f $(BUILD_CERTS_PREFIX)/$(@F)/*.key $(BUILD_CERTS_PREFIX)/$(@F)/*.csr $(BUILD_CERTS_PREFIX)/$(@F)/*.openssl-verify
 
 certs-clean:
 	rm -rf errors/*/_certs
@@ -47,7 +46,11 @@ $(BUILD_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(ERRORS_PREF
 $(BUILD_CERTZIP_PREFIX)/%.zip: $(BUILD_CERTS_PREFIX)/% $$(wildcard $(BUILD_CERTS_PREFIX)/%/*)
 	@printf "Generating zip for %-62s" $(*F)
 	@mkdir -p $(BUILD_CERTZIP_PREFIX)
-	@zip --quiet $@ $(BUILD_CERTS_PREFIX)/$(*F)/*
+	@mkdir $(*F)
+	@cp $(BUILD_CERTS_PREFIX)/$(*F)/*.crt $(*F) 2>/dev/null ||:
+	@cp $(BUILD_CERTS_PREFIX)/$(*F)/*.crl $(*F) 2>/dev/null ||:
+	@zip -r --quiet $@ $(*F)
+	@rm -r $(*F)
 	@printf "[ OK ]\n"
 
 web-local: web
