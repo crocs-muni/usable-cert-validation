@@ -46,11 +46,7 @@ $(BUILD_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(ERRORS_PREF
 $(BUILD_CERTZIP_PREFIX)/%.zip: $(BUILD_CERTS_PREFIX)/% $$(wildcard $(BUILD_CERTS_PREFIX)/%/*)
 	@printf "Generating zip for %-62s" $(*F)
 	@mkdir -p $(BUILD_CERTZIP_PREFIX)
-	@mkdir $(*F)
-	@cp $(BUILD_CERTS_PREFIX)/$(*F)/*.crt $(*F) 2>/dev/null ||:
-	@cp $(BUILD_CERTS_PREFIX)/$(*F)/*.crl $(*F) 2>/dev/null ||:
-	@zip -r --quiet $@ $(*F)
-	@rm -r $(*F)
+	@cd $(BUILD_CERTS_PREFIX) && zip --quiet ../$@ $(*F)/*.crt $(*F)/*.crl
 	@printf "[ OK ]\n"
 
 web-local: web
