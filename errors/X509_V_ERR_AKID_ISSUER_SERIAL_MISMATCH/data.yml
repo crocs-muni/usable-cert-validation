@@ -1,4 +1,5 @@
 tags: [ openssl, trust ]
 openssl-docs: |
   Not used as of OpenSSL 1.1.0 as a result of the deprecation of the -issuer_checks option.
+unused-openssl: |
 weight: 214
