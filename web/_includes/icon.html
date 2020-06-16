@@ -23,6 +23,8 @@
     <span class="fas fa-fw fa-project-diagram color-white"></span>
   {% when 'button-email' %}
     <span class="fas fa-fw fa-envelope color-white"></span>
+  {% when 'unused-openssl-icon' %}
+    <span class="fas fa-times {{ include.float }} color-verylightgray"></span>
   {% else %}
     <span class="fas fa-fw fa-question {{ include.float }} color-red" title="Icon error"></span>
 {% endcase %}
