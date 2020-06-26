@@ -30,3 +30,6 @@ cdn:
 
 target-blank:
     add_css_classes: ext-link
+
+plugins:
+    - jekyll-sitemap

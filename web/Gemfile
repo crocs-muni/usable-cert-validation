@@ -2,6 +2,7 @@ source 'https://rubygems.org'
 
 gem 'jekyll'
 gem 'html-proofer'
+gem 'jekyll-sitemap'
 
 # The plugin in the gem repository is ccurrently not maintained.
 # Temporarity provided locally.
