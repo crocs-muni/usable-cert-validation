@@ -16,7 +16,7 @@ clean: certs-clean web-clean
 
 certs: $(addprefix $(BUILD_CERTS_PREFIX)/,$(ERROR_CODES_SCRIPTS))
 
-$(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(ERRORS_PREFIX)/%/*.cfg
+$(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(wildcard ($(ERRORS_PREFIX)/%/*.cfg))
 	@printf "Generating certs for %-60s" $(*F)
 	@mkdir -p $@
 	@$(MAKE) --silent --directory=$(ERRORS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert

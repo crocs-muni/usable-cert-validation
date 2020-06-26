@@ -2,6 +2,11 @@
 BUILD_DIR=_certs
 VERBOSITY=
 
+# How to replicate this error:
+# Create a simple chain consisting of a self-signed CA and non-ca endpoint.
+# In some of the last bytes of the endpoint certificate, change a few characters manually
+# The last part of the certificate is signature, this should invalidate it.
+
 all: error-code generate-cert verify-openssl verify-gnutls verify-botan verify-mbedtls
 
 error-code:
@@ -9,17 +14,8 @@ error-code:
 
 generate-cert: $(BUILD_DIR)/endpoint.crt
 
-CERT_CONFIGS=$(wildcard *.cfg)
-$(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
-	mkdir -p $(BUILD_DIR)
-	certtool --generate-privkey --outfile $(BUILD_DIR)/ca.key $(VERBOSITY)
-	certtool --generate-self-signed --load-privkey $(BUILD_DIR)/ca.key --outfile $(BUILD_DIR)/ca.crt --template ca.cfg $(VERBOSITY)
-	certtool --generate-privkey --outfile $(BUILD_DIR)/endpoint.key $(VERBOSITY)
-	certtool --generate-request --load-privkey $(BUILD_DIR)/endpoint.key --outfile $(BUILD_DIR)/endpoint.csr --template endpoint.cfg $(VERBOSITY)
-	certtool --generate-certificate --load-request $(BUILD_DIR)/endpoint.csr --outfile $(BUILD_DIR)/endpoint.crt --load-ca-certificate $(BUILD_DIR)/ca.crt \
-			 --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg $(VERBOSITY)
-	# needs improvement
-	sed -i ':a;N;$!ba;s/......\n-----END CERTIFICATE-----/QQQQQ=\n-----END CERTIFICATE-----/g' $(BUILD_DIR)/endpoint.crt
+$(BUILD_DIR)/endpoint.crt:
+	cp *.crt $(BUILD_DIR)
 
 verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt $(BUILD_DIR)/endpoint.crt
