@@ -1,5 +1,5 @@
 tags: [ openssl, name ]
 openssl-docs: |
   Unsupported or invalid name constraint syntax.
-openssl-unused: true
+openssl-unused: As of now only defined in the code but not used.
 weight: 408

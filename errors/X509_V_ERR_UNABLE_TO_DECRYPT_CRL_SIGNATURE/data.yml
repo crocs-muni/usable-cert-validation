@@ -1,5 +1,5 @@
 tags: [ openssl, format ]
 openssl-docs: |
   The CRL signature could not be decrypted: this means that the actual signature value could not be determined rather than it not matching the expected value. Unused.
-openssl-unused: true
+openssl-unused: As of now only defined in the code but not used. Also marked as unused in the docs.
 weight: 708
