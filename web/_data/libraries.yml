@@ -1,0 +1,8 @@
+- tag: openssl
+  title: "OpenSSL"
+  description: "These errrors are returned by OpenSSL."
+  links: >
+    Relevant links:
+    <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.5">Certificate Validity</a> (RFC 5280), 
+    <a href="https://tools.ietf.org/html/rfc5280#section-3.3">Certificate Revocation</a> (RFC 5280)
+

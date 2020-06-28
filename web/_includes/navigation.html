@@ -17,10 +17,10 @@
                     <a class="nav-link" href="{% if page.slug != 'index' %}/{% endif %}#home">Intro</a>
                 </li>
                 <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
-                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Errors</a>
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Library</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
-                        {% for category in site.data.errors %}
-                          <a class="dropdown-item" href="{% if page.slug != 'index' %}/{% endif %}#{{ category.title | slugify }}">{{ category.title }}</a>
+                        {% for category in site.data.libraries %}
+                          <a class="dropdown-item" href="{% if page.slug != 'index' %}/{% endif %}{{ category.title | slugify }}">{{ category.title }}</a>
                         {% endfor %}
                     </div>
                 </li>

@@ -1,0 +1,24 @@
+---
+layout: default
+title: Usable X.509 errors
+slug: openssl
+---
+
+{% for category in site.data.errors %}
+
+<div class="section"><div class="container" markdown="1">
+    <h2 id="{{ category.title | slugify }}">{{ category.title }}</h2>
+    <p>
+    {{ category.description }} <br/>
+    {{ category.links }}
+    </p>
+
+    {% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
+    {% for error in errors %}
+    {% include error_box.html page=error %}
+    {% endfor %}
+</div></div>
+
+{% endfor %}
+
+
