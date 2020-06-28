@@ -19,7 +19,7 @@ $(BUILD_DIR)/endpoint.crt: $(CERT_CONFIGS)
 	certtool --generate-certificate --load-request $(BUILD_DIR)/endpoint.csr --outfile $(BUILD_DIR)/endpoint.crt --load-ca-certificate $(BUILD_DIR)/ca.crt \
 			 --load-ca-privkey $(BUILD_DIR)/ca.key --template endpoint.cfg $(VERBOSITY)
 	# needs improvement
-	sed -i 's/......=/QQQQQQ=/g' $(BUILD_DIR)/endpoint.crt
+	sed -i ':a;N;$!ba;s/......\n-----END CERTIFICATE-----/QQQQQ=\n-----END CERTIFICATE-----/g' $(BUILD_DIR)/endpoint.crt
 
 verify-openssl:
 	-openssl verify -CAfile $(BUILD_DIR)/ca.crt $(BUILD_DIR)/endpoint.crt
