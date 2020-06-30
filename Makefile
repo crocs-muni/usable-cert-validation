@@ -1,6 +1,7 @@
 # Environment settiongs
 ERRORS_PREFIX=errors
 BUILD_CERTS_PREFIX=_certs
+DEBUG_PREFIX=_debug
 BUILD_ERRORINFO_PREFIX=web/_errors
 BUILD_CERTZIP_PREFIX=web/assets/certs
 VERBOSITY=">/dev/null 2>&1"
@@ -22,13 +23,15 @@ $(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(wildcard ($(ERRORS_PREFIX
 	@$(MAKE) --silent --directory=$(ERRORS_PREFIX)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
 	@printf "[ OK ]\n"
 	@printf "Testing OpenSSL validation for %-50s" $(*F)
-	@utils/test-cert-validation.sh $(ERRORS_PREFIX)/$(@F) $(CURDIR)/$@
+	@utils/test-cert-validation.sh $(ERRORS_PREFIX)/$(@F) $(CURDIR)/$@ && [ $$? -eq 0 ] || \
+	( rm -rf $(DEBUG_PREFIX) && mv $@ $(DEBUG_PREFIX)/ && printf "## See the failing certificate chain in $(DEBUG_PREFIX).\n" && exit 1 )
 	@printf "[ OK ]\n"
 
 certs-clean:
 	rm -rf errors/*/_certs
 	rm -rf $(BUILD_CERTS_PREFIX)
-
+	rm -rf $(DEBUG_PREFIX)
+	
 # Web building targets
 
 WEB_ERRORINFO=$(addsuffix .md, $(addprefix $(BUILD_ERRORINFO_PREFIX)/,$(ERROR_CODES_DATA)) )
