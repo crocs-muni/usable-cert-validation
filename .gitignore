@@ -2,6 +2,9 @@
 errors/*/_certs
 _certs
 
+# Debug files
+_debug
+
 # Automatically generated website files
 web/assets/certs
 web/_errors
