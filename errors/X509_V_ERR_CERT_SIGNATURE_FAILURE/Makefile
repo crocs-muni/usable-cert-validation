@@ -15,7 +15,8 @@ error-code:
 
 generate-cert: $(BUILD_DIR)/endpoint.crt
 
-$(BUILD_DIR)/endpoint.crt:
+STATIC_CERTS=$(wildcard *.crt)
+$(BUILD_DIR)/endpoint.crt: $(STATIC_CERTS)
 	cp *.crt $(BUILD_DIR)
 
 verify-openssl:
