@@ -25,6 +25,8 @@ In the future, we plan the possibility of reorganization based on the other libr
 
 The website is build using [Jekyll](https://jekyllrb.com/). To develop locally, install Jekyll (e.g. according to [this guide](https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll). Then run `make web-local` and see the website served at `localhost:4000`.
 
+Running certificate tests requires [shyaml](https://github.com/0k/shyaml) for parsing YAML files.
+
 ## Authors
 
 The project is developed at the [Centre for Research on Cryptography and Security](https://www.fi.muni.cz/research/crocs/) of [Masaryk University](http://www.muni.cz/) in Brno, Czech Republic. The main contributors are:

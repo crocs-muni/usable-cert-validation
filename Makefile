@@ -4,16 +4,17 @@ CERTS_BUILD_FOLDER=assets/certs-build
 CERTS_BUILD_DEBUG_FOLDER=assets/certs-build/_debug
 CERTS_ARCHIVES_FOLDER=assets/certs-archives
 VERBOSITY=">/dev/null 2>&1"
-ERROR_CODES_ALL=$(notdir $(wildcard $(CERTS_FOLDER)/*) )
-ERROR_CODES_DATA=$(notdir $(subst /data.yml,,$(wildcard $(CERTS_FOLDER)/*/data.yml)) )
-ERROR_CODES_SCRIPTS=$(notdir $(subst /Makefile,,$(wildcard $(CERTS_FOLDER)/*/Makefile)) )
+ERRORS_FOLDER=_data
 
-all: certs web
+# Computed variables
+CERTS_IDS_ALL=$(notdir $(wildcard $(CERTS_FOLDER)/*))
+CERTS_BUILD_ALL=$(addprefix $(CERTS_BUILD_FOLDER)/,$(CERTS_IDS_ALL))
+CERTS_ARCHIVES_ALL=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(CERTS_IDS_ALL)) )
+ERRORS_ALL=$(wildcard $(ERRORS_FOLDER)/*/*.yml)
 
-# Generating certificates
+all: $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL)
 
-certs: $(addprefix $(CERTS_BUILD_FOLDER)/,$(ERROR_CODES_SCRIPTS))
-
+# Generate certificates
 $(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/%/*.cfg))
 	@printf "Generating certs for %-60s" $(*F)
 	@mkdir -p $@
@@ -23,29 +24,33 @@ $(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/
 #	@utils/test-cert-validation.sh $(CERTS_FOLDER)/$(@F) $(CURDIR)/$@ && [ $$? -eq 0 ] || \
 	( rm -rf $(CERTS_BUILD_DEBUG_FOLDER) && mv $@ $(CERTS_BUILD_DEBUG_FOLDER)/ && printf "## See the failing certificate chain in $(CERTS_BUILD_DEBUG_FOLDER).\n" && exit 1 )
 #	@printf "[ OK ]\n"
-	
-# Web building targets
 
-WEB_CERTS=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(ERROR_CODES_SCRIPTS)) )
-
-web: $(WEB_CERTS)
-
+# Generate certificate archives
 .SECONDEXPANSION:
 $(CERTS_ARCHIVES_FOLDER)/%.zip: $(CERTS_BUILD_FOLDER)/% $$(wildcard $(CERTS_BUILD_FOLDER)/%/*)
 	@printf "Generating zip for %-62s" $(*F)
 	@mkdir -p $(CERTS_ARCHIVES_FOLDER)
 	@cd $(CERTS_BUILD_FOLDER) && zip --filesync --quiet ../../$@ $(*F)/*.crt $(*F)/*.crl
 	@printf "[ OK ]\n"
-
-local: web
-	bundle exec jekyll serve
-
-test: web
+	
+# Test web consistency
+test: all $(ERRORS_ALL)
 	@echo "Building the website using Jekyll ..."
 	@bundle exec jekyll build
 	@echo "Running tests on the generated sites using html-proofer ..."
 	-@bundle exec ruby utils/web-test.rb
 
+# Test generated certificates for assigned errors
+$(ERRORS_FOLDER)/*/*.yml:
+	@printf "Testing certificates for %-70s" $(@D)/$(@F)
+	@if RES=`grep verify-cert $@ | wc -l` && [ $$RES -eq 0 ]; then printf "[ -- ]\n"; \
+		else utils/test-cert-validation.sh $(CERTS_BUILD_FOLDER) $@ && printf "[ OK ]\n"; fi
+
+# Web targets
+local: all
+	bundle exec jekyll serve
+
+# Utility targets
 clean:
 	rm -rf $(CERTS_FOLDER)/*/_certs
 	rm -rf $(CERTS_BUILD_FOLDER)
@@ -53,4 +58,4 @@ clean:
 	rm -rf $(CERTS_ARCHIVES_FOLDER)
 	rm -rf _site
 
-.PHONY: all clean test web local certs
+.PHONY: all clean test local $(ERRORS_ALL)
