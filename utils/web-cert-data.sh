@@ -16,8 +16,7 @@ ERROR_FOLDER=$1
 ERROR_CODE=`basename $ERROR_FOLDER`
 ERROR_DATA_FILE=$ERROR_FOLDER/data.yml
 
-echo "title: "`echo $ERROR_CODE | sed 's/_/_\&shy;/g'`
-echo "openssl-code: "$ERROR_CODE
+echo "error-code: "$ERROR_CODE
 echo -n "slug: "
 echo $ERROR_CODE | sed 's/[A-Z]/\L&/g' | sed 's/_/-/g'
 
