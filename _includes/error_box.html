@@ -25,7 +25,7 @@
     <div class="card card-body">
         {% if include.page.verify-openssl %}
         <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
-        <p>Download <a href="/assets/certs/{{ include.page.openssl-code }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/errors/{{ include.page.openssl-code }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
+        <p>Download <a href="/assets/cert-archives/{{ include.page.openssl-code }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/errors/{{ include.page.openssl-code }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
         <ul>
             {% if include.page.verify-openssl %}
             <li>OpenSSL: <code class="highlighter-rouge">{{ include.page.verify-openssl }}</code></li>

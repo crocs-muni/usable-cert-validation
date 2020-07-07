@@ -1,9 +1,9 @@
 # Environment settiongs
 ERRORS_PREFIX=errors
-BUILD_CERTS_PREFIX=_certs
+BUILD_CERTS_PREFIX=assets/certs
 DEBUG_PREFIX=_debug
 BUILD_ERRORINFO_PREFIX=_data/openssl
-BUILD_CERTZIP_PREFIX=assets/certs
+BUILD_CERTZIP_PREFIX=assets/cert-archives
 VERBOSITY=">/dev/null 2>&1"
 ERROR_CODES_ALL=$(notdir $(wildcard $(ERRORS_PREFIX)/*) )
 ERROR_CODES_DATA=$(notdir $(subst /data.yml,,$(wildcard $(ERRORS_PREFIX)/*/data.yml)) )
@@ -42,7 +42,7 @@ $(BUILD_ERRORINFO_PREFIX)/%.yml: utils/web-cert-data.sh $$(wildcard $(ERRORS_PRE
 $(BUILD_CERTZIP_PREFIX)/%.zip: $(BUILD_CERTS_PREFIX)/% $$(wildcard $(BUILD_CERTS_PREFIX)/%/*)
 	@printf "Generating zip for %-62s" $(*F)
 	@mkdir -p $(BUILD_CERTZIP_PREFIX)
-	@cd $(BUILD_CERTS_PREFIX) && zip --filesync --quiet ../$@ $(*F)/*.crt $(*F)/*.crl
+	@cd $(BUILD_CERTS_PREFIX) && zip --filesync --quiet ../../$@ $(*F)/*.crt $(*F)/*.crl
 	@printf "[ OK ]\n"
 
 local: web
