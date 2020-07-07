@@ -1,4 +1,0 @@
-tags: [ openssl, format ]
-openssl-docs: |
-  The certificate notAfter field contains an invalid time.
-weight: 704

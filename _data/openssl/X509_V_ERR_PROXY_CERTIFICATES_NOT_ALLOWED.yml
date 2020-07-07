@@ -1,0 +1,11 @@
+error-code: X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED
+slug: x509-v-err-proxy-certificates-not-allowed
+tags: [ openssl, uncategorized ]
+openssl-docs: |
+  Proxy certificates not allowed, please use -allow_proxy_certs.
+weight: 801
+verify-cert: X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED
+verify-command: |
+    openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+    error 40 at 0 depth lookup: proxy certificates not allowed, please set the appropriate flag

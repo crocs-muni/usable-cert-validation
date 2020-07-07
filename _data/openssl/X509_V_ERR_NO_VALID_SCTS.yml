@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_NO_VALID_SCTS
+slug: x509-v-err-no-valid-scts
+tags: [ openssl, uncategorized ]
+openssl-docs: |
+  Certificate Transparency required, but no valid SCTs found.
+weight: 810

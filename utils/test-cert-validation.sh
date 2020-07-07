@@ -17,7 +17,7 @@ ERROR=`basename $ERROR_PATH`
 BUILD_DIR=$2
 VERIFY_OUTPUT_FILE=$BUILD_DIR/$ERROR.openssl-verify
 
-make --silent --directory=$ERROR_PATH BUILD_DIR=$BUILD_DIR verify-openssl >$VERIFY_OUTPUT_FILE 2>&1
+make --silent --directory=$ERROR_PATH BUILD_DIR=$BUILD_DIR verify-command >$VERIFY_OUTPUT_FILE 2>&1
 GREP_RESULT=`grep -f $ERROR_PATH/expected.txt $VERIFY_OUTPUT_FILE | wc -l`
 
 if [ ! $GREP_RESULT -eq 1 ]

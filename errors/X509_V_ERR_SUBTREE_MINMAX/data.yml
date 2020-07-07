@@ -1,4 +1,0 @@
-tags: [ openssl, name ]
-openssl-docs: |
-  Name constraints minimum and maximum not supported.
-weight: 406

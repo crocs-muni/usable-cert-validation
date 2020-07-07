@@ -1,0 +1,7 @@
+error-code: X509_V_ERR_UNSUPPORTED_EXTENSION_FEATURE
+slug: x509-v-err-unsupported-extension-feature
+tags: [ openssl, extension ]
+openssl-docs: |
+  Unsupported extension feature.
+openssl-unused: As of now only defined in the code but not used.
+weight: 206

@@ -1,4 +1,0 @@
-tags: [ openssl, algorithm ]
-openssl-docs: |
-  Suite B: invalid signature algorithm.
-weight: 607

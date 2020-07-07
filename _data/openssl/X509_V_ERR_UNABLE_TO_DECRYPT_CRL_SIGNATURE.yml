@@ -1,0 +1,7 @@
+error-code: X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE
+slug: x509-v-err-unable-to-decrypt-crl-signature
+tags: [ openssl, format ]
+openssl-docs: |
+  The CRL signature could not be decrypted: this means that the actual signature value could not be determined rather than it not matching the expected value. Unused.
+openssl-unused: As of now only defined in the code but not used. Also marked as unused in the docs.
+weight: 708

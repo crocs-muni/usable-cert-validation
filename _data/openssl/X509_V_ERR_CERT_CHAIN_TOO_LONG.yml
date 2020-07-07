@@ -1,0 +1,11 @@
+error-code: X509_V_ERR_CERT_CHAIN_TOO_LONG
+slug: x509-v-err-cert-chain-too-long
+tags: [ openssl, trust ]
+openssl-docs: |
+  The certificate chain length is greater than the supplied maximum depth. Unused.
+weight: 205
+verify-cert: X509_V_ERR_CERT_CHAIN_TOO_LONG
+verify-command: |
+    openssl verify -CAfile subca.crt -untrusted subca.crt -verify_depth 0 endpoint.crt
+verify-expected: |
+    error 22 at 1 depth lookup: certificate chain too long

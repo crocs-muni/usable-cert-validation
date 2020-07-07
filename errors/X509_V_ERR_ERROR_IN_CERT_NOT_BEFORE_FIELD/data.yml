@@ -1,4 +1,0 @@
-tags: [ openssl, format ]
-openssl-docs: |
-  The certificate notBefore field contains an invalid time.
-weight: 703

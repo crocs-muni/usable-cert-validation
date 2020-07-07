@@ -1,0 +1,22 @@
+error-code: X509_V_ERR_CRL_NOT_YET_VALID
+slug: x509-v-err-crl-not-yet-valid
+tags: [ openssl, time ]
+openssl-docs: |
+  The CRL is not yet valid.
+gnutls-code: GNUTLS_CERT_REVOCATION_DATA_ISSUED_IN_FUTURE
+gnutls-docs: |
+  The revocation data have a future issue date.
+mbed-code: MBEDTLS_X509_BADCRL_FUTURE
+mbed-docs: |
+  The CRL is from the future
+weight: 103
+verify-cert: X509_V_ERR_CRL_NOT_YET_VALID
+verify-command: |
+    openssl verify -CAfile ca.crt -CRLfile ca.crl -crl_check endpoint.crt
+verify-expected: |
+    error 11 at 0 depth lookup: CRL is not yet valid
+verify-gnutls: |
+    certtool --load-ca-certificate ca.crt --infile ca.crl --verify-crl
+verify-mbedtls: |
+    mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt crl_file=ca.crl
+

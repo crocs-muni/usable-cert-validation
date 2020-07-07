@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_SIGNATURE_ALGORITHM_MISMATCH
+slug: x509-v-err-signature-algorithm-mismatch
+tags: [ openssl, format ]
+openssl-docs: |
+  Subject signature algorithm and issuer public key algorithm mismatch
+weight: 711

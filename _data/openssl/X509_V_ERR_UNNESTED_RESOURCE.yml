@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_UNNESTED_RESOURCE
+slug: x509-v-err-unnested-resource
+tags: [ openssl, name ]
+openssl-docs: |
+  RFC 3779 resource not subset of parent's resources.
+weight: 411

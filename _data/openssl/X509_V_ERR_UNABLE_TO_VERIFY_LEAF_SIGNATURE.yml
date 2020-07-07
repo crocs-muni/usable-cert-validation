@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE
+slug: x509-v-err-unable-to-verify-leaf-signature
+tags: [ openssl, trust ]
+openssl-docs: |
+  No signatures could be verified because the chain contains only one certificate and it is not self signed.
+weight: 210

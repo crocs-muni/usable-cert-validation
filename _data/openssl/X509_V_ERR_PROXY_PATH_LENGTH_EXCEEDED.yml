@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_PROXY_PATH_LENGTH_EXCEEDED
+slug: x509-v-err-proxy-path-length-exceeded
+tags: [ openssl, uncategorized ]
+openssl-docs: |
+  Proxy path length constraint exceeded.
+weight: 803

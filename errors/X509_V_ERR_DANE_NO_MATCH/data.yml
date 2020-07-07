@@ -1,4 +1,0 @@
-tags: [ openssl, uncategorized ]
-openssl-docs: |
-  DANE TLSA authentication is enabled, but no TLSA records matched the certificate chain. This error is only possible in s_client(1).
-weight: 809

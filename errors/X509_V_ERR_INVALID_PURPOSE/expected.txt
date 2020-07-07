@@ -1,1 +1,0 @@
-error 26 at 0 depth lookup: unsupported certificate purpose

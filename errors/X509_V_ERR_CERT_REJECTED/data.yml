@@ -1,4 +1,0 @@
-tags: [ openssl, usage ]
-openssl-docs: |
-  The root CA is marked to reject the specified purpose.
-weight: 502

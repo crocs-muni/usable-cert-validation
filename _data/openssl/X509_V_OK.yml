@@ -1,0 +1,17 @@
+error-code: X509_V_OK
+slug: x509-v-ok
+tags: [ openssl, uncategorized ]
+openssl-docs: |
+  The operation was successful.
+botan-code: OK
+weight: 819
+verify-cert: X509_V_OK
+verify-command: |
+    openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+    OK
+verify-gnutls: |
+    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
+verify-botan: |
+    botan cert_verify endpoint.crt ca.crt
+

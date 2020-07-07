@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD
+slug: x509-v-err-error-in-cert-not-after-field
+tags: [ openssl, format ]
+openssl-docs: |
+  The certificate notAfter field contains an invalid time.
+weight: 704

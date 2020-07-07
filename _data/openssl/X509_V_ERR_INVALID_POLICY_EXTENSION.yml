@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_INVALID_POLICY_EXTENSION
+slug: x509-v-err-invalid-policy-extension
+tags: [ openssl, usage ]
+openssl-docs: |
+  Invalid or inconsistent certificate policy extension.
+weight: 503

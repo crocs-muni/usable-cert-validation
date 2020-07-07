@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_SUBTREE_MINMAX
+slug: x509-v-err-subtree-minmax
+tags: [ openssl, name ]
+openssl-docs: |
+  Name constraints minimum and maximum not supported.
+weight: 406

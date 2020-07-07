@@ -1,4 +1,0 @@
-tags: [ openssl, trust ]
-openssl-docs: |
-  The certificate chain length is greater than the supplied maximum depth. Unused.
-weight: 205

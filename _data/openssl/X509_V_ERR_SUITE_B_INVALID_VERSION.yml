@@ -1,0 +1,11 @@
+error-code: X509_V_ERR_SUITE_B_INVALID_VERSION
+slug: x509-v-err-suite-b-invalid-version
+tags: [ openssl, algorithm ]
+openssl-docs: |
+  Suite B: certificate version invalid.
+weight: 604
+verify-cert: X509_V_ERR_SUITE_B_INVALID_VERSION
+verify-command: |
+    openssl verify -CAfile ca.crt -suiteB_128_only endpoint.crt
+verify-expected: |
+    error 56 at 0 depth lookup: Suite B: certificate version invalid

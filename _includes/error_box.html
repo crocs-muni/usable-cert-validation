@@ -2,7 +2,7 @@
 <div class="card-header clearfix" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="true" aria-controls="#{{ include.page.slug }}">
     <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
     <span class="openssl-code" title="{{ include.page.error-code }}">{{ include.page.error-code | replace: "_", "_&shy;" }}</span>
-    {% if include.page.verify-openssl %}
+    {% if include.page.verify-command %}
         {% include icon.html icon="certificate" float="float-right" %}
     {% endif %}
     {% if include.page.openssl-unused %}
@@ -23,12 +23,12 @@
 </div>
 <div class="collapse show" id="{{ include.page.slug }}">
     <div class="card card-body">
-        {% if include.page.verify-openssl %}
+        {% if include.page.verify-cert %}
         <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
-        <p>Download <a href="/assets/cert-archives/{{ include.page.error-code }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/errors/{{ include.page.error-code }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
+        <p>Download <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
         <ul>
-            {% if include.page.verify-openssl %}
-            <li>OpenSSL: <code class="highlighter-rouge">{{ include.page.verify-openssl }}</code></li>
+            {% if include.page.verify-command %}
+            <li>OpenSSL: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></li>
             {% endif %}
             {% if include.page.verify-gnutls %}
             <li>GnuTLS: <code class="highlighter-rouge">{{ include.page.verify-gnutls }}</code></li>
