@@ -1,4 +1,0 @@
-tags: [ openssl, format ]
-openssl-docs: |
-  Issuer certificate doesn't have a public key.
-weight: 710

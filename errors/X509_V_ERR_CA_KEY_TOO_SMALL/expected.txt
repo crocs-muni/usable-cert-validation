@@ -1,1 +1,0 @@
-error 67 at 1 depth lookup: CA certificate key too weak

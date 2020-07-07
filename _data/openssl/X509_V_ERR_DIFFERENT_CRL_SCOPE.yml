@@ -1,0 +1,6 @@
+error-code: X509_V_ERR_DIFFERENT_CRL_SCOPE
+slug: x509-v-err-different-crl-scope
+tags: [ openssl, trust ]
+openssl-docs: |
+  Different CRL scope.
+weight: 209

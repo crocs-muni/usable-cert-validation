@@ -1,6 +1,0 @@
-tags: [ openssl, uncategorized ]
-openssl-docs: |
-  Proxy certificate subject is invalid. It MUST be the same as the issuer with a single CN component added.
-openssl-unused: |
-  This code is not even defined in the code. It was in OpenSSL 1.1.1 docs, but in current master docs isn't.
-weight: 819

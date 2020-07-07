@@ -1,4 +1,0 @@
-tags: [ openssl, usage ]
-openssl-docs: |
-  Key usage does not include CRL signing.
-weight: 505

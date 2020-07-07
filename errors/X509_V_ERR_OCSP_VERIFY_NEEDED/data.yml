@@ -1,4 +1,0 @@
-tags: [ openssl, uncategorized ]
-openssl-docs: |
-  Returned by the verify callback to indicate an OCSP verification is needed.
-weight: 811

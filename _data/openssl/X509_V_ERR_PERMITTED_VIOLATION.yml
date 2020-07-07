@@ -1,0 +1,25 @@
+error-code: X509_V_ERR_PERMITTED_VIOLATION
+slug: x509-v-err-permitted-violation
+tags: [ openssl, name ]
+openssl-docs: |
+  Permitted subtree violation.
+gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
+gnutls-docs: |
+  The certificate’s signer constraints were violated.
+botan-code: NAME_CONSTRAINT_ERROR
+botan-docs: |
+  Certificate does not pass name constraint
+mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
+mbed-docs: |
+  The certificate is not correctly signed by the trusted CA
+weight: 404
+verify-cert: X509_V_ERR_PERMITTED_VIOLATION
+verify-command: |
+    openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+    error 47 at 0 depth lookup: permitted subtree violation
+verify-gnutls: |
+    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
+verify-botan: |
+    botan cert_verify endpoint.crt ca.crt
+

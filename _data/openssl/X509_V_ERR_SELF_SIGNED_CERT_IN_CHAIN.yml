@@ -1,0 +1,25 @@
+error-code: X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN
+slug: x509-v-err-self-signed-cert-in-chain
+tags: [ openssl, trust]
+openssl-docs: |
+  The certificate chain could be built up using the untrusted certificates but the root could not be found locally.
+gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
+gnutls-docs: |
+  The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list.
+botan-code: CANNOT_ESTABLISH_TRUST
+botan-docs: |
+  Cannot establish trust
+mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
+mbed-docs: |
+  The certificate is not correctly signed by the trusted CA
+weight: 204
+verify-cert: X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN
+verify-command: |
+    openssl verify -untrusted ca.crt endpoint.crt
+verify-expected: |
+    error 19 at 1 depth lookup: self signed certificate in certificate chain
+verify-gnutls: |
+    certtool --verify --infile chain.crt
+verify-botan: |
+    botan cert_verify chain.crt
+

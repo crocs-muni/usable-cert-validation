@@ -1,0 +1,17 @@
+error-code: X509_V_ERR_HOSTNAME_MISMATCH
+slug: x509-v-err-hostname-mismatch
+tags: [ openssl, name ]
+openssl-docs: |
+  Hostname mismatch.
+botan-code: CERT_NAME_NO_MATCH
+botan-docs: |
+  Certificate does not match provided name
+mbed-code: MBEDTLS_X509_BADCERT_CN_MISMATCH
+mbed-docs: |
+  The certificate Common Name (CN) does not match with the expected CN
+weight: 401
+verify-cert: X509_V_ERR_HOSTNAME_MISMATCH
+verify-command: |
+    openssl verify -CAfile ca.crt -verify_hostname www.crocs.muni.cz endpoint.crt
+verify-expected: |
+    error 62 at 0 depth lookup: Hostname mismatch

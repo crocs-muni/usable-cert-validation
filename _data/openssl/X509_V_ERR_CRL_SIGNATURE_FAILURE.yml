@@ -1,0 +1,17 @@
+error-code: X509_V_ERR_CRL_SIGNATURE_FAILURE
+slug: x509-v-err-crl-signature-failure
+tags: [ openssl, format ]
+openssl-docs: |
+  The signature of the certificate is invalid.
+gnutls-code: GNUTLS_CERT_SIGNATURE_FAILURE
+gnutls-docs: |
+  The signature verification failed.
+weight: 702
+verify-cert: X509_V_ERR_CRL_SIGNATURE_FAILURE
+verify-command: |
+    openssl verify -CAfile ca.crt -CRLfile ca.crl -crl_check endpoint.crt
+verify-expected: |
+    error 8 at 0 depth lookup: CRL signature failure
+verify-gnutls: |
+    certtool --load-ca-certificate ca.crt  --verify-crl --infile ca.crl
+

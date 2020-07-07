@@ -1,4 +1,0 @@
-tags: [ openssl, uncategorized ]
-openssl-docs: |
-  Certificate Transparency required, but no valid SCTs found.
-weight: 810

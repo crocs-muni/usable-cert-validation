@@ -1,4 +1,0 @@
-tags: [ openssl, algorithm ]
-openssl-docs: |
-  Suite B: cannot sign P-384 with P-256.
-weight: 609

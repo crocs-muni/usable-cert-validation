@@ -1,4 +1,0 @@
-tags: [ openssl, trust ]
-openssl-docs: |
-  CRL path validation error.
-weight: 208

@@ -1,1 +1,0 @@
-error 18 at 0 depth lookup: self signed certificate

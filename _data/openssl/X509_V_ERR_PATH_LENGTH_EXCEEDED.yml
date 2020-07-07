@@ -1,0 +1,25 @@
+error-code: X509_V_ERR_PATH_LENGTH_EXCEEDED
+slug: x509-v-err-path-length-exceeded
+tags: [ openssl, extension ]
+openssl-docs: |
+  The basicConstraints pathlength parameter has been exceeded.
+gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
+gnutls-docs: |
+  The certificate’s signer constraints were violated.
+botan-code: CERT_CHAIN_TOO_LONG
+botan-docs: |
+  Certificate chain too long
+mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
+mbed-docs: |
+  The certificate is not correctly signed by the trusted CA
+weight: 302
+verify-cert: X509_V_ERR_PATH_LENGTH_EXCEEDED
+verify-command: |
+    openssl verify -CAfile ca.crt -untrusted subca1.crt -untrusted subca2.crt endpoint.crt
+verify-expected: |
+    error 25 at 2 depth lookup: path length constraint exceeded
+verify-gnutls: |
+    certtool --verify --load-ca-certificate ca.crt --infile chain.crt
+verify-botan: |
+    botan cert_verify endpoint.crt subca1.crt subca2.crt ca.crt
+

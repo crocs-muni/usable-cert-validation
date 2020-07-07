@@ -1,7 +1,8 @@
 # Automatically generated certificates and website files
-assets/certs
-assets/cert-archives
-_data/openssl
+assets/certs-build
+assets/certs/*/_certs
+_debug
+assets/certs-archives
 
 # Build web page
 _site
@@ -10,6 +11,3 @@ _site
 Gemfile.lock
 .cache
 *~
-
-# Debug files
-_debug

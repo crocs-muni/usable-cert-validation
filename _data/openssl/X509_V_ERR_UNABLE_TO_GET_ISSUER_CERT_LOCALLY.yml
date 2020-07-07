@@ -1,0 +1,25 @@
+error-code: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+slug: x509-v-err-unable-to-get-issuer-cert-locally
+tags: [ openssl, trust]
+openssl-docs: |
+  The issuer certificate could not be found: this occurs if the issuer certificate of an untrusted certificate cannot be found.
+gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
+gnutls-docs: |
+  The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list.
+botan-code: CERT_ISSUER_NOT_FOUND
+botan-docs: |
+  Certificate issuer not found
+mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
+mbed-docs: |
+  The certificate is not correctly signed by the trusted CA
+weight: 202
+verify-cert: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+verify-command: |
+    openssl verify endpoint.crt
+verify-expected: |
+    error 20 at 0 depth lookup: unable to get local issuer certificate
+verify-gnutls: |
+    certtool --verify --infile endpoint.crt
+verify-botan: |
+    botan cert_verify endpoint.crt
+

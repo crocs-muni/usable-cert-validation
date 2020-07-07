@@ -1,4 +1,0 @@
-tags: [ openssl, trust ]
-openssl-docs: |
-  Different CRL scope.
-weight: 209

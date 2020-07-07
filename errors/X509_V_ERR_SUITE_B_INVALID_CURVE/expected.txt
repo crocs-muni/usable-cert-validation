@@ -1,1 +1,0 @@
-error 58 at 0 depth lookup: Suite B: invalid ECC curve

@@ -1,0 +1,11 @@
+error-code: X509_V_ERR_EMAIL_MISMATCH
+slug: x509-v-err-email-mismatch
+tags: [ openssl, name ]
+openssl-docs: |
+  Email address mismatch.
+weight: 402
+verify-cert: X509_V_ERR_EMAIL_MISMATCH
+verify-command: |
+    openssl verify -CAfile ca.crt -verify_email crocs@muni.cz endpoint.crt
+verify-expected: |
+    error 63 at 0 depth lookup: Email address mismatch

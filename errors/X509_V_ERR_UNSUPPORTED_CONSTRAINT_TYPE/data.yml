@@ -1,4 +1,0 @@
-tags: [ openssl, name ]
-openssl-docs: |
-  Unsupported name constraint type.
-weight: 407
