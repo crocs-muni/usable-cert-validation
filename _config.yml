@@ -10,9 +10,6 @@ collections:
     pages:
         output: true
         permalink: /:title
-    errors:
-        output: false
-        permalink: /:collection/:title
 sass:
     sass_dir: assets/css
 cache_dir: .cache

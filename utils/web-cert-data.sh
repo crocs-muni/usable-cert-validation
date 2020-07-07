@@ -16,7 +16,6 @@ ERROR_FOLDER=$1
 ERROR_CODE=`basename $ERROR_FOLDER`
 ERROR_DATA_FILE=$ERROR_FOLDER/data.yml
 
-echo "---"
 echo "title: "`echo $ERROR_CODE | sed 's/_/_\&shy;/g'`
 echo "openssl-code: "$ERROR_CODE
 echo -n "slug: "
@@ -58,5 +57,3 @@ then
         make --silent --directory=$ERROR_FOLDER --just-print --always-make verify-mbedtls | sed 's/^/    /' | sed 's|_certs/||g' | sed 's/</\&lt;/g' | sed 's/>/\&gt;/g'
     fi
 fi
-
-echo "---"
