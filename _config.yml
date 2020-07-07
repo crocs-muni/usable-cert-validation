@@ -6,6 +6,11 @@ url: https://x509errors.cz
 repo-url: https://github.com/crocs-muni/usable-cert-validation
 
 # Build settings
+include: [ ".well-known" ]
+exclude: [ "Gemfile", "Gemfile.lock", "Makefile"    # Build settings
+         , "README.md", "LICENSE.md"                # Development documentation
+         , "utils", "errors", "assets/certs"        # Development files
+         ]
 collections:
     pages:
         output: true
