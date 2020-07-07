@@ -7,7 +7,7 @@ _debug
 
 # Automatically generated website files
 assets/certs
-_errors
+_data/openssl
 
 # Build web page
 _site

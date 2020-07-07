@@ -44,7 +44,7 @@ slug:   index
     {{ category.links }}
     </p>
 
-    {% assign errors = site.errors | where:"tags",category.tag | sort: 'weight' %}
+    {% assign errors = site.data.openssl | where:"tags",category.tag | sort: 'weight' %}
     {% for error in errors %}
     {% include error_box.html page=error %}
     {% endfor %}

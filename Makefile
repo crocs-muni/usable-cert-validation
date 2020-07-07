@@ -2,7 +2,7 @@
 ERRORS_PREFIX=errors
 BUILD_CERTS_PREFIX=_certs
 DEBUG_PREFIX=_debug
-BUILD_ERRORINFO_PREFIX=_errors
+BUILD_ERRORINFO_PREFIX=_data/openssl
 BUILD_CERTZIP_PREFIX=assets/certs
 VERBOSITY=">/dev/null 2>&1"
 ERROR_CODES_ALL=$(notdir $(wildcard $(ERRORS_PREFIX)/*) )
@@ -27,13 +27,13 @@ $(BUILD_CERTS_PREFIX)/%: $(ERRORS_PREFIX)/%/Makefile $(wildcard ($(ERRORS_PREFIX
 	
 # Web building targets
 
-WEB_ERRORINFO=$(addsuffix .md, $(addprefix $(BUILD_ERRORINFO_PREFIX)/,$(ERROR_CODES_DATA)) )
+WEB_ERRORINFO=$(addsuffix .yml, $(addprefix $(BUILD_ERRORINFO_PREFIX)/,$(ERROR_CODES_DATA)) )
 WEB_CERTS=$(addsuffix .zip, $(addprefix $(BUILD_CERTZIP_PREFIX)/, $(ERROR_CODES_SCRIPTS)) )
 
 web: $(WEB_ERRORINFO) $(WEB_CERTS)
 
 .SECONDEXPANSION:
-$(BUILD_ERRORINFO_PREFIX)/%.md: utils/web-cert-data.sh $$(wildcard $(ERRORS_PREFIX)/%/data.yml)
+$(BUILD_ERRORINFO_PREFIX)/%.yml: utils/web-cert-data.sh $$(wildcard $(ERRORS_PREFIX)/%/data.yml)
 	@printf "Generating info for %-51s" $(*F)
 	@mkdir -p $(BUILD_ERRORINFO_PREFIX)
 	@utils/web-cert-data.sh $(ERRORS_PREFIX)/$(*F) >$@
