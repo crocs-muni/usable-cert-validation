@@ -48,7 +48,7 @@ $(BUILD_CERTZIP_PREFIX)/%.zip: $(BUILD_CERTS_PREFIX)/% $$(wildcard $(BUILD_CERTS
 local: web
 	bundle exec jekyll serve
 
-check: web
+test: web
 	@echo "Building the website using Jekyll ..."
 	@bundle exec jekyll build
 	@echo "Running tests on the generated sites using html-proofer ..."
@@ -62,4 +62,4 @@ clean:
 	rm -rf $(BUILD_CERTZIP_PREFIX)
 	rm -rf _site
 
-.PHONY: all clean check web local certs
+.PHONY: all clean test web local certs
