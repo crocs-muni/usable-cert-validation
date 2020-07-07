@@ -2,7 +2,7 @@
 
 if [ $# -eq 0 ]
 then
-    echo "usage: "$0" <path/error-code> <path/cert-build-dir>"
+    echo "usage: "$0" <path/certs-build-folder> <path/error-code.yml>"
     exit -1
 fi
 
@@ -12,20 +12,26 @@ then
     exit -1
 fi
 
-ERROR_PATH=$1
-ERROR=`basename $ERROR_PATH`
-BUILD_DIR=$2
-VERIFY_OUTPUT_FILE=$BUILD_DIR/$ERROR.openssl-verify
+CERTS_BUILD_FOLDER=$1
+ERROR_FILE=$2
+ERROR=`basename $ERROR_FILE | sed s/.yml//`
+VERIFY_CERT=`cat $ERROR_FILE | shyaml get-value verify-cert`
+VERIFY_COMMAND=`cat $ERROR_FILE | shyaml get-value verify-command`
+VERIFY_EXPECTED=`cat $ERROR_FILE | shyaml get-value verify-expected`
+VERIFY_OUTPUT_FILE=openssl-verify.txt
 
-make --silent --directory=$ERROR_PATH BUILD_DIR=$BUILD_DIR verify-command >$VERIFY_OUTPUT_FILE 2>&1
-GREP_RESULT=`grep -f $ERROR_PATH/expected.txt $VERIFY_OUTPUT_FILE | wc -l`
+cd $CERTS_BUILD_FOLDER/$VERIFY_CERT
+eval $VERIFY_COMMAND >$VERIFY_OUTPUT_FILE 2>&1
+GREP_RESULT=`grep -F "$VERIFY_EXPECTED" $VERIFY_OUTPUT_FILE | wc -l`
+rm -f $VERIFY_OUTPUT_FILE
 
 if [ ! $GREP_RESULT -eq 1 ]
 then
     echo "### Validation with unexpected results for $ERROR! ###"
-    echo "## Expected:"
-    cat $ERROR_PATH/expected.txt
-    echo "## Observed:"
+    echo "====== Expected ======"
+    echo $VERIFY_EXPECTED
+    echo "====== Observed ======"
     cat $VERIFY_OUTPUT_FILE
+    echo "====== (end) ======"
     exit -2
 fi
