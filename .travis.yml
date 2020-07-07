@@ -1,6 +1,6 @@
 dist: bionic    # Ubuntu 18.04 LTS
 language: ruby
-gemfile: web/Gemfile
+gemfile: Gemfile
 
 before_install: 
   - sudo apt update
@@ -20,13 +20,13 @@ cache:
   directories:
   - $TRAVIS_BUILD_DIR/.cache  # Enable caching link checks
   - $TRAVIS_BUILD_DIR/_certs  # Enable caching of generated certificates
-  - $TRAVIS_BUILD_DIR/web/_errors # Enable caching of generated error metadata
-  - $TRAVIS_BUILD_DIR/web/assets/certs # Enable caching of generated certificates
+  - $TRAVIS_BUILD_DIR/_errors # Enable caching of generated error metadata
+  - $TRAVIS_BUILD_DIR/assets/certs # Enable caching of generated certificates
 
 deploy:
   provider: pages
   skip_cleanup: true
-  local_dir: web/_site
+  local_dir: _site
   target_branch: gh-pages
   keep_history: false
   verbose: false

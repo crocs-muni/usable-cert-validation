@@ -6,13 +6,13 @@ _certs
 _debug
 
 # Automatically generated website files
-web/assets/certs
-web/_errors
+assets/certs
+_errors
 
 # Build web page
-web/_site
+_site
 
 # Temporary files
-web/Gemfile.lock
-web/.cache
+Gemfile.lock
+.cache
 *~
