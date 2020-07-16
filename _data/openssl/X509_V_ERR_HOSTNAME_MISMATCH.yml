@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_HOSTNAME_MISMATCH
 slug: x509-v-err-hostname-mismatch
-tags: [ openssl, name ]
-openssl-docs: |
+tags: [ name ]
+docs: |
   Hostname mismatch.
 botan-code: CERT_NAME_NO_MATCH
 botan-docs: |

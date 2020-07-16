@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_CRL_NOT_YET_VALID
 slug: x509-v-err-crl-not-yet-valid
-tags: [ openssl, time ]
-openssl-docs: |
+tags: [ time ]
+docs: |
   The CRL is not yet valid.
 gnutls-code: GNUTLS_CERT_REVOCATION_DATA_ISSUED_IN_FUTURE
 gnutls-docs: |

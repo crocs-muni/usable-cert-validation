@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_CRL_HAS_EXPIRED
 slug: x509-v-err-crl-has-expired
-tags: [ openssl, time ]
-openssl-docs: |
+tags: [ time ]
+docs: |
   The CRL has expired.
 gnutls-code: GNUTLS_CERT_REVOCATION_DATA_SUPERSEDED
 gnutls-docs: |

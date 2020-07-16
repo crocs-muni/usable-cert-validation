@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_KEYUSAGE_NO_CRL_SIGN
 slug: x509-v-err-keyusage-no-crl-sign
-tags: [ openssl, usage ]
-openssl-docs: |
+tags: [ usage ]
+docs: |
   Key usage does not include CRL signing.
 weight: 505
 verify-cert: X509_V_ERR_KEYUSAGE_NO_CRL_SIGN

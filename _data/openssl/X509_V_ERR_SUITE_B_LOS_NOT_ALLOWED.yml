@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_SUITE_B_LOS_NOT_ALLOWED
 slug: x509-v-err-suite-b-los-not-allowed
-tags: [ openssl, algorithm ]
-openssl-docs: |
+tags: [ algorithm ]
+docs: |
   Suite B: curve not allowed for this LOS.
 weight: 608
 verify-cert: X509_V_ERR_SUITE_B_LOS_NOT_ALLOWED

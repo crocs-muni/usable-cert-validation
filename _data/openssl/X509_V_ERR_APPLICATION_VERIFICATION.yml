@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_APPLICATION_VERIFICATION
 slug: x509-v-err-application-verification
-tags: [ openssl, uncategorized ]
-openssl-docs: |
+tags: [ uncategorized ]
+docs: |
   Application verification failure. Unused.
 weight: 808

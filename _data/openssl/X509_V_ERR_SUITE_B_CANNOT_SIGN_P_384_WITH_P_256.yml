@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_SUITE_B_CANNOT_SIGN_P_384_WITH_P_256
 slug: x509-v-err-suite-b-cannot-sign-p-384-with-p-256
-tags: [ openssl, algorithm ]
-openssl-docs: |
+tags: [ algorithm ]
+docs: |
   Suite B: cannot sign P-384 with P-256.
 weight: 609

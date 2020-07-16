@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_EMAIL_MISMATCH
 slug: x509-v-err-email-mismatch
-tags: [ openssl, name ]
-openssl-docs: |
+tags: [ name ]
+docs: |
   Email address mismatch.
 weight: 402
 verify-cert: X509_V_ERR_EMAIL_MISMATCH

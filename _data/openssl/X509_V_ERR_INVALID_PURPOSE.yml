@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_INVALID_PURPOSE
 slug: x509-v-err-invalid-purpose
-tags: [ openssl, usage ]
-openssl-docs: |
+tags: [ usage ]
+docs: |
   The supplied certificate cannot be used for the specified purpose.
 gnutls-code: GNUTLS_CERT_PURPOSE_MISMATCH
 gnutls-docs: |

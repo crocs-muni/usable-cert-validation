@@ -5,8 +5,8 @@
     {% if include.page.verify-command %}
         {% include icon.html icon="certificate" float="float-right" %}
     {% endif %}
-    {% if include.page.openssl-unused %}
-        {% include icon.html icon="openssl-unused" float="float-right" %}
+    {% if include.page.deprecated %}
+        {% include icon.html icon="deprecated" float="float-right" %}
     {% endif %}
     {% if include.page.mbed-code %}
         {% include icon.html icon="mbed-book" float="float-right" %}
@@ -48,8 +48,8 @@
             OpenSSL: {{ include.page.error-code | replace: "_", "_&shy;" }}
             <span class="text-muted small">(<a class="color-reset" href="https://www.openssl.org/docs/man1.1.1/man1/openssl-verify.html">source</a>)</span>
             </h3>
-            {% if include.page.openssl-docs %}
-                <p>{{ include.page.openssl-docs }}</p>
+            {% if include.page.docs %}
+                <p>{{ include.page.docs }}</p>
             {% else %}
                 <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
             {% endif %}

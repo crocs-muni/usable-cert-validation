@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_CA_KEY_TOO_SMALL
 slug: x509-v-err-ca-key-too-small
-tags: [ openssl, algorithm ]
-openssl-docs: |
+tags: [ algorithm ]
+docs: |
   CA certificate key too weak.
 botan-code: SIGNATURE_METHOD_TOO_WEAK
 botan-docs: |

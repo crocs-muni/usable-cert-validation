@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE
 slug: x509-v-err-unsupported-constraint-type
-tags: [ openssl, name ]
-openssl-docs: |
+tags: [ name ]
+docs: |
   Unsupported name constraint type.
 weight: 407

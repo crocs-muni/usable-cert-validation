@@ -1,9 +1,9 @@
 error-code: X509_V_ERR_PATH_LOOP
 slug: x509-v-err-path-loop
-tags: [ openssl, trust ]
-openssl-docs: |
+tags: [ trust ]
+docs: |
   Path loop.
-openssl-unused: |
+deprecated: |
   Is actively used in the code once in function check_issued in file x509_vfy.c,
   but cannot be returned outside of that function.
 weight: 211

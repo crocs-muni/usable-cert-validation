@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_CRL_SIGNATURE_FAILURE
 slug: x509-v-err-crl-signature-failure
-tags: [ openssl, format ]
-openssl-docs: |
+tags: [ format ]
+docs: |
   The signature of the certificate is invalid.
 gnutls-code: GNUTLS_CERT_SIGNATURE_FAILURE
 gnutls-docs: |

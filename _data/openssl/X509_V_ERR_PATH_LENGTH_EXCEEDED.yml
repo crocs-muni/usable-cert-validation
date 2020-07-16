@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_PATH_LENGTH_EXCEEDED
 slug: x509-v-err-path-length-exceeded
-tags: [ openssl, extension ]
-openssl-docs: |
+tags: [ extension ]
+docs: |
   The basicConstraints pathlength parameter has been exceeded.
 gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
 gnutls-docs: |

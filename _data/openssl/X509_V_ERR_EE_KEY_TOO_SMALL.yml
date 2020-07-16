@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_EE_KEY_TOO_SMALL
 slug: x509-v-err-ee-key-too-small
-tags: [ openssl, algorithm ]
-openssl-docs: |
+tags: [ algorithm ]
+docs: |
   EE certificate key too weak.
 mbed-code: MBEDTLS_X509_BADCERT_BAD_KEY
 mbed-docs: |

@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION
 slug: x509-v-err-unhandled-critical-extension
-tags: [ openssl, extension ]
-openssl-docs: |
+tags: [ extension ]
+docs: |
   Unhandled critical extension.
 gnutls-code: GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS
 gnutls-docs: |

@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD
 slug: x509-v-err-error-in-crl-last-update-field
-tags: [ openssl, format ]
-openssl-docs: |
+tags: [ format ]
+docs: |
   The CRL lastUpdate field contains an invalid time.
 weight: 705

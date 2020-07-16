@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_INVALID_EXTENSION
 slug: x509-v-err-invalid-extension
-tags: [ openssl, extension ]
-openssl-docs: |
+tags: [ extension ]
+docs: |
   Invalid or inconsistent certificate extension.
 weight: 305

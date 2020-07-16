@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
 slug: x509-v-err-unable-to-get-issuer-cert-locally
-tags: [ openssl, trust]
-openssl-docs: |
+tags: [ trust]
+docs: |
   The issuer certificate could not be found: this occurs if the issuer certificate of an untrusted certificate cannot be found.
 gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
 gnutls-docs: |

@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_SUITE_B_INVALID_CURVE
 slug: x509-v-err-suite-b-invalid-curve
-tags: [ openssl, algorithm ]
-openssl-docs: |
+tags: [ algorithm ]
+docs: |
   Suite B: invalid ECC curve.
 weight: 606
 verify-cert: X509_V_ERR_SUITE_B_INVALID_CURVE
