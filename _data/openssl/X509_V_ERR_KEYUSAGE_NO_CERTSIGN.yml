@@ -1,8 +1,8 @@
 error-code: X509_V_ERR_KEYUSAGE_NO_CERTSIGN
 slug: x509-v-err-keyusage-no-certsign
-tags: [ openssl, usage ]
-openssl-docs: |
+tags: [ usage ]
+docs: |
   Not used as of OpenSSL 1.1.0 as a result of the deprecation of the -issuer_checks option.
-openssl-unused: |
+deprecated: |
   Not used as of OpenSSL 1.1.0 as a result of the deprecation of the -issuer_checks option.
 weight: 508

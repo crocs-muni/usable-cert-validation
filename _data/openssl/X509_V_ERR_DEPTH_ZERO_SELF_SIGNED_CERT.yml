@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT
 slug: x509-v-err-depth-zero-self-signed-cert
-tags: [ openssl, trust ]
-openssl-docs: |
+tags: [ trust ]
+docs: |
   The passed certificate is self-signed and the same certificate cannot be found in the list of trusted certificates.
 gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
 gnutls-docs: |

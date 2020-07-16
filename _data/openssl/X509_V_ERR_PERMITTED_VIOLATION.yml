@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_PERMITTED_VIOLATION
 slug: x509-v-err-permitted-violation
-tags: [ openssl, name ]
-openssl-docs: |
+tags: [ name ]
+docs: |
   Permitted subtree violation.
 gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
 gnutls-docs: |

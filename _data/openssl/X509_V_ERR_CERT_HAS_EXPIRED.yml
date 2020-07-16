@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_CERT_HAS_EXPIRED
 slug: x509-v-err-cert-has-expired
-tags: [ openssl, time ]
-openssl-docs: |
+tags: [ time ]
+docs: |
   The certificate has expired: that is the notAfter date is before the current time.
 gnutls-code: GNUTLS_CERT_EXPIRED
 gnutls-docs: |

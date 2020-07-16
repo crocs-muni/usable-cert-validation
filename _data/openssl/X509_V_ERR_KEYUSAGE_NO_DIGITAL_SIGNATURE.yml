@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_KEYUSAGE_NO_DIGITAL_SIGNATURE
 slug: x509-v-err-keyusage-no-digital-signature
-tags: [ openssl, usage ]
-openssl-docs: |
+tags: [ usage ]
+docs: |
   Key usage does not include digital signature.
 weight: 506

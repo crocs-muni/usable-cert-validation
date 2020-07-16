@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN
 slug: x509-v-err-self-signed-cert-in-chain
-tags: [ openssl, trust]
-openssl-docs: |
+tags: [ trust]
+docs: |
   The certificate chain could be built up using the untrusted certificates but the root could not be found locally.
 gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
 gnutls-docs: |

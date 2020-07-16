@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_IP_ADDRESS_MISMATCH
 slug: x509-v-err-ip-address-mismatch
-tags: [ openssl, name ]
-openssl-docs: |
+tags: [ name ]
+docs: |
   IP address mismatch.
 weight: 403
 verify-cert: X509_V_ERR_IP_ADDRESS_MISMATCH

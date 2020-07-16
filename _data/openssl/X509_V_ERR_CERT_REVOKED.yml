@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_CERT_REVOKED
 slug: x509-v-err-cert-revoked
-tags: [ openssl, time ]
-openssl-docs: |
+tags: [ time ]
+docs: |
   The certificate has been revoked.
 gnutls-code: GNUTLS_CERT_REVOKED
 gnutls-docs: |

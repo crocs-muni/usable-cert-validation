@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED
 slug: x509-v-err-proxy-certificates-not-allowed
-tags: [ openssl, uncategorized ]
-openssl-docs: |
+tags: [ uncategorized ]
+docs: |
   Proxy certificates not allowed, please use -allow_proxy_certs.
 weight: 801
 verify-cert: X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED

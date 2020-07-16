@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_INVALID_CALL
 slug: x509-v-err-invalid-call
-tags: [ openssl, uncategorized ]
-openssl-docs: |
+tags: [ uncategorized ]
+docs: |
   Invalid certificate verification context.
 weight: 805

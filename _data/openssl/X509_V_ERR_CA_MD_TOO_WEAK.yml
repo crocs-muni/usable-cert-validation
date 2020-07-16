@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_CA_MD_TOO_WEAK
 slug: x509-v-err-ca-md-too-weak
-tags: [ openssl, algorithm ]
-openssl-docs: |
+tags: [ algorithm ]
+docs: |
   CA signature digest algorithm too weak.
 botan-code: UNTRUSTED_HASH
 botan-docs: |

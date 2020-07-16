@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_SUITE_B_INVALID_ALGORITHM
 slug: x509-v-err-suite-b-invalid-algorithm
-tags: [ openssl, algorithm ]
-openssl-docs: |
+tags: [ algorithm ]
+docs: |
   Suite B: invalid public key algorithm.
 weight: 605
 verify-cert: X509_V_ERR_SUITE_B_INVALID_ALGORITHM

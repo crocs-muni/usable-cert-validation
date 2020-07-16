@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_EXCLUDED_VIOLATION
 slug: x509-v-err-excluded-violation
-tags: [ openssl, name ]
-openssl-docs: |
+tags: [ name ]
+docs: |
   Excluded subtree violation.
 gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
 gnutls-docs: |

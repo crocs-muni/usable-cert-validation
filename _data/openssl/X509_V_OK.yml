@@ -1,7 +1,7 @@
 error-code: X509_V_OK
 slug: x509-v-ok
-tags: [ openssl, uncategorized ]
-openssl-docs: |
+tags: [ uncategorized ]
+docs: |
   The operation was successful.
 botan-code: OK
 weight: 819

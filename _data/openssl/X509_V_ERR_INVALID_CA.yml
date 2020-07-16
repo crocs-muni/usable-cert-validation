@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_INVALID_CA
 slug: x509-v-err-invalid-ca
-tags: [ openssl, extension ]
-openssl-docs: |
+tags: [ extension ]
+docs: |
   A CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
 gnutls-code: GNUTLS_CERT_SIGNER_NOT_CA
 gnutls-docs: |

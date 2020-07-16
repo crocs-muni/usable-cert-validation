@@ -1,6 +1,6 @@
 error-code: X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD
 slug: x509-v-err-error-in-crl-next-update-field
-tags: [ openssl, format ]
-openssl-docs: |
+tags: [ format ]
+docs: |
   The CRL nextUpdate field contains an invalid time.
 weight: 706

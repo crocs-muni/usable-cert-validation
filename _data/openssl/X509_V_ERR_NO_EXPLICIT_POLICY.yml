@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_NO_EXPLICIT_POLICY
 slug: x509-v-err-no-explicit-policy
-tags: [ openssl, usage ]
-openssl-docs: |
+tags: [ usage ]
+docs: |
   No explicit policy.
 weight: 504
 verify-cert: X509_V_ERR_NO_EXPLICIT_POLICY

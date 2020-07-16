@@ -1,7 +1,7 @@
 error-code: X509_V_ERR_UNABLE_TO_GET_CRL
 slug: x509-v-err-unable-to-get-crl
-tags: [ openssl, trust ]
-openssl-docs: |
+tags: [ trust ]
+docs: |
   The CRL of a certificate could not be found.
 weight: 206
 verify-cert: X509_V_ERR_UNABLE_TO_GET_CRL
