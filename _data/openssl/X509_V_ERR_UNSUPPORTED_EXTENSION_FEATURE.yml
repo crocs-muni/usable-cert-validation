@@ -3,5 +3,6 @@ slug: x509-v-err-unsupported-extension-feature
 tags: [ extension ]
 docs: |
   Unsupported extension feature.
-unused: As of now only defined in the code but not used.
+unused: |
+  As of now only defined in the code but not used.
 weight: 206
