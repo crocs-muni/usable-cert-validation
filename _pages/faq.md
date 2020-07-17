@@ -1,7 +1,8 @@
 ---
-layout: default
-title:  Frequently asked questions
-slug:   faq
+layout:     default
+title:      Frequently asked questions
+title-nav:  Project FAQ
+slug:       faq
 ---
 <div class="section"><div class="container" markdown="1">
 <h1 id="faq">{{ page.title }}</h1>

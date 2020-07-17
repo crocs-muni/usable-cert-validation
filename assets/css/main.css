@@ -1,7 +1,6 @@
 /* Common HTML tags */
 
 body {
-    padding-top: 3rem;
     font-family: 'Source Sans Pro', sans-serif !important;
     font-size: 1.0rem;
     position: relative;
@@ -24,6 +23,8 @@ main {
 
 h1 {
     font-weight: bold;
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
 }
 
 h3 {
@@ -107,16 +108,23 @@ blockquote {
     background: #FAFAFA;
 }
 
-.navbar {
+.navbar-scrolled {
+    box-shadow: 0 3px 10px #e2e2ff;
     background: #F7F7F7;
 }
 
-.navbar-scrolled {
-    box-shadow: 0 3px 10px #e2e2ff;
+.navbar-brand {
+    width: 0px;
+    overflow: hidden;
+}
+
+.navbar-scrolled .navbar-brand {
+    width: auto;
 }
 
 .navbar-brand .fa-stack {
     width: 1.5em;
+    margin-top: -0.2rem;
 }
 
 .navbar a {
