@@ -79,6 +79,47 @@ blockquote {
     color: #6c757d;
 }
 
+/* Feedback box */
+
+#feedback {
+    position: fixed;
+    left: 0;
+    top: 15%;
+    margin-left: -3px;
+}
+
+@media screen and (max-width: 768px) {
+    #feedback {
+        display: none;
+    }
+}
+
+#feedback .card {
+    float: left;
+    width: 300px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    background-color: #FAFAFA;
+    transition: margin .25s ease;
+}
+
+#feedback .card.collapsed {
+    margin-left: -300px;
+}
+
+#feedback .btn-secondary {
+    float: right;
+    font-size: 1.5rem;
+    margin-top: 120px;
+    margin-left: -3.6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    background-color: #6c757d;
+    transform: rotate(90deg);
+}
+
+#feedback .btn-secondary:hover { background-color: #505050; }
+
 /* Core design: sectioning, header, footer, buttons */
 
 .color-firebrick { color: firebrick; }
@@ -109,7 +150,7 @@ blockquote {
 }
 
 .navbar-scrolled {
-    box-shadow: 0 3px 10px #e2e2ff;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
     background: #F7F7F7;
 }
 
