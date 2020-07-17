@@ -3,5 +3,6 @@ slug: x509-v-err-unable-to-decrypt-crl-signature
 tags: [ format ]
 docs: |
   The CRL signature could not be decrypted: this means that the actual signature value could not be determined rather than it not matching the expected value. Unused.
-unused: As of now only defined in the code but not used. Also marked as unused in the docs.
+unused: |
+  As of now only defined in the code but not used. Also marked as unused in the docs.
 weight: 708
