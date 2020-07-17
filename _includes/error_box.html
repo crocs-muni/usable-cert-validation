@@ -54,6 +54,9 @@
                 <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
             {% endif %}
         {% endif %}
+        {% if include.page.unused %}
+            <p><i><b>{% include icon.html icon="unused" %}Unused: </b>{{ include.page.unused }}</i></p>
+        {% endif %}
         {% if include.page.gnutls-code %}
             <h3>
             {% include icon.html icon="gnutls-book" %}
