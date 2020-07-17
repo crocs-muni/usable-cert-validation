@@ -4,6 +4,7 @@ description: Let's make the validation of TLS certificates usable.
 author: Centre for Research on Cryptography and Security, Masaryk University, Czechia
 url: https://x509errors.cz
 repo-url: https://github.com/crocs-muni/usable-cert-validation
+email: webmaster@x509errors.org
 
 # Build settings
 include: [ ".well-known" ]
