@@ -1,11 +1,12 @@
+// Collapse error details at page load
 $(document).ready(function(){
-    // Collapse error details.
     $('.collapse.show')
         .removeClass('show')
         .siblings('.card-header')
         .addClass('collapsed');
 });
-// Show navbar if necessaryAdd shadow under navbar if the page is scrolled already on load.
+
+// Show navbar if necessary at page load and after scroll
 function showNavbar() {
     var scrolled = $(this).scrollTop();
     if($(".navbar").offset().top > 50) {
@@ -16,3 +17,15 @@ function showNavbar() {
 };
 $(window).scroll(showNavbar);
 $(document).ready(showNavbar);
+
+// Open feedback tab after click
+$(function() {
+	$("#feedback .btn-secondary").click(function() {
+        var feedback_box = $("#feedback .btn-secondary").siblings('.card');
+        if (feedback_box.hasClass('collapsed')) {
+            feedback_box.removeClass('collapsed');
+        } else {
+            feedback_box.addClass('collapsed');
+        }
+	});
+});
