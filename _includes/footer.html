@@ -1,12 +1,16 @@
-<div class="page-footer">
+<footer">
     <div class="container clearfix">
-        <span class="float-left">
+        <span class="footer-left">
+            <a class="no-ext-link-icon" href="mailto:{{ site.email }}" title="Contact email">
+            <span class="fas fa-fw fa-envelope"></span> {{ site.email }}</a><br/>
+            <a class="no-ext-link-icon" href="{{ site.repo-url }}" title="GitHub repository">
+            <span class="fab fa-fw fa-github"></span> usable-cert-validation</a><br/>
+            <a class="no-ext-link-icon" href="{{ site.repo-url }}/commit/{{ site.git.commit_hash }}" title="Last modification">
+            <span class="fas fa-fw fa-clock"></span> {{ site.git.commit_date }}</a>
+        </span>
+        <span class="footer-right">
             &copy; 2019 <a class="no-ext-link-icon" href="https://muni.cz/">Masaryk University</a><br/>
             <a class="no-ext-link-icon" href="https://crocs.fi.muni.cz/">Centre for Research on Cryptography and Security</a>
         </span>
-        <span class="float-right">
-            <a lass="no-ext-link-icon" href="mailto:webmaster@x509errors.org">webmaster@x509errors.org</a><br/>
-            Last change: <a class="no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation/commit/{{ site.git.commit_hash }}" title="commit {{ site.git.commit_hash_short }}">{{ site.git.commit_date }}</a>
-        </span>
     </div>
-</div>
+</footer>

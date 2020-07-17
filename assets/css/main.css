@@ -2,18 +2,24 @@
 
 body {
     padding-top: 3rem;
-    padding-bottom: 2rem;
     font-family: 'Source Sans Pro', sans-serif !important;
     font-size: 1.0rem;
     position: relative;
-    min-height: 100vh;
     text-align: justify;
+    /* learn more: http://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/ */
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
 }
 
 @media screen and (max-width: 768px) {
     body {
         text-align: left;
     }
+}
+
+main {
+    flex: 1;
 }
 
 h1 {
@@ -30,6 +36,10 @@ h1:target,
 h2:target {
     padding-top: 5rem;
     margin-top: -5rem;
+}
+
+.container p:last-of-type {
+    margin-bottom: 0;
 }
 
 a {
@@ -126,24 +136,38 @@ blockquote {
     padding-right: 1rem;
 }
 
-.page-footer {
-    position: absolute;
-    bottom: 0;
+footer {
     width: 100%;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
     background: #E7E7E7;
     color: #303030;
-    font-size: 80%;
 }
 
-.page-footer a {
+footer a {
     color: #303030;
+}
+
+footer a:hover {
     text-decoration: none;
 }
 
-.page-footer .float-right {
+footer .footer-left {
+    float: left;
+}
+
+footer .footer-right {
+    float: right;
     text-align: right;
+}
+
+
+@media screen and (max-width: 768px) {
+    footer .footer-right {
+        margin-top: 1rem;
+        float: left;
+        text-align: left;
+    }
 }
 
 .card {
