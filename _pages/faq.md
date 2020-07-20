@@ -36,7 +36,7 @@ Not in the X.509 certificate world (as far as we know). If we speak about APIs i
 
 ## Has there been any real-world impact so far?
 
-As of late 2019, we are gradually contacting the library developers to collect feedback. Furthermore, research that led to this problem is gradually getting published on various venues (see below). Last but not lest, as we find smaller issues, we directly file issues and pull requests in the library repositories (e.g. OpenSSL [man invocation improvement](https://github.com/openssl/openssl/issues/4548), [web documentation fix](https://github.com/openssl/web/issues/24#issuecomment-353961715) or [error documentation fix](https://github.com/openssl/openssl/pull/9529)).
+As of late 2019, we are gradually contacting the library developers to collect feedback. Furthermore, research that led to this problem is gradually getting published on various venues (see below). Last but not least, as we find smaller issues, we directly file issues and pull requests in the library repositories (e.g. OpenSSL [man invocation improvement](https://github.com/openssl/openssl/issues/4548), [web documentation fix](https://github.com/openssl/web/issues/24#issuecomment-353961715) or [error documentation fix](https://github.com/openssl/openssl/pull/9529)).
 
 </div></div>
 
