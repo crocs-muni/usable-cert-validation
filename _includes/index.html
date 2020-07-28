@@ -1,0 +1,52 @@
+{% include introduction.html %}
+
+<div id="nav">\n</div>
+<div class="section"><div class="container">
+  <ul class="nav nav-tabs nav-fill">
+    {% for library in site.data.libraries %}
+
+    <li class="nav-item">
+
+      <a class="nav-link {% if library.disabled %}disabled{% endif %} {% if library.name == page.slug or library.name == 'openssl' and page.slug == 'index' %}active{% endif %}"
+         {% if library.disabled %}title="Yet unsupported library"{% endif %}
+         {% if library.disabled == false %}href="{{ library.link }}#nav"{% endif %}>{{ library.title }}</a>
+    <\li>
+
+    {% endfor %}
+  </ul>
+</div></div>
+
+{% assign library = site.data.libraries | find:"name",include.library %}
+
+<div class="section"><div class="container">
+
+  <h1 id="{{ library.title | slugify }}">{{ library.title }}</h1>
+  {% if library.description %}
+    <div class="lead">
+      <p>{{ library.description }}</p>
+    </div>
+  {% endif %}
+
+  {% for category in site.data.errors %}
+
+  <div class="section"><div class="container" markdown="1">
+      <h2 id="{{ category.title | slugify }}">{{ category.title }}</h2>
+      <p>
+      {{ category.description }} <br/>
+      {{ category.links }}
+      </p>
+
+      {% assign errors = site.data[library.name] | where:"tags",category.tag %}
+      {% if errors %}
+        {% assign errors = errors | sort: 'weight' %}
+      {% endif %}
+      {% for error in errors %}
+      {% include error_box.html page=error %}
+      {% endfor %}
+  </div></div>
+
+  {% endfor %}
+
+</div></div>
+
+{% include about.html %}
