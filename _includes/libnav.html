@@ -1,17 +1,22 @@
-<!-- Temporary solution, feel free to change it to something more reasonable -->
-<div id="nav">\n</div>
-
 <div class="section"><div class="container">
-  <ul class="nav nav-tabs nav-fill">
+  <ul class="nav nav-tabs nav-fill" id="myTab" role="tablist">
     {% for library in site.data.libraries %}
 
     <li class="nav-item">
-
-      <a class="nav-link {% if library.disabled %}disabled{% endif %} {% if library.name == page.slug or library.name == 'openssl' and page.slug == 'index' %}active{% endif %}"
-         {% if library.disabled %}title="Not yet supported"{% endif %}
-         {% if library.disabled == false %}href="{{ library.link }}#nav"{% endif %}>{{ library.nav-title }}</a>
-    <\li>
+      <a class="nav-link {% if library.name == 'openssl' %}active{% endif %} {% if library.disabled %}disabled{% endif %}"
+         id="{{ library.name }}-tab" data-toggle="tab"
+         href="#{{ library.name }}" role="tab"
+         aria-controls="{{ library.name }}" aria-selected="true">{{ library.nav-title }}</a>
+    </li>
 
     {% endfor %}
   </ul>
 </div></div>
+
+<div class="tab-content" id="myTabContent">
+  {% for library in site.data.libraries %}
+    <div class="tab-pane fade {%if library.name == 'openssl' %}show active{% endif %}"
+         id="{{ library.name }}" role="tabpanel"
+         aria-labelledby="{{ library.name }}-tab">{% include errors.html library=library.name %}</div>
+  {% endfor %}
+</div>
