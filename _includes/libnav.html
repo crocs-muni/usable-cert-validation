@@ -1,0 +1,17 @@
+<!-- Temporary solution, feel free to change it to something more reasonable -->
+<div id="nav">\n</div>
+
+<div class="section"><div class="container">
+  <ul class="nav nav-tabs nav-fill">
+    {% for library in site.data.libraries %}
+
+    <li class="nav-item">
+
+      <a class="nav-link {% if library.disabled %}disabled{% endif %} {% if library.name == page.slug or library.name == 'openssl' and page.slug == 'index' %}active{% endif %}"
+         {% if library.disabled %}title="Not yet supported"{% endif %}
+         {% if library.disabled == false %}href="{{ library.link }}#nav"{% endif %}>{{ library.nav-title }}</a>
+    <\li>
+
+    {% endfor %}
+  </ul>
+</div></div>

@@ -1,23 +1,28 @@
 - name: "openssl"
-  title: "OpenSSL"
+  title: "OpenSSL errors"
+  nav-title: "OpenSSL"
   link: "/"
   disabled: false
   description: |
-    The Biggest TLS library used, the OpenSSL.
+    By far the most used library for cryptography and working with with TLS
+    certificates.
 
 - name: "gnutls"
-  title: "GnuTLS"
+  title: "GnuTLS errors"
+  nav-title: "GnuTLS"
   link: "gnutls"
-  disabled: false
+  disabled: true
   description: |
     Not as popular but also very frequently used library.
 
 - name: "botan"
-  title: "Botan"
+  title: "Botan errors"
+  nav-title: "Botan"
   link: "botan"
   disabled: true
 
 - name: "mbedtls"
-  title: "mbedTLS"
+  title: "mbedTLS errors"
+  nav-title: "mbedTLS"
   link: "mbedtls"
   disabled: true

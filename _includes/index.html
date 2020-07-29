@@ -1,28 +1,12 @@
 {% include introduction.html %}
 
-<!-- Temporary solution, feel free to change it to something more reasonable -->
-<div id="nav">\n</div>
-
-<div class="section"><div class="container">
-  <ul class="nav nav-tabs nav-fill">
-    {% for library in site.data.libraries %}
-
-    <li class="nav-item">
-
-      <a class="nav-link {% if library.disabled %}disabled{% endif %} {% if library.name == page.slug or library.name == 'openssl' and page.slug == 'index' %}active{% endif %}"
-         {% if library.disabled %}title="Yet unsupported library"{% endif %}
-         {% if library.disabled == false %}href="{{ library.link }}#nav"{% endif %}>{{ library.title }}</a>
-    <\li>
-
-    {% endfor %}
-  </ul>
-</div></div>
+{% include libnav.html %}
 
 {% assign library = site.data.libraries | find:"name",include.library %}
 
 <div class="section"><div class="container">
 
-  <h1 id="{{ library.title | slugify }}">{{ library.title }}</h1>
+  <h1 id="{{ library.name | slugify }}">{{ library.title }}</h1>
   {% if library.description %}
     <div class="lead">
       <p>{{ library.description }}</p>
