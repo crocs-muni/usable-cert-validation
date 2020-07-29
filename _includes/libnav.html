@@ -4,6 +4,7 @@
 
     <li class="nav-item">
       <a class="nav-link {% if library.name == 'openssl' %}active{% endif %} {% if library.disabled %}disabled{% endif %}"
+         {% if library.disabled %}title="Not yet supported."{% endif %}
          id="{{ library.name }}-tab" data-toggle="tab"
          href="#{{ library.name }}" role="tab"
          aria-controls="{{ library.name }}" aria-selected="true">{{ library.nav-title }}</a>
