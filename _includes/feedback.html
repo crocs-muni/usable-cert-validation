@@ -2,9 +2,9 @@
     <div class="card card-body collapsed">
         <h4>Feedback</h4>
         <p>Something is not working? File a bug report to our repository, please.</p>
-        <a class="btn btn-primary d-block mb-3" href="{{ site.repo-url }}/issues/new?labels=bug&title=Bug+report&body=Please+describe+what+does+not+work..."><span class="fas fa-fw fa-bug"></span> Bug report</a>
+        <a class="btn btn-primary d-block mb-3" href="{{ site.repo-url }}/issues/new?labels=bug&title=Bug+report&body=Please+describe+what+does+not+work...">{% include icon.html icon="button-bug" %} Bug report</a>
         <p>Other comments or ideas?</p>
-        <a class="btn btn-primary d-block" target="_blank" href="mailto:{{ site.email }}?subject=Site+feedback"><span class="fas fa-fw fa-envelope"></span> Email us!</a>
+        <a class="btn btn-primary d-block" target="_blank" href="mailto:{{ site.email }}?subject=Site+feedback">{% include icon.html icon="button-email" %} Email us!</a>
     </div>
     <div class="btn btn-secondary"><span class="fas fa-fw fa-question-circle"></span> Feedback</div>
 </div>
