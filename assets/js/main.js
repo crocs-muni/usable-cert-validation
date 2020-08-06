@@ -29,3 +29,11 @@ $(function() {
         }
 	});
 });
+
+// Drop justShown class after a delay
+$(function() {
+	$(".collapsed").click(function() {
+        $(".justShown").removeClass('justShown');
+        $(this).addClass('justShown');
+	});
+});
