@@ -12,6 +12,6 @@ verify-command: |
     openssl verify -CAfile ca.crt -auth_level 1 endpoint.crt
 verify-expected: |
     error 66 at 0 depth lookup: EE certificate key too weak
-verify-mbedtls: |
+verify-mbed: |
     mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
 

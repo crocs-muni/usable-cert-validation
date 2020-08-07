@@ -17,6 +17,6 @@ verify-expected: |
     error 11 at 0 depth lookup: CRL is not yet valid
 verify-gnutls: |
     certtool --load-ca-certificate ca.crt --infile ca.crl --verify-crl
-verify-mbedtls: |
+verify-mbed: |
     mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt crl_file=ca.crl
 

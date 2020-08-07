@@ -17,6 +17,6 @@ verify-expected: |
     error 68 at 0 depth lookup: CA signature digest algorithm too weak
 verify-botan: |
     botan cert_verify endpoint.crt ca.crt
-verify-mbedtls: |
+verify-mbed: |
     mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
     
