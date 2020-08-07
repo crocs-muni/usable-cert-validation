@@ -1,11 +1,15 @@
 - name: openssl
   title: OpenSSL
+  source: https://www.openssl.org/docs/man1.1.1/man1/openssl-verify.html
 
 - name: gnutls
   title: GnuTLS
+  source: https://www.gnutls.org/manual/gnutls.html#index-verifying-certificate-paths
 
 - name: botan
   title: Botan
+  source: https://botan.randombit.net/doxygen/cert__status_8cpp_source.html
 
 - name: mbed
   title: mbedTLS
+  source: https://github.com/ARMmbed/mbedtls/blob/master/library/x509_crt.c#L1666

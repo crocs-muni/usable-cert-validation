@@ -1,0 +1,8 @@
+error-code: CA_CERT_NOT_FOR_CERT_ISSUER
+slug: ca-cert-not-for-cert-issuer
+tags: [ extension ]
+docs: |
+  CA certificate not allowed to issue certs
+verify-command: |
+  botan cert_verify endpoint.crt subca.crt ca.crt 
+

@@ -1,0 +1,8 @@
+error-code: GNUTLS_CERT_SIGNATURE_FAILURE
+slug: gnutls-cert-signature-failure
+tags: [ format ]
+docs: |
+  The signature verification failed.
+verify-command: |
+  certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
+

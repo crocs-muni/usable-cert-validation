@@ -1,0 +1,5 @@
+error-code: CERT_IS_REVOKED
+slug: cert-is-revoked
+tags: [ time ]
+docs: |
+  Certificate is revoked

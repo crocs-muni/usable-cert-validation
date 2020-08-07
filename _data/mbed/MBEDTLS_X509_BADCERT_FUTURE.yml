@@ -1,0 +1,8 @@
+error-code: MBEDTLS_X509_BADCERT_FUTURE
+slug: mbedtls-x509-badcert-future
+tags: [ time ]
+docs: |
+  The certificate validity starts in the future
+verify-command: |
+  mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt
+

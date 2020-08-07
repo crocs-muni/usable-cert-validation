@@ -1,0 +1,8 @@
+error-code: UNTRUSTED_HASH
+slug: untrusted-hash
+tags: [ algorithm ]
+docs: |
+  Hash function used is considered too weak for security
+verify-command: |
+  botan cert_verify endpoint.crt ca.crt
+

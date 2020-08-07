@@ -1,0 +1,8 @@
+error-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
+slug: mbedtls-x509-badcert-not-trusted
+tags: [ extension ]
+docs: |
+  The certificate is not correctly signed by the trusted CA
+verify-command: |
+  mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
+

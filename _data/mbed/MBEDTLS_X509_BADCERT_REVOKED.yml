@@ -1,0 +1,8 @@
+error-code: MBEDTLS_X509_BADCERT_REVOKED
+slug: mbedtls-x509-badcert-revoked
+tags: [ time ]
+docs: |
+  The certificate has been revoked (is on a CRL)
+verify-command: |
+  mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt crl_file=/ca.crl
+

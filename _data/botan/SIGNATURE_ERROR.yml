@@ -1,0 +1,8 @@
+error-code: SIGNATURE_ERROR
+slug: signature-error
+tags: [ format ]
+docs: |
+  Signature error
+verify-command: |
+  botan cert_verify endpoint.crt ca.crt
+

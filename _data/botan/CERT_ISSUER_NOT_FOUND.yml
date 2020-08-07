@@ -1,0 +1,8 @@
+error-code: CERT_ISSUER_NOT_FOUND
+slug: cert-issuer-not-found
+tags: [ trust ]
+docs: |
+  Certificate issuer not found
+verify-command: |
+  botan cert_verify endpoint.crt
+

@@ -1,0 +1,8 @@
+error-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
+slug: gnutls-cert-signer-constraints-failure
+tags: [ name ]
+docs: |
+  The certificate’s signer constraints were violated.
+verify-command: |
+  certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
+

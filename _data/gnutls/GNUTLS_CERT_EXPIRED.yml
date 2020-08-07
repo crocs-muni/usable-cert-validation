@@ -1,0 +1,8 @@
+error-code: GNUTLS_CERT_EXPIRED
+slug: gnutls-cert-expired
+tags: [ time ]
+docs: |
+  The certificate has expired.
+verify-command: |
+  certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
+

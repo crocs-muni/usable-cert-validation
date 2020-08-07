@@ -1,0 +1,8 @@
+error-code: GNUTLS_CERT_REVOCATION_DATA_ISSUED_IN_FUTURE
+slug: gnutls-cert-revocation-data-issued-in-future
+tags: [ time ]
+docs: |
+  The revocation data have a future issue date.
+verify-command: |
+  certtool --load-ca-certificate ca.crt --infile ca.crl --verify-crl
+
