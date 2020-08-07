@@ -1,0 +1,8 @@
+error-code: CERT_NOT_YET_VALID
+slug: cert-not-yet-valid
+tags: [ time ]
+docs: |
+  Certificate is not yet valid
+verify-command: |
+  botan cert_verify endpoint.crt ca.crt
+

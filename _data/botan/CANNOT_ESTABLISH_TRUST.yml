@@ -1,0 +1,8 @@
+error-code: CANNOT_ESTABLISH_TRUST
+slug: cannot-establish-trust
+tags: [ trust ]
+docs: |
+  Cannot establish trust
+verify-command: |
+  botan cert_verify chain.crt
+

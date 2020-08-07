@@ -1,0 +1,6 @@
+error-code: OK
+slug: ok
+tags: [ uncategorized ]
+verify-command: |
+  botan cert_verify endpoint.crt ca.crt
+

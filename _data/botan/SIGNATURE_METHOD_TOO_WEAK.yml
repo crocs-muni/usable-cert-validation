@@ -1,0 +1,8 @@
+error-code: SIGNATURE_METHOD_TOO_WEAK
+slug: signature-method-too-weak
+tags: [ algorithm ]
+docs: |
+  Signature method too weak
+verify-command: |
+  botan cert_verify endpoint.crt ca.crt
+

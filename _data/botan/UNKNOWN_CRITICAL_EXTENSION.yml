@@ -1,0 +1,8 @@
+error-code: UNKNOWN_CRITICAL_EXTENSION
+slug: unknown-critical-extension
+tags: [ extension ]
+docs: |
+  Unknown critical extension encountered
+verify-command: |
+  botan cert_verify endpoint.crt ca.crt
+

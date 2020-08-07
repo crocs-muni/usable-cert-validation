@@ -1,0 +1,8 @@
+error-code: GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS
+slug: gnutls-cert-unknown-crit-extensions
+tags: [ extension ]
+docs: |
+  The certificate has extensions marked as critical which are not supported.
+verify-command: |
+  certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
+
