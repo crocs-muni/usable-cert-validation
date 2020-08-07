@@ -22,6 +22,6 @@ verify-gnutls: |
     certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
 verify-botan: |
     botan cert_verify endpoint.crt ca.crt
-verify-mbedtls: |
+verify-mbed: |
     mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt
 

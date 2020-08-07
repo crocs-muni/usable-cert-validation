@@ -17,6 +17,6 @@ verify-expected: |
     error 12 at 0 depth lookup: CRL has expired
 verify-gnutls: |
     certtool --load-ca-certificate ca.crt --infile ca.crl --verify-crl
-verify-mbedtls: |
+verify-mbed: |
     mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt crl_file=ca.crl
 

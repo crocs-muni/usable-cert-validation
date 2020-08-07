@@ -20,6 +20,6 @@ verify-expected: |
     error 23 at 0 depth lookup: certificate revoked
 verify-gnutls: |
     certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-mbedtls: |
+verify-mbed: |
     mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt crl_file=/ca.crl
 
