@@ -4,22 +4,11 @@ tags: [ trust ]
 docs: |
   The passed certificate is self-signed and the same certificate cannot be found in the list of trusted certificates.
 gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
-gnutls-docs: |
-  The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list.
 botan-code: CANNOT_ESTABLISH_TRUST
-botan-docs: |
-  Cannot establish trust
 mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
-mbed-docs: |
-  The certificate is not correctly signed by the trusted CA
 weight: 203
 verify-cert: X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT
 verify-command: |
-    openssl verify endpoint.crt
+  openssl verify endpoint.crt
 verify-expected: |
-    error 18 at 0 depth lookup: self signed certificate
-verify-gnutls: |
-    certtool --verify --infile endpoint.crt
-verify-botan: |
-    botan cert_verify endpoint.crt
-
+  error 18 at 0 depth lookup: self signed certificate

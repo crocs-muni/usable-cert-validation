@@ -4,24 +4,11 @@ tags: [ time ]
 docs: |
   The certificate is not yet valid: the notBefore date is after the current time.
 gnutls-code: GNUTLS_CERT_NOT_ACTIVATED
-gnutls-docs: |
-  The certificate is not yet activated.
 botan-code: CERT_NOT_YET_VALID
-botan-docs: |
-  Certificate is not yet valid
 mbed-code: MBEDTLS_X509_BADCERT_FUTURE
-mbed-docs: |
-  The certificate validity starts in the future
 weight: 101
 verify-cert: X509_V_ERR_CERT_NOT_YET_VALID
 verify-command: |
-    openssl verify -CAfile ca.crt endpoint.crt
+  openssl verify -CAfile ca.crt endpoint.crt
 verify-expected: |
-    error 9 at 0 depth lookup: certificate is not yet valid
-verify-gnutls: |
-    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-botan: |
-    botan cert_verify endpoint.crt ca.crt
-verify-mbed: |
-    mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt
-
+  error 9 at 0 depth lookup: certificate is not yet valid

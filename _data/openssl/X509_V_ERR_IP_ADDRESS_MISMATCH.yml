@@ -6,6 +6,6 @@ docs: |
 weight: 403
 verify-cert: X509_V_ERR_IP_ADDRESS_MISMATCH
 verify-command: |
-    openssl verify -CAfile ca.crt -verify_ip 192.168.0.0. endpoint.crt
+  openssl verify -CAfile ca.crt -verify_ip 192.168.0.0. endpoint.crt
 verify-expected: |
-    error 64 at 0 depth lookup: IP address mismatch
+  error 64 at 0 depth lookup: IP address mismatch

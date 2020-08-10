@@ -6,6 +6,6 @@ docs: |
 weight: 804
 verify-cert: X509_V_ERR_PROXY_SUBJECT_NAME_VIOLATION
 verify-command: |
-    openssl verify -allow_proxy_certs -CAfile ca.crt -untrusted endpoint.crt proxy.crt
+  openssl verify -allow_proxy_certs -CAfile ca.crt -untrusted endpoint.crt proxy.crt
 verify-expected: |
-    error 72 at 0 depth lookup: proxy subject name violation
+  error 72 at 0 depth lookup: proxy subject name violation

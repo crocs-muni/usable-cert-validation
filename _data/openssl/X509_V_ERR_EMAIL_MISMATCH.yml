@@ -6,6 +6,6 @@ docs: |
 weight: 402
 verify-cert: X509_V_ERR_EMAIL_MISMATCH
 verify-command: |
-    openssl verify -CAfile ca.crt -verify_email crocs@muni.cz endpoint.crt
+  openssl verify -CAfile ca.crt -verify_email crocs@muni.cz endpoint.crt
 verify-expected: |
-    error 63 at 0 depth lookup: Email address mismatch
+  error 63 at 0 depth lookup: Email address mismatch

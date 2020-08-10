@@ -4,24 +4,11 @@ tags: [ format ]
 docs: |
   The signature of the certificate is invalid.
 gnutls-code: GNUTLS_CERT_SIGNATURE_FAILURE
-gnutls-docs: |
-  The signature verification failed.
 botan-code: SIGNATURE_ERROR
-botan-docs: |
-  Signature error
 mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
-mbed-docs: |
-  The certificate is not correctly signed by the trusted CA
 weight: 701
 verify-cert: X509_V_ERR_CERT_SIGNATURE_FAILURE
 verify-command: |
-    openssl verify -CAfile ca.crt endpoint.crt
+  openssl verify -CAfile ca.crt endpoint.crt
 verify-expected: |
-    error 7 at 0 depth lookup: certificate signature failure
-verify-gnutls: |
-    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-botan: |
-    botan cert_verify endpoint.crt ca.crt
-verify-mbed: |
-    mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-
+  error 7 at 0 depth lookup: certificate signature failure

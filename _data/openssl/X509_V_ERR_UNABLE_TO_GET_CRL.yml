@@ -6,6 +6,6 @@ docs: |
 weight: 206
 verify-cert: X509_V_ERR_UNABLE_TO_GET_CRL
 verify-command: |
-    openssl verify -crl_check -CAfile ca.crt endpoint.crt
+  openssl verify -crl_check -CAfile ca.crt endpoint.crt
 verify-expected: |
-    error 3 at 0 depth lookup: unable to get certificate CRL
+  error 3 at 0 depth lookup: unable to get certificate CRL

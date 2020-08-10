@@ -4,22 +4,11 @@ tags: [ time ]
 docs: |
   The certificate has been revoked.
 gnutls-code: GNUTLS_CERT_REVOKED
-gnutls-docs: |
-  Certificate is revoked by its authority. In X.509 this will be set only if CRLs are checked.
 botan-code: CERT_IS_REVOKED
-botan-docs: |
-  Certificate is revoked
 mbed-code: MBEDTLS_X509_BADCERT_REVOKED
-mbed-docs: |
-  The certificate has been revoked (is on a CRL)
 weight: 105
 verify-cert: X509_V_ERR_CERT_REVOKED
 verify-command: |
-    openssl verify -CAfile ca.crt -CRLfile ca.crl -crl_check endpoint.crt
+  openssl verify -CAfile ca.crt -CRLfile ca.crl -crl_check endpoint.crt
 verify-expected: |
-    error 23 at 0 depth lookup: certificate revoked
-verify-gnutls: |
-    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-mbed: |
-    mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt crl_file=/ca.crl
-
+  error 23 at 0 depth lookup: certificate revoked

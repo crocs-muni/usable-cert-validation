@@ -6,13 +6,6 @@ docs: |
 weight: 709
 verify-cert: X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY
 verify-command: |
-    openssl verify -CAfile ca.crt endpoint.crt
+  openssl verify -CAfile ca.crt endpoint.crt
 verify-expected: |
-    error 6 at 1 depth lookup: unable to decode issuer public key
-verify-gnutls: |
-    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-botan: |
-    botan cert_verify endpoint.crt ca.crt
-verify-mbed: |
-    mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-
+  error 6 at 1 depth lookup: unable to decode issuer public key

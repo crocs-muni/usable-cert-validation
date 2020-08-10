@@ -4,24 +4,11 @@ tags: [ time ]
 docs: |
   The certificate has expired: that is the notAfter date is before the current time.
 gnutls-code: GNUTLS_CERT_EXPIRED
-gnutls-docs: |
-  The certificate has expired.
 botan-code: CERT_HAS_EXPIRED
-botan-docs: |
-  Certificate has expired
 mbed-code: MBEDTLS_X509_BADCERT_EXPIRED
-mbed-docs: |
-  The certificate validity has expired
 weight: 102
 verify-cert: X509_V_ERR_CERT_HAS_EXPIRED
 verify-command: |
-    openssl verify -CAfile ca.crt endpoint.crt
+  openssl verify -CAfile ca.crt endpoint.crt
 verify-expected: |
-    error 10 at 0 depth lookup: certificate has expired
-verify-gnutls: |
-    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-botan: |
-    botan cert_verify endpoint.crt ca.crt
-verify-mbed: |
-    mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt
-
+  error 10 at 0 depth lookup: certificate has expired
