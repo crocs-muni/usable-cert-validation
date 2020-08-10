@@ -4,19 +4,10 @@ tags: [ algorithm ]
 docs: |
   CA certificate key too weak.
 botan-code: SIGNATURE_METHOD_TOO_WEAK
-botan-docs: |
-  Signature method too weak
 mbed-code: MBEDTLS_X509_BADCERT_BAD_KEY
-mbed-docs: |
-  The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
 weight: 602
 verify-cert: X509_V_ERR_CA_KEY_TOO_SMALL
 verify-command: |
-    openssl verify -CAfile ca.crt -auth_level 1 endpoint.crt
+  openssl verify -CAfile ca.crt -auth_level 1 endpoint.crt
 verify-expected: |
-    error 67 at 1 depth lookup: CA certificate key too weak
-verify-botan: |
-    botan cert_verify endpoint.crt ca.crt
-verify-mbed: |
-    mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-
+  error 67 at 1 depth lookup: CA certificate key too weak

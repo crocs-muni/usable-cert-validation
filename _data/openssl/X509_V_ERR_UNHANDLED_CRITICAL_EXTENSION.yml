@@ -4,21 +4,10 @@ tags: [ extension ]
 docs: |
   Unhandled critical extension.
 gnutls-code: GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS
-gnutls-docs: |
-  The certificate has extensions marked as critical which are not supported.
 botan-code: UNKNOWN_CRITICAL_EXTENSION
-botan-docs: |
-  Unknown critical extension encountered
 weight: 303
 verify-cert: X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION
 verify-command: |
-    openssl verify -CAfile ca.crt endpoint.crt
+  openssl verify -CAfile ca.crt endpoint.crt
 verify-expected: |
-    error 34 at 0 depth lookup: unhandled critical extension
-verify-gnutls: |
-    certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-botan: |
-    botan cert_verify endpoint.crt ca.crt
-verify-mbed: |
-    mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-
+  error 34 at 0 depth lookup: unhandled critical extension

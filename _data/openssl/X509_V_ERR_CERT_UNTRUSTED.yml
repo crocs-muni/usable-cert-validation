@@ -3,4 +3,3 @@ slug: x509-v-err-cert-untrusted
 tags: [ unused ]
 docs: |
   The root CA is not marked as trusted for the specified purpose.
-weight:

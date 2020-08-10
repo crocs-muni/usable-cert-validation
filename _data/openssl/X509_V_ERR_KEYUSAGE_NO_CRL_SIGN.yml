@@ -6,9 +6,6 @@ docs: |
 weight: 505
 verify-cert: X509_V_ERR_KEYUSAGE_NO_CRL_SIGN
 verify-command: |
-    openssl verify -CAfile ca.crt -crl_check -CRLfile ca.crl endpoint.crt
+  openssl verify -CAfile ca.crt -crl_check -CRLfile ca.crl endpoint.crt
 verify-expected: |
-    error 35 at 0 depth lookup: key usage does not include CRL signing
-verify-gnutls: |
-    certtool --verify-crl --load-ca-certificate ca.crt &lt; ca.crl
-
+  error 35 at 0 depth lookup: key usage does not include CRL signing

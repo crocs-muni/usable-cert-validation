@@ -6,6 +6,6 @@ docs: |
 weight: 605
 verify-cert: X509_V_ERR_SUITE_B_INVALID_ALGORITHM
 verify-command: |
-    openssl verify -CAfile ca.crt -suiteB_192 endpoint.crt
+  openssl verify -CAfile ca.crt -suiteB_192 endpoint.crt
 verify-expected: |
-    error 57 at 0 depth lookup: Suite B: invalid public key algorithm
+  error 57 at 0 depth lookup: Suite B: invalid public key algorithm

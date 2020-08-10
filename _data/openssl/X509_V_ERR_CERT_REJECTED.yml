@@ -6,6 +6,6 @@ docs: |
 weight: 502
 verify-cert: X509_V_ERR_CERT_REJECTED
 verify-command: |
-    openssl verify -purpose sslserver -CAfile sca.crt endpoint.crt
+  openssl verify -purpose sslserver -CAfile sca.crt endpoint.crt
 verify-expected: |
-    error 28 at 1 depth lookup: certificate rejected
+  error 28 at 1 depth lookup: certificate rejected

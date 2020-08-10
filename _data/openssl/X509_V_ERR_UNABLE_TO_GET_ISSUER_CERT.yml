@@ -6,6 +6,6 @@ docs: |
 weight: 201
 verify-cert: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT
 verify-command: |
-    openssl verify -CAfile subca.crt -untrusted subca.crt endpoint.crt
+  openssl verify -CAfile subca.crt -untrusted subca.crt endpoint.crt
 verify-expected: |
-    error 2 at 1 depth lookup: unable to get issuer certificate
+  error 2 at 1 depth lookup: unable to get issuer certificate
