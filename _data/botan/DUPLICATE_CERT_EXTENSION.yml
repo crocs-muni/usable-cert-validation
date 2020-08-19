@@ -1,0 +1,5 @@
+error-code: DUPLICATE_CERT_EXTENSION
+slug: duplicate-cert-extension
+tags: #TODO
+docs: |
+  Duplicate certificate extension encountered

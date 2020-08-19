@@ -1,0 +1,5 @@
+error-code: GNUTLS_CERT_UNEXPECTED_OWNER
+slug: gnutls-cert-unexpected-owner
+tags: #TODO
+docs: |
+  The owner is not the expected one.

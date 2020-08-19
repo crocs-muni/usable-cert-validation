@@ -1,0 +1,5 @@
+error-code: OCSP_NOT_YET_VALID
+slug: ocsp-not-yet-valid
+tags: #TODO
+docs: |
+  OCSP is not yet valid

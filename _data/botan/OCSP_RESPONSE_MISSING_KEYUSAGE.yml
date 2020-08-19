@@ -1,0 +1,5 @@
+error-code: OCSP_RESPONSE_MISSING_KEYUSAGE
+slug: ocsp-response-missing-keyusage
+tags: #TODO
+docs: |
+  OCSP issuer's keyusage prohibits OCSP

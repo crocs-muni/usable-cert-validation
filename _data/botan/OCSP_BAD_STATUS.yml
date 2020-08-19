@@ -1,0 +1,5 @@
+error-code: OCSP_BAD_STATUS
+slug: ocsp-bad-status
+tags: #TODO
+docs: |
+  OCSP bad status

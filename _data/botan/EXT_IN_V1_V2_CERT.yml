@@ -1,0 +1,5 @@
+error-code: EXT_IN_V1_V2_CERT
+slug: ext-in-v1-v2-cert
+tags: #TODO
+docs: |
+  Encountered extension in certificate with version < 3
