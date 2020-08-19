@@ -1,0 +1,5 @@
+error-code: OCSP_RESPONSE_INVALID
+slug: ocsp-response-invalid
+tags: #TODO
+docs: |
+  OCSP parsing valid

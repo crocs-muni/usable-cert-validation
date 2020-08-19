@@ -1,0 +1,5 @@
+error-code: OCSP_CERT_NOT_LISTED
+slug: ocsp-cert-not-listed
+tags: #TODO
+docs: |
+  OCSP cert not listed

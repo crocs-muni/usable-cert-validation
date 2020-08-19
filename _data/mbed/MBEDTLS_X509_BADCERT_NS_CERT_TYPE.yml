@@ -1,0 +1,5 @@
+error-code: MBEDTLS_X509_BADCERT_NS_CERT_TYPE
+slug: mbedtls-x509-badcert-ns-cert-type
+tags: #TODO
+docs: |
+  Usage does not match the nsCertType extension.

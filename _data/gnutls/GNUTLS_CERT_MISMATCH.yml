@@ -1,0 +1,5 @@
+error-code: GNUTLS_CERT_MISMATCH
+slug: gnutls-cert-mismatch
+tags: #TODO
+docs: |
+  The certificate presented isn’t the expected one (TOFU)

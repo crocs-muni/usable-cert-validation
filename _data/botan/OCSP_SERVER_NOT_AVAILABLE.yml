@@ -1,0 +1,5 @@
+error-code: OCSP_SERVER_NOT_AVAILABLE
+slug: ocsp-server-not-available
+tags: #TODO
+docs: |
+  OCSP server not available

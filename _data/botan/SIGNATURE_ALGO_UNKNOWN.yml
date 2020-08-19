@@ -1,0 +1,5 @@
+error-code: SIGNATURE_ALGO_UNKNOWN
+slug: signature-algo-unknown
+tags: #TODO
+docs: |
+  Certificate signed with unknown/unavailable algorithm

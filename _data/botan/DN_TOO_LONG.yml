@@ -1,0 +1,5 @@
+error-code: DN_TOO_LONG
+slug: dn-too-long
+tags: #TODO
+docs: |
+  Distinguished name too long

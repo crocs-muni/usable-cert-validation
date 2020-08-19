@@ -1,0 +1,5 @@
+error-code: CERT_CHAIN_LOOP
+slug: cert-chain-loop
+tags: #TODO
+docs: |
+  Loop in certificate chain

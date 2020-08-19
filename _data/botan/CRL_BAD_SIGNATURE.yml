@@ -1,0 +1,5 @@
+error-code: CRL_BAD_SIGNATURE
+slug: crl-bad-signature
+tags: #TODO
+docs: |
+  CRL bad signature
