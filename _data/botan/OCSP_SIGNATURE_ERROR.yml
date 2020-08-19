@@ -1,5 +1,5 @@
 error-code: OCSP_SIGNATURE_ERROR
 slug: ocsp-signature-error
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   OCSP signature error

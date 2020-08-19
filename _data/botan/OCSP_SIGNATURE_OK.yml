@@ -1,5 +1,5 @@
 error-code: OCSP_SIGNATURE_OK
 slug: ocsp-signature-ok
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Signature on OCSP response was found valid

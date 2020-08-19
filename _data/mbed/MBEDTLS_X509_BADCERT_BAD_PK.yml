@@ -1,5 +1,5 @@
 error-code: MBEDTLS_X509_BADCERT_BAD_PK
 slug: mbedtls-x509-badcert-bad-pk
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).

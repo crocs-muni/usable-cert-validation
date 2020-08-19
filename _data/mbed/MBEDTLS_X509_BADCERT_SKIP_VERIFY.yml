@@ -1,5 +1,5 @@
 error-code: MBEDTLS_X509_BADCERT_SKIP_VERIFY
 slug: mbedtls-x509-badcert-skip-verify
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate verification was skipped.

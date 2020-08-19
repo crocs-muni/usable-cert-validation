@@ -1,5 +1,5 @@
 error-code: GNUTLS_CERT_INSECURE_ALGORITHM
 slug: gnutls-cert-insecure-algorithm
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   The certificate was signed using an insecure algorithm such as MD2 or MD5. These algorithms have been broken and should not be trusted.

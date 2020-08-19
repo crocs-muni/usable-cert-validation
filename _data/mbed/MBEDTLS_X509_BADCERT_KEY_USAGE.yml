@@ -1,5 +1,5 @@
 error-code: MBEDTLS_X509_BADCERT_KEY_USAGE
 slug: mbedtls-x509-badcert-key-usage
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Usage does not match the keyUsage extension.

@@ -1,5 +1,5 @@
 error-code: CERT_NAME_NOMATCH
 slug: cert-name-nomatch
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate does not match provided name

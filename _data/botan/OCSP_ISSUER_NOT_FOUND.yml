@@ -1,5 +1,5 @@
 error-code: OCSP_ISSUER_NOT_FOUND
 slug: ocsp-issuer-not-found
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Unable to find certificate issusing OCSP response

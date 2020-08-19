@@ -1,5 +1,5 @@
 error-code: MBEDTLS_X509_BADCERT_MISSING
 slug: mbedtls-x509-badcert-missing
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate was missing.

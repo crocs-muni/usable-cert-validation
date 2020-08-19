@@ -1,5 +1,5 @@
 error-code: OCSP_NO_HTTP
 slug: ocsp-no-http
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   OCSP requests not available

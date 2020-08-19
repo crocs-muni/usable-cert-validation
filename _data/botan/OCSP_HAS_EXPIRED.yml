@@ -1,5 +1,5 @@
 error-code: OCSP_HAS_EXPIRED
 slug: ocsp-has-expired
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   OCSP response has expired
