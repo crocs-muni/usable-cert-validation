@@ -1,5 +1,5 @@
 error-code: NO_MATCHING_CRLDP
 slug: no-matching-crldp
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   No CRL with matching distribution point for certificate

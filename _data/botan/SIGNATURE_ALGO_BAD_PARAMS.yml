@@ -1,5 +1,5 @@
 error-code: SIGNATURE_ALGO_BAD_PARAMS
 slug: signature-algo-bad-params
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate signature has invalid parameters

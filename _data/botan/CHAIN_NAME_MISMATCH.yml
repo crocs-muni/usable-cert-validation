@@ -1,5 +1,5 @@
 error-code: CHAIN_NAME_MISMATCH
 slug: chain-name-mismatch
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate issuer does not match subject of issuing cert

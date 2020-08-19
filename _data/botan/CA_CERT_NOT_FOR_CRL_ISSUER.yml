@@ -1,5 +1,5 @@
 error-code: CA_CERT_NOT_FOR_CRL_ISSUER
 slug: ca-cert-not-for-crl-issuer
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   CA certificate not allowed to issue CRLs

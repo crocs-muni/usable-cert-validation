@@ -1,5 +1,5 @@
 error-code: CHAIN_LACKS_TRUST_ROOT
 slug: chain-lacks-trust-root
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate chain does not end in a CA certificate

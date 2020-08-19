@@ -1,5 +1,5 @@
 error-code: OCSP_RESPONSE_INVALID
 slug: ocsp-response-invalid
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   OCSP parsing valid

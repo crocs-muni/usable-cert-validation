@@ -1,5 +1,5 @@
 error-code: DUPLICATE_CERT_POLICY
 slug: duplicate-cert-policy
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate contains duplicate policy

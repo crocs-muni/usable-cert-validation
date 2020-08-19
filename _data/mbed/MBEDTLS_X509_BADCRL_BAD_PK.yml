@@ -1,5 +1,5 @@
 error-code: MBEDTLS_X509_BADCRL_BAD_PK
 slug: mbedtls-x509-badcrl-bad-pk
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).

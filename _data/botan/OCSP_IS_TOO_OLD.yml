@@ -1,5 +1,5 @@
 error-code: OCSP_IS_TOO_OLD
 slug: ocsp-is-too-old
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   OCSP response is too old

@@ -1,5 +1,5 @@
 error-code: CERT_PUBKEY_INVALID
 slug: cert-pubkey-invalid
-tags: #TODO
+tags: [ uncategorized ] #TODO
 docs: |
   Certificate public key invalid, no HTTP support compiled in
