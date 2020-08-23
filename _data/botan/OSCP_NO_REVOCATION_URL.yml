@@ -1,3 +1,5 @@
 error-code: OSCP_NO_REVOCATION_URL
 slug: oscp-no-revocation-url
 tags: [ uncategorized ] #TODO
+unused: |
+  Deprecated due to a typo - will be removed in future major release
