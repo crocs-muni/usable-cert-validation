@@ -1,3 +1,5 @@
 error-code: OSCP_SERVER_NOT_AVAILABLE
 slug: oscp-server-not-available
 tags: [ uncategorized ] #TODO
+unused: |
+  Deprecated due to a typo - will be removed in future major release
