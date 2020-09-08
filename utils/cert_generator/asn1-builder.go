@@ -62,6 +62,10 @@ func BuildASN1(obj *Object,  builder *cryptobyte.Builder) error {
 	case "TIME":
 		t, _ := time.Parse("2006/01/02", obj.Content)
 		builder.AddASN1GeneralizedTime(t)
+	case "YEAR_OFFSET":
+		years, _ := strconv.Atoi(obj.Content)
+		t := time.Now().AddDate(years, 0, 0)
+		builder.AddASN1GeneralizedTime(t)
 	case "BITSTRING":
 		builder.AddASN1BitString([]byte(obj.Content))
 	case "OCTETSTRING":
