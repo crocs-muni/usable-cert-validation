@@ -1,5 +1,5 @@
 error-code: POLICY_ERROR
 slug: policy-error
-tags: [ uncategorized ] #TODO
+tags: [ usage ]
 docs: |
   Certificate policy error

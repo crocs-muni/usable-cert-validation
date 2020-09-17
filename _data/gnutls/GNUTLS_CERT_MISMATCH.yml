@@ -1,5 +1,5 @@
 error-code: GNUTLS_CERT_MISMATCH
 slug: gnutls-cert-mismatch
-tags: [ uncategorized ] #TODO
+tags: [ trust ] # not really sure
 docs: |
   The certificate presented isn’t the expected one (TOFU)

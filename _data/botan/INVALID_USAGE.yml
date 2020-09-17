@@ -1,5 +1,5 @@
 error-code: INVALID_USAGE
 slug: invalid-usage
-tags: [ uncategorized ] #TODO
+tags: [ usage ]
 docs: |
   Certificate does not allow the requested usage

@@ -1,5 +1,5 @@
 error-code: CRL_NOT_YET_VALID
 slug: crl-not-yet-valid
-tags: [ uncategorized ] #TODO
+tags: [ time ]
 docs: |
   CRL response is not yet valid

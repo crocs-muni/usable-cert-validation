@@ -1,5 +1,5 @@
 error-code: CRL_BAD_SIGNATURE
 slug: crl-bad-signature
-tags: [ uncategorized ] #TODO
+tags: [ format ] #this error should match openssl's X509_V_ERR_CRL_SIGNATURE_FAILURE
 docs: |
   CRL bad signature
