@@ -17,8 +17,12 @@
     {% if include.page.gnutls-code %}
         {% include icon.html icon="gnutls-book" float="float-right" %}
     {% endif %}
-    {% if include.page.error-code %}
+    {% if include.page.openssl-code %}
         {% include icon.html icon="openssl-book" float="float-right" %}
+    {% endif %}
+    {% if include.page.error-code %}
+        {% assign lib-book=page.library | append: "-book" %}
+        {% include icon.html icon=lib-book float="float-right" %}
     {% endif %}
 </div>
 <div class="collapse show" id="{{ include.page.slug }}">
@@ -43,9 +47,11 @@
         {% endif %}
         {% if include.page.error-code %}
             <h3>
-            {% include icon.html icon="openssl-book" %}
-            OpenSSL: {{ include.page.error-code | replace: "_", "_&shy;" }}
-            <span class="text-muted small">(<a class="color-reset" href="https://www.openssl.org/docs/man1.1.1/man1/openssl-verify.html">source</a>)</span>
+            {% assign lib-book=page.library | append: "-book" %}
+            {% include icon.html icon=lib-book %}
+            {% assign library=site.data.libraries | where: "name", page.library | first %}
+            {{ library.title }}: {{ include.page.error-code | replace: "_", "_&shy;" }}
+            <span class="text-muted small">(<a class="color-reset" href="{{ library.source }}">source</a>)</span>
             </h3>
             {% if include.page.docs %}
                 <p>{{ include.page.docs }}</p>

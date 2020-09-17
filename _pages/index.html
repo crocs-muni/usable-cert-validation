@@ -1,65 +1,12 @@
 ---
 layout:     default
 title:      Usable X.509 errors
-title-nav:  Usable X.509 errors
+title-nav:  OpenSSL
 slug:       index
+library:    openssl
 ---
-<div class="section"><div class="container">
-    <h1 id="home">{{ page.title }}</h1>
-    <div class="lead">
-    <p>Validating X.509 certificates correctly turns out to be pretty complicated (e.g. <a href="http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf">Georgiev2012</a>, <a href="https://crocs.fi.muni.cz/papers/acsac2019">Ukrop2019</a>). Yet certificate validation is absolutely crucial for secure communication on the Internet (think <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a>).</p>
-    <p>Our goal is to simplify the ecosystem by consolidating the errors and their documentation (similarly to <a href="https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/">web documentation</a>) and by explaining better what the validation errors mean.</p>
-    <p>For every error, we aim to provide an example certificate ({% include icon.html icon="certificate" %}), documentation from OpenSSL ({% include icon.html icon="openssl-book" %}, deprecated or unused denoted by {% include icon.html icon="unused" %}) and other TLS libraries ({% include icon.html icon="gnutls-book" %}, {% include icon.html icon="botan-book" %}, {% include icon.html icon="mbed-book" %}). In the future, we plan the possibility of reorganization based on the other libraries (currently, the web is organized by OpenSSL), adding the error frequencies based on IP-wide scans and elaborating on the consequences of individual errors.</p>
-    </div>
-    <div class="row intro">
-    <div class="col-md-4">
-        <div class="card card-body">
-            <h4>Multiple libraries</h4>
-            <p>Our consolidated taxonomy aims for eight most used TLS-enabled libraries. The main structure is based on <a href="https://www.openssl.org/">OpenSSL</a> as it is by far the most used library in the domain of TLS.</p>
-            <a href="https://docs.google.com/spreadsheets/d/1AYX02k49lBhrZ7fLoh5UsEaXU-OND27zX4LexnzVR-k/edit?usp=sharing" class="btn btn-primary">{% include icon.html icon="button-table" %} Error mapping</a>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-body">
-            <h4>Further details</h4>
-            <p>We extend the existing research on security, TLS and documentation design. Details are described in the frequently asked questions on a separate page.</p>
-            <a href="/faq" class="btn btn-primary">{% include icon.html icon="button-methodology" %} FAQ with details</a>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-body">
-            <h4>Feedback welcome!</h4>
-            <p>Like the project? Think it's useless? Found something not working? Please let us know, we are grateful for all feedback.</p>
-            <a href="{{ site.repo-url }}/issues/new?labels=bug&title=Bug+report&body=Please+describe+what+does+not+work..." class="btn btn-primary">{% include icon.html icon="button-bug" %} Bug report</a><a href="mailto:webmaster@x509errors.org" class="btn btn-primary">{% include icon.html icon="button-email" %} Email us!</a>
-        </div>
-    </div>
-    </div>
-</div></div>
+{% include intro.html %}
 
-{% for category in site.data.errors %}
+{% include all_errors.html %}
 
-<div class="section"><div class="container" markdown="1">
-    <h2 id="{{ category.title | slugify }}">{{ category.title }}</h2>
-    <p>
-    {{ category.description }} <br/>
-    {{ category.links }}
-    </p>
-
-    {% assign errors = site.data.openssl | where:"tags",category.tag | sort: 'weight' %}
-    {% for error in errors %}
-    {% include error_box.html page=error %}
-    {% endfor %}
-</div></div>
-
-{% endfor %}
-
-<div class="section"><div class="container clearfix">
-    <h2 id="about">About the project</h2>
-    <div class="col-lg-3 col-md-4 col-6 float-right">
-        <a class="no-ext-link-icon" href="https://crocs.fi.muni.cz">
-            <img class="crocs" src="/assets/img/crocs.png" alt="CRoCS FI MU" title="CRoCS FI MU">
-        </a>
-    </div>
-    <p>The project is developed at the <a href="https://www.fi.muni.cz/research/crocs/">Centre for Research on Cryptography and Security (CRoCS)</a> at <a href="http://www.muni.cz/">Masaryk University</a>, Brno, Czech Republic by <a href="https://crocs.fi.muni.cz/people/mukrop">Martin Ukrop</a>, Pavol Žáčik, Eric Valčík with the help of Michaela Balážová and Matěj Grabovský. For more details, see the ReadMe file in <a href="{{ site.repo-url }}">{% include icon.html icon="github" %}the project repository</a> on GitHub.</p>
-    <p>The authors are grateful for the financial support by and <a href="https://research.redhat.com/">Red Hat Czech</a> and <a href="https://www.kiwi.com">Kiwi.com</a>.
-</div></div>
+{% include about.html %}
