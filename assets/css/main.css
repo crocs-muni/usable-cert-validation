@@ -134,7 +134,8 @@ blockquote {
 .color-reset { color: inherit !important; }
 
 .section {
-    padding-top: 3rem;
+    margin-top: -4rem;
+    padding-top: 7rem;
     padding-bottom: 3rem;
 }
 
