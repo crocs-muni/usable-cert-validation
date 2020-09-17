@@ -1,5 +1,5 @@
 error-code: NO_REVOCATION_DATA
 slug: no-revocation-data
-tags: [ uncategorized ] #TODO
+tags: [ trust ]
 docs: |
   No revocation data

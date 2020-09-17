@@ -1,5 +1,5 @@
 error-code: OCSP_NO_REVOCATION_URL
 slug: ocsp-no-revocation-url
-tags: [ uncategorized ] #TODO
+tags: [ uncategorized ]
 docs: |
   OCSP URL not available

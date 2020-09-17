@@ -1,5 +1,5 @@
 error-code: OCSP_NOT_YET_VALID
 slug: ocsp-not-yet-valid
-tags: [ uncategorized ] #TODO
+tags: [ time ] #or trust ?
 docs: |
   OCSP is not yet valid

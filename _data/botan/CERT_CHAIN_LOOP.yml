@@ -1,5 +1,5 @@
 error-code: CERT_CHAIN_LOOP
 slug: cert-chain-loop
-tags: [ uncategorized ] #TODO
+tags: [ trust ] # same as openssl's path loop
 docs: |
   Loop in certificate chain

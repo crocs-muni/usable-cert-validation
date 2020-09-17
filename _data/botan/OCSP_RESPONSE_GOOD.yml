@@ -1,5 +1,5 @@
 error-code: OCSP_RESPONSE_GOOD
 slug: ocsp-response-good
-tags: [ uncategorized ] #TODO
+tags: [ uncategorized ]
 docs: |
   OCSP response accepted as affirming unrevoked status for certificate

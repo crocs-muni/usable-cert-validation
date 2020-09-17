@@ -1,5 +1,5 @@
 error-code: VALID_CRL_CHECKED
 slug: valid-crl-checked
-tags: [ uncategorized ] #TODO
+tags: [ uncategorized ]
 docs: |
   Valid CRL examined

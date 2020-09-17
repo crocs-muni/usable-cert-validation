@@ -1,5 +1,5 @@
 error-code: OCSP_BAD_STATUS
 slug: ocsp-bad-status
-tags: [ uncategorized ] #TODO
+tags: [ trust ]
 docs: |
   OCSP bad status

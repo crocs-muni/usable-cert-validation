@@ -1,5 +1,5 @@
 error-code: MBEDTLS_X509_BADCERT_OTHER
 slug: mbedtls-x509-badcert-other
-tags: [ uncategorized ] #TODO
+tags: [ uncategorized ]
 docs: |
   Other reason (can be used by verify callback)

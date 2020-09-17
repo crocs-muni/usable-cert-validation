@@ -1,5 +1,5 @@
 error-code: CRL_HAS_EXPIRED
 slug: crl-has-expired
-tags: [ uncategorized ] #TODO
+tags: [ time ]
 docs: |
   CRL has expired
