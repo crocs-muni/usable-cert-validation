@@ -3,6 +3,7 @@ CERTS_FOLDER=assets/certs
 CERTS_BUILD_FOLDER=assets/certs-build
 CERTS_BUILD_DEBUG_FOLDER=assets/certs-build/_debug
 CERTS_ARCHIVES_FOLDER=assets/certs-archives
+MAPPING_FOLDER=_data/mapping
 VERBOSITY=">/dev/null 2>&1"
 ERRORS_FOLDER=_data
 
@@ -11,12 +12,13 @@ CERTS_IDS_ALL=$(notdir $(wildcard $(CERTS_FOLDER)/*))
 CERTS_BUILD_ALL=$(addprefix $(CERTS_BUILD_FOLDER)/,$(CERTS_IDS_ALL))
 CERTS_ARCHIVES_ALL=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(CERTS_IDS_ALL)) )
 ERRORS_ALL=$(wildcard $(ERRORS_FOLDER)/*/*.yml)
+ERRORS_WITH_LIBS_ALL=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERRORS_FOLDER)/*/*.yml))
 
-all: $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL)
+all: $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
 
 # Generate certificates
 $(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/%/*.cfg))
-	@printf "Generating certs for %-60s" $(*F)
+	@printf "Generating certs for %-64s" $(*F)
 	@mkdir -p $@
 	@$(MAKE) --silent --directory=$(CERTS_FOLDER)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
 	@printf "[ OK ]\n"
@@ -28,11 +30,19 @@ $(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/
 # Generate certificate archives
 .SECONDEXPANSION:
 $(CERTS_ARCHIVES_FOLDER)/%.zip: $(CERTS_BUILD_FOLDER)/% $$(wildcard $(CERTS_BUILD_FOLDER)/%/*)
-	@printf "Generating zip for %-62s" $(*F)
+	@printf "Generating zip for %-66s" $(*F)
 	@mkdir -p $(CERTS_ARCHIVES_FOLDER)
 	@cd $(CERTS_BUILD_FOLDER) && zip --filesync --quiet ../../$@ $(*F)/*.crt $(*F)/*.crl
 	@printf "[ OK ]\n"
-	
+
+# Generate mapping files
+$(MAPPING_FOLDER)/%.yml:
+	$(eval ERROR=$(notdir $@))
+	$(eval LIBRARY=$(subst .yml,,$(patsubst %/,%,$(subst $(MAPPING_FOLDER)/,,$(dir $@)))))
+	@printf "Generating mapping for %-62s" "$(LIBRARY)/$(basename $(ERROR))"
+	@python utils/find_all_linked_errors.py $(LIBRARY) $(ERROR)
+	@printf "[ OK ]\n"
+
 # Test web consistency
 test: all $(ERRORS_ALL)
 	@echo "Building the website using Jekyll ..."
@@ -56,6 +66,7 @@ clean:
 	rm -rf $(CERTS_BUILD_FOLDER)
 	rm -rf $(CERTS_BUILD_DEBUG_FOLDER)
 	rm -rf $(CERTS_ARCHIVES_FOLDER)
+	rm -rf $(MAPPING_FOLDER)
 	rm -rf _site
 
 .PHONY: all clean test local $(ERRORS_ALL)

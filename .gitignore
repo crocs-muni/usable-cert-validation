@@ -4,6 +4,9 @@ assets/certs/*/_certs
 _debug
 assets/certs-archives
 
+# Automatically generated linking files
+_data/mapping
+
 # Build web page
 _site
 
@@ -11,3 +14,6 @@ _site
 Gemfile.lock
 .cache
 *~
+
+# VS Code project files
+.vscode

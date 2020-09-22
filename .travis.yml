@@ -5,6 +5,7 @@ gemfile: Gemfile
 before_install: 
   - sudo apt update
   - sudo apt install -y gnutls-bin
+  - sudo apt install python3
   - sudo apt install -y python-pip && pip install shyaml
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
 
