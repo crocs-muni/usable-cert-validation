@@ -40,7 +40,7 @@ $(MAPPING_FOLDER)/%.yml:
 	$(eval ERROR=$(notdir $@))
 	$(eval LIBRARY=$(subst .yml,,$(patsubst %/,%,$(subst $(MAPPING_FOLDER)/,,$(dir $@)))))
 	@printf "Generating mapping for %-62s" "$(LIBRARY)/$(basename $(ERROR))"
-	@python utils/find_all_linked_errors.py $(LIBRARY) $(ERROR)
+	@python3.8 utils/find_all_linked_errors.py $(LIBRARY) $(ERROR)
 	@printf "[ OK ]\n"
 
 # Test web consistency
