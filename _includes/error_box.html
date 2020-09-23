@@ -32,7 +32,8 @@
         <p>Download <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
         <ul>
             {% if include.page.verify-command %}
-            <li>OpenSSL: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></li>
+            {% assign library=site.data.libraries | where: "name", page.library | first %}
+            <li>{{ library.title }}: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></li>
             {% endif %}
 
             {% for library in site.data.libraries %}
