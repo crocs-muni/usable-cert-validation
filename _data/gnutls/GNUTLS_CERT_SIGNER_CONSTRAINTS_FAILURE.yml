@@ -6,5 +6,3 @@ docs: |
 verify-command: |
   certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
 verify-cert: X509_V_ERR_PERMITTED_VIOLATION
-verify-cert: X509_V_ERR_PATH_LENGTH_EXCEEDED
-verify-cert: X509_V_ERR_EXCLUDED_VIOLATION
