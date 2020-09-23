@@ -5,4 +5,4 @@ docs: |
   The revocation data are old and have been superseded.
 verify-command: |
   certtool --load-ca-certificate ca.crt --infile ca.crl --verify-crl
-
+verify-cert: X509_V_ERR_CRL_HAS_EXPIRED

@@ -5,4 +5,4 @@ docs: |
   The revocation data have a future issue date.
 verify-command: |
   certtool --load-ca-certificate ca.crt --infile ca.crl --verify-crl
-
+verify-cert: X509_V_ERR_CRL_NOT_YET_VALID
