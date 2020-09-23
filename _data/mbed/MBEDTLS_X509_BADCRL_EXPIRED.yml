@@ -5,5 +5,4 @@ docs: |
   The CRL is expired
 verify-command: |
   mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt crl_file=ca.crl
-
 verify-cert: X509_V_ERR_CRL_HAS_EXPIRED

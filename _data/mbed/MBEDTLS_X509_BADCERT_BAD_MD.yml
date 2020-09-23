@@ -5,5 +5,4 @@ docs: |
   The certificate is signed with an unacceptable hash.
 verify-command: |
   mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-
 verify-cert: X509_V_ERR_CA_MD_TOO_WEAK

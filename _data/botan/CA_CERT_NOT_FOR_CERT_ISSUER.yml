@@ -5,5 +5,4 @@ docs: |
   CA certificate not allowed to issue certs
 verify-command: |
   botan cert_verify endpoint.crt subca.crt ca.crt 
-
 verify-cert: X509_V_ERR_INVALID_CA

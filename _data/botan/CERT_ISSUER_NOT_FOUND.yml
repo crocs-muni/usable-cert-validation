@@ -5,5 +5,4 @@ docs: |
   Certificate issuer not found
 verify-command: |
   botan cert_verify endpoint.crt
-
 verify-cert: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
