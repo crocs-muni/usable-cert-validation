@@ -5,6 +5,5 @@ docs: |
   The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
 verify-command: |
   mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-
 verify-cert: X509_V_ERR_CA_KEY_TOO_SMALL
 verify-cert: X509_V_ERR_EE_KEY_TOO_SMALL

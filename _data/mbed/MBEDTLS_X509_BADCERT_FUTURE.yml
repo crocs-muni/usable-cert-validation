@@ -5,5 +5,4 @@ docs: |
   The certificate validity starts in the future
 verify-command: |
   mbedtls/programs/x509/cert_app mode=file filename=/endpoint.crt ca_file=/ca.crt
-
 verify-cert: X509_V_ERR_CERT_NOT_YET_VALID

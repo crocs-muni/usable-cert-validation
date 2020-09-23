@@ -5,5 +5,4 @@ docs: |
   Certificate chain too long
 verify-command: |
   botan cert_verify endpoint.crt subca1.crt subca2.crt ca.crt
-
 verify-cert: X509_V_ERR_PATH_LENGTH_EXCEEDED
