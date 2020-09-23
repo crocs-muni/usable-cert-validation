@@ -6,3 +6,6 @@ docs: |
 verify-command: |
   certtool --verify --infile endpoint.crt
 
+verify-cert: X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT
+verify-cert: X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN
+verify-cert: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY

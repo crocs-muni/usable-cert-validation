@@ -5,4 +5,4 @@ docs: |
   The certificate or an intermediate does not match the intended purpose (extended key usage).
 verify-command: |
   certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt --verify-purpose 1.3.6.1.5.5.7.3.1 
-
+verify-cert: X509_V_ERR_INVALID_PURPOSE

@@ -5,4 +5,4 @@ docs: |
   The certificate is not yet activated.
 verify-command: |
   certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-
+verify-cert: X509_V_ERR_CERT_NOT_YET_VALID
