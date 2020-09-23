@@ -43,7 +43,7 @@ test: all $(ERRORS_ALL)
 # Test generated certificates for assigned errors
 $(ERRORS_FOLDER)/*/*.yml:
 	@printf "Testing certificates for %-70s" $(@D)/$(@F)
-	@if RES=`grep verify-cert $@ | wc -l` && [ $$RES -eq 0 ]; then printf "[ -- ]\n"; \
+	@if RES=`grep verify-expected $@ | wc -l` && [ $$RES -eq 0 ]; then printf "[ -- ]\n"; \
 		else utils/test-cert-validation.sh $(CERTS_BUILD_FOLDER) $@ && printf "[ OK ]\n"; fi
 
 # Web targets
