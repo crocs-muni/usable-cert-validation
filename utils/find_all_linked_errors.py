@@ -98,6 +98,7 @@ output_file = mapping_folder + "/" + library + "/" + error + ".yml"
 makedirs(mapping_folder + "/" + library, exist_ok=True)
 errors = find_all_equal_errors(library, error, mapping_data)
 
-file = open(output_file, "w")
-append_file_equal(errors, file)
-file.close()
+if errors:
+    file = open(output_file, "w")
+    append_file_equal(errors, file)
+    file.close()
