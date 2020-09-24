@@ -1,7 +1,6 @@
 ---
 version:
-  EXPLICIT-0:
-    INTEGER: 3
+  INTEGER EXPLICIT 0: 2
 
 serialNumber:
   INTEGER: 1234
@@ -9,53 +8,45 @@ serialNumber:
 signature:
   SEQUENCE:
     OID: 1.2.840.113549.1.1.11
-    NULL_TAG: NULL
+    NULLTAG: NULL
 
 issuer:
-  SEQUENCE:
-    SET:
-      SEQUENCE:
-        OID: 2.5.4.3
-        IA5String: Some subject name
+  ISSUERCERT: ca.pem
 
 validity:
   SEQUENCE:
-    TIME: 2015/02/25
-    TIME: 2021/02/25
+    YEAROFFSET: 0
+    YEAROFFSET: 1
 
 subject:
   SEQUENCE:
     SET:
       SEQUENCE:
         OID: 2.5.4.3
-        IA5String: Some subject name
+        IA5STRING: Some subject name
 
 subjectPublicKeyInfo:
   SEQUENCE:
     SEQUENCE:
       OID: 1.2.840.113549.1.1.1
-      NULL_TAG: NULL
-    PRIVATE_KEY_FILE: ca_privkey.pem
+      NULLTAG: NULL
+    PRIVATEKEY: ca_privkey.pem
 
 extensions:
-  EXPLICIT-3:
-    SEQUENCE:
-
-      # name constraints
+    SEQUENCE EXPLICIT 3:
+      
       SEQUENCE:
         OID: 2.5.29.30
         BOOLEAN: true
-        OCTETSTRING:
+        OCTETCAPSULE:
           SEQUENCE:
-            EXPLICIT-0:
-              SEQUENCE:
-                IMPLICIT-1: name.com
-    
-      # basic constraints
+            SEQUENCE EXPLICIT 0:
+              IA5STRING IMPLICIT 1: name.com
+
       SEQUENCE:
         OID: 2.5.29.19
         BOOLEAN: true
-        OCTETSTRING:
+        OCTETCAPSULE:
           SEQUENCE:
             BOOLEAN: true
             INTEGER: 2
@@ -63,5 +54,5 @@ extensions:
 signatureAlgorithm:
   SEQUENCE:
     OID: 1.2.840.113549.1.1.11
-    NULL_TAG: NULL
+    NULLTAG: NULL
 ...

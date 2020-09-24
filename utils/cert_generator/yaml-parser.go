@@ -50,8 +50,8 @@ func nodeToObject(node *yaml.Node) (Object, error) {
 		ch = append(ch, obj)
 	}
 	return Object {
-		Name:     "",
-		Content:  node.Value,
+		Name: "",
+		Content: node.Value,
 		Children: ch,
 	}, nil
 }
