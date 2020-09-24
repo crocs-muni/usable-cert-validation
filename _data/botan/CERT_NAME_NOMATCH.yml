@@ -3,3 +3,5 @@ slug: cert-name-nomatch
 tags: [ name ]
 docs: |
   Certificate does not match provided name
+verify-cert: X509_V_ERR_HOSTNAME_MISMATCH
+weight: 401

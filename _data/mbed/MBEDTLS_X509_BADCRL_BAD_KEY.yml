@@ -3,3 +3,4 @@ slug: mbedtls-x509-badcrl-bad-key
 tags: [ algorithm ]
 docs: |
   The CRL is signed with an unacceptable key (eg bad curve, RSA too short).
+weight: 602

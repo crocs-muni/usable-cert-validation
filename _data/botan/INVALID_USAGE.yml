@@ -3,3 +3,4 @@ slug: invalid-usage
 tags: [ usage ]
 docs: |
   Certificate does not allow the requested usage
+weight: 501

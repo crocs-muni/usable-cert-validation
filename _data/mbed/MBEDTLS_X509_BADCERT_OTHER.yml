@@ -3,3 +3,4 @@ slug: mbedtls-x509-badcert-other
 tags: [ uncategorized ]
 docs: |
   Other reason (can be used by verify callback)
+weight: 802

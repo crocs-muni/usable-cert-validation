@@ -3,3 +3,4 @@ slug: ocsp-response-good
 tags: [ uncategorized ]
 docs: |
   OCSP response accepted as affirming unrevoked status for certificate
+weight: 805

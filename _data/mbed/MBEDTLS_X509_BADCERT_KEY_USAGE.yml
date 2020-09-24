@@ -3,3 +3,4 @@ slug: mbedtls-x509-badcert-key-usage
 tags: [ usage ]
 docs: |
   Usage does not match the keyUsage extension.
+weight: 502

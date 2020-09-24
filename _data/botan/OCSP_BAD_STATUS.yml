@@ -3,3 +3,4 @@ slug: ocsp-bad-status
 tags: [ trust ]
 docs: |
   OCSP bad status
+weight: 209

@@ -3,3 +3,4 @@ slug: ext-in-v1-v2-cert
 tags: [ extension ] #not really sure
 docs: |
   Encountered extension in certificate with version < 3
+weight: 304

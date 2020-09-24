@@ -1,8 +1,9 @@
 error-code: CERT_CHAIN_TOO_LONG
 slug: cert-chain-too-long
-tags: [ extension ]
+tags: [ trust ]
 docs: |
   Certificate chain too long
 verify-command: |
   botan cert_verify endpoint.crt subca1.crt subca2.crt ca.crt
 verify-cert: X509_V_ERR_PATH_LENGTH_EXCEEDED
+weight: 206

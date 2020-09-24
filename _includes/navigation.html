@@ -5,7 +5,7 @@
                 <span class="fas fa-fw fa-lg fa-certificate fa-stack-1x color-verydarkgrey"></span>
                 <span class="fas fa-fw fa-xs fa-check fa-stack-1x color-white"></span>
             </span>
-            {{ page.title-nav }}
+            {{ page.title }}
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Show/hide navigation">
             <span class="navbar-toggler-icon"></span>
@@ -17,14 +17,12 @@
                     <a class="nav-link" href="{% if page.library %}#home{% else %}/#home{% endif %}">Intro</a>
                 </li>
                 <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
-                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        {% if page.library %}{% if page.library == "mbed" %}mbedTLS{% else %}{{ page.library }}{% endif %}{% else %}Libraries{% endif %}
-                    </a>
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Libraries</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
                         {% for library in site.data.libraries %}
                           <a class="dropdown-item" href=
-                          "{% if page.library != library.name %}/{% if library.name != 'openssl' %}{{ library.name }}{% endif %}{% endif %}#{{ library.name }}"
-                          >{{ library.title }}</a>
+                          "{% if page.library != library.name %}/{% if library.name != 'openssl' %}{{ library.name }}{% endif %}{% endif %}#errors">
+                          {{ library.title }}</a>
                         {% endfor %}
                     </div>
                 </li>

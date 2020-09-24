@@ -3,3 +3,4 @@ slug: ocsp-no-http
 tags: [ uncategorized ]
 docs: |
   OCSP requests not available
+weight: 803

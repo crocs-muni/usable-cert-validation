@@ -3,3 +3,4 @@ slug: ocsp-not-yet-valid
 tags: [ time ] #or trust ?
 docs: |
   OCSP is not yet valid
+weight: 105

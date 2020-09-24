@@ -6,3 +6,4 @@ docs: |
 verify-command: |
   certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
 verify-cert: X509_V_ERR_PERMITTED_VIOLATION
+weight: 402

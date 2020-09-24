@@ -1,6 +1,0 @@
-error-code: CERT_NAME_NO_MATCH
-slug: cert-name-no-match
-tags: [ name ]
-docs: |
-  Certificate does not match provided name
-verify-cert: X509_V_ERR_HOSTNAME_MISMATCH

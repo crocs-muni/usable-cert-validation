@@ -3,3 +3,4 @@ slug: ca-cert-not-for-crl-issuer
 tags: [ usage ]
 docs: |
   CA certificate not allowed to issue CRLs
+weight: 504

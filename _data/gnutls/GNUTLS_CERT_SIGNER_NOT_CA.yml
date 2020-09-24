@@ -6,3 +6,4 @@ docs: |
 verify-command: |
   certtool --verify --load-ca-certificate ca.crt --infile chain.crt
 verify-cert: X509_V_ERR_INVALID_CA
+weight: 302

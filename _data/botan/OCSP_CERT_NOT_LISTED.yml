@@ -3,3 +3,4 @@ slug: ocsp-cert-not-listed
 tags: [ uncategorized ]
 docs: |
   OCSP cert not listed
+weight: 802
