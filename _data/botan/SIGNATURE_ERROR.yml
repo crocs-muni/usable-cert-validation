@@ -6,3 +6,4 @@ docs: |
 verify-command: |
   botan cert_verify endpoint.crt ca.crt
 verify-cert: X509_V_ERR_CERT_SIGNATURE_FAILURE
+weight: 701

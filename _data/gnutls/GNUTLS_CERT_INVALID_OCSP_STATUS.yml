@@ -3,3 +3,4 @@ slug: gnutls-cert-invalid-ocsp-status
 tags: [ trust ]
 docs: |
   The received OCSP status response is invalid.
+weight: 204

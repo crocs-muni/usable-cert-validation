@@ -6,3 +6,4 @@ docs: |
 verify-command: |
   botan cert_verify chain.crt
 verify-cert: X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN
+weight: 201

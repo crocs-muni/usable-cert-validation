@@ -3,3 +3,4 @@ slug: gnutls-cert-missing-ocsp-status
 tags: [ trust ]
 docs: |
   The certificate requires the server to send the certifiate status, but no status was received.
+weight: 203

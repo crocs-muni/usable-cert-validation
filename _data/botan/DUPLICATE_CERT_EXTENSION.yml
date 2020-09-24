@@ -3,3 +3,4 @@ slug: duplicate-cert-extension
 tags: [ extension ]
 docs: |
   Duplicate certificate extension encountered
+weight: 303

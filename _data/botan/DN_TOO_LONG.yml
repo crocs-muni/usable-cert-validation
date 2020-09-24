@@ -3,3 +3,4 @@ slug: dn-too-long
 tags: [ name ]
 docs: |
   Distinguished name too long
+weight: 404

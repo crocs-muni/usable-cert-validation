@@ -3,3 +3,4 @@ slug: gnutls-cert-insecure-algorithm
 tags: [ algorithm ]
 docs: |
   The certificate was signed using an insecure algorithm such as MD2 or MD5. These algorithms have been broken and should not be trusted.
+weight: 601

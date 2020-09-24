@@ -3,3 +3,4 @@ slug: gnutls-cert-mismatch
 tags: [ trust ] # not really sure
 docs: |
   The certificate presented isn’t the expected one (TOFU)
+weight: 205

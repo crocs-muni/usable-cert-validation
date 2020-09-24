@@ -1,5 +1,6 @@
 error-code: OCSP_NO_REVOCATION_URL
 slug: ocsp-no-revocation-url
-tags: [ uncategorized ]
+tags: [ trust ]
 docs: |
   OCSP URL not available
+weight: 211

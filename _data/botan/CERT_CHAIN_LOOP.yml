@@ -3,3 +3,4 @@ slug: cert-chain-loop
 tags: [ trust ] # same as openssl's path loop
 docs: |
   Loop in certificate chain
+weight: 205

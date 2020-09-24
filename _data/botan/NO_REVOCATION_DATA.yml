@@ -3,3 +3,4 @@ slug: no-revocation-data
 tags: [ trust ]
 docs: |
   No revocation data
+weight: 215

@@ -3,3 +3,4 @@ slug: mbedtls-x509-badcert-missing
 tags: [ uncategorized ]
 docs: |
   Certificate was missing.
+weight: 801

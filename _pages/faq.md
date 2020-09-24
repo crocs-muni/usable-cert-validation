@@ -1,7 +1,6 @@
 ---
 layout:     default
 title:      Frequently asked questions
-title-nav:  Project FAQ
 slug:       faq
 ---
 <div class="section"><div class="container" markdown="1">

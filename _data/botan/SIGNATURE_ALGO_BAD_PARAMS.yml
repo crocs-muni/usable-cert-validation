@@ -3,3 +3,4 @@ slug: signature-algo-bad-params
 tags: [ algorithm ]
 docs: |
   Certificate signature has invalid parameters
+weight: 603

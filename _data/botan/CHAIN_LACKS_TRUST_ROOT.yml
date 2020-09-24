@@ -3,3 +3,4 @@ slug: chain-lacks-trust-root
 tags: [ trust ]
 docs: |
   Certificate chain does not end in a CA certificate
+weight: 202

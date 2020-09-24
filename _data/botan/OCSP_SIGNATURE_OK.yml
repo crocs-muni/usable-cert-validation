@@ -3,3 +3,4 @@ slug: ocsp-signature-ok
 tags: [ uncategorized ]
 docs: |
   Signature on OCSP response was found valid
+weight: 804

@@ -1,8 +1,9 @@
+
 {% for category in site.data.errors %}
 
 {% assign errors = site.data[page.library] | where:"tags", category.tag | sort: 'weight' %}
 {% unless errors.size == 0 %}
-    <div id="{{ page.library }}" class="section"><div class="container" markdown="1">
+    <div id="errors" class="section"><div class="container" markdown="1">
         <h2 id="{{ category.title | slugify }}">{{ category.title }}</h2>
         <p>
         {{ category.description }} <br/>
@@ -16,3 +17,4 @@
 {% endunless %}
 
 {% endfor %}
+

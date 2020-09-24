@@ -3,3 +3,4 @@ slug: ocsp-response-missing-keyusage
 tags: [ usage ]
 docs: |
   OCSP issuer's keyusage prohibits OCSP
+weight: 505
