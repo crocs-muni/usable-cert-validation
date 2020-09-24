@@ -5,11 +5,21 @@ This simple application can generate a certificate using a YAML template which d
 The YAML template uses tags equal to ASN.1 tags (with some additions). 
 To view an example of such a template, see *template.yml*.
 
+## Pre-Build
+
+To be able to build this application correctly, install the GO language and the following GO libraries:
+
+__$ go get gopkg.in/yaml.v3__
+
+__$ go get -u golang.org/x/crypto__
+
+Then replace __$GOPATH/src/golang.org/x/crypto/cryptobyte__ with the provided __cryptobyte__ directory.
+
 ## Build
 
 To build this application, use:
 
-__go build -o cert_generator *.go__
+__$ go build -o cert_generator *.go__
 
 ## Usage
 
@@ -61,12 +71,12 @@ Possible values are arbitrary number of digits separated by commas arbitrarily.
 - NULL_TAG is equivalent to ASN.1 NULL. \
 The only meaningful value is NULL, as it is ignored.
 
-- OCTETSTRING is equivalent to ASN.1 OCTETSTRING. \
+- OCTETSTRING is equivalent to ASN.1 OCTETSTRING.
 
 - OCTETCAPSULE generates an ASN.1 OCTETSTRING. \
 It must be represented as a mapping and it creates a DER capsule around the types underneath. 
 
-- ISSUERCERT is a special type used to create RFC5280 certificate issuer value. \ 
+- ISSUERCERT is a special type used to create RFC5280 certificate issuer value. \
 Valid value is a filename of a PEM encoded issuer certificate.
  
 - PRIVATEKEY is a special type used to create RFC5280 PublicKeyInfo certificate value. \
