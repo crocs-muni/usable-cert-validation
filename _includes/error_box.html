@@ -43,21 +43,10 @@
         {% if include.page.verify-cert %}
         <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
         <p>Download <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
-        <ul>
-            {% if include.page.verify-command %}
-            {% assign library=site.data.libraries | where: "name", page.library | first %}
-            <li>{{ library.title }}: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></li>
-            {% endif %}
-
-            {% for library in site.data.libraries %}
-                {% assign lib-w-code = library.name | append: "-code" %}
-                {% assign lib-code = include.page[lib-w-code] %}
-                {% if site.data[library.name][lib-code].verify-command %}
-                    <li>{{ library.title }}: <code class="highlighter-rouge">{{ site.data[library.name][lib-code].verify-command }}</code></li>
-                {% endif %}
-            {% endfor %}
-
-        </ul>
+        {% if include.page.verify-command %}
+        {% assign library=site.data.libraries | where: "name", page.library | first %}
+        <p><code class="highlighter-rouge">{{ include.page.verify-command }}</code></p>
+        {% endif %}
         {% endif %}
         
         {% if site.data.mapping[page.library][include.page.error-code] %}
