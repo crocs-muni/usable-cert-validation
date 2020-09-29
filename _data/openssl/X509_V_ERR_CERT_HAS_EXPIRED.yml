@@ -3,9 +3,6 @@ slug: x509-v-err-cert-has-expired
 tags: [ time ]
 docs: |
   The certificate has expired: that is the notAfter date is before the current time.
-gnutls-code: GNUTLS_CERT_EXPIRED
-botan-code: CERT_HAS_EXPIRED
-mbed-code: MBEDTLS_X509_BADCERT_EXPIRED
 weight: 102
 verify-cert: X509_V_ERR_CERT_HAS_EXPIRED
 verify-command: |

@@ -3,7 +3,6 @@ slug: x509-v-err-invalid-purpose
 tags: [ usage ]
 docs: |
   The supplied certificate cannot be used for the specified purpose.
-gnutls-code: GNUTLS_CERT_PURPOSE_MISMATCH
 weight: 501
 verify-cert: X509_V_ERR_INVALID_PURPOSE
 verify-command: |

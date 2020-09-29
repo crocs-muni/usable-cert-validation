@@ -3,9 +3,6 @@ slug: x509-v-err-permitted-violation
 tags: [ name ]
 docs: |
   Permitted subtree violation.
-gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
-botan-code: NAME_CONSTRAINT_ERROR
-mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 weight: 404
 verify-cert: X509_V_ERR_PERMITTED_VIOLATION
 verify-command: |

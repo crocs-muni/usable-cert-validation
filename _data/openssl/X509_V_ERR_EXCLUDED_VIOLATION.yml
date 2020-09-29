@@ -3,8 +3,6 @@ slug: x509-v-err-excluded-violation
 tags: [ name ]
 docs: |
   Excluded subtree violation.
-gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
-mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 weight: 405
 verify-cert: X509_V_ERR_EXCLUDED_VIOLATION
 verify-command: |

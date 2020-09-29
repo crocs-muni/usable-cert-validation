@@ -3,9 +3,6 @@ slug: x509-v-err-self-signed-cert-in-chain
 tags: [ trust ]
 docs: |
   The certificate chain could be built up using the untrusted certificates but the root could not be found locally.
-gnutls-code: GNUTLS_CERT_SIGNER_NOT_FOUND
-botan-code: CANNOT_ESTABLISH_TRUST
-mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 weight: 204
 verify-cert: X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN
 verify-command: |

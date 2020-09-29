@@ -3,7 +3,6 @@ slug: x509-v-ok
 tags: [ uncategorized ]
 docs: |
   The operation was successful.
-botan-code: VERIFIED
 weight: 819
 verify-cert: X509_V_OK
 verify-command: |

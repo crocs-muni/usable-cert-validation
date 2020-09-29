@@ -3,8 +3,6 @@ slug: x509-v-err-crl-has-expired
 tags: [ time ]
 docs: |
   The CRL has expired.
-gnutls-code: GNUTLS_CERT_REVOCATION_DATA_SUPERSEDED
-mbed-code: MBEDTLS_X509_BADCRL_EXPIRED
 weight: 104
 verify-cert: X509_V_ERR_CRL_HAS_EXPIRED
 verify-command: |
