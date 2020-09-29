@@ -134,8 +134,7 @@ blockquote {
 .color-reset { color: inherit !important; }
 
 .section {
-    margin-top: -4rem;
-    padding-top: 7rem;
+    padding-top: 3rem;
     padding-bottom: 3rem;
 }
 
@@ -146,8 +145,8 @@ blockquote {
     }
 }
 
-#errors {
-    scroll-margin-top: 2rem;
+.linked-anchor {
+    scroll-margin-top: 4rem;
 }
 
 .section:nth-of-type(even) {
