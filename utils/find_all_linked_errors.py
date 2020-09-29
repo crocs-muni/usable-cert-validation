@@ -1,6 +1,6 @@
 import sys
 import re
-from typing import List, TextIO
+from typing import List, TextIO, Set
 from os import makedirs
 
 # usage: ./find_all_linked_errors.sh <library> <errors>
@@ -37,34 +37,95 @@ from os import makedirs
 # usage: find_all_equal_errors(<library>, <error>, <list of lines>)
 # returns a sorted list of linked errors
 
-def find_all_equal_errors(lib: str, err: str, data: List[str]) -> List[str]:
+def find_all_equal_errors(lib: str, err: str, data: List[str]) -> Set[str]:
     patterns = [lib + "/" + err]
     ret_set = set(patterns)
     for pattern in patterns:
-        # our error is on the left side
         for line in data:
+            line = remove_all_whitespace(line)
+            # ignore commets (lines that start with #)
+            if len(line) == 0 or line[0] == '#':
+                continue
+            # our error is on the left side
             if re.search(pattern + "=", line):
                 new_err = line.replace(pattern + "=", "")
                 if new_err not in ret_set:
                     ret_set.add(new_err)
                     patterns.append(new_err)
-        # our error is on the right side
-        for line in data:
+            # our error is on the right side
             if re.search("=" + pattern, line):
                 new_err = line.replace("=" + pattern, "")
                 if new_err not in ret_set:
                     ret_set.add(new_err)
-                    patterns.append(new_err)
+                    patterns.append(new_err) 
     ret_set.discard(lib + '/' + err)
-    ret_list = list(ret_set)
-    return sorted(ret_list)
+    return ret_set
+
+
+# finds all directly connected supersetted/subsetted errors (no transitivity)
+# usage: find_direct_sets(<library>, <error>, <list of lines>, <"super"/"sub">)
+# returns a sorted list of linked errors
+
+def find_direct_sets(err: str, data: List[str], decider: str) -> Set[str]:
+    if decider == "super":
+        pattern_left = err + '<'
+        pattern_right = '>' + err
+    elif decider == "sub":
+        pattern_left = err + '>'
+        pattern_right = '<' + err
+    else:
+        raise Exception("WrongArgument")
+    ret_set = set()
+    for line in data:
+        line = remove_all_whitespace(line)
+        if len(line) == 0 or line[0] == '#':
+            continue
+        # error is on the left side
+        if re.search(pattern_left, line):
+            new_err = line.replace(pattern_left, "")
+            ret_set.add(new_err)
+        # error is on the right side
+        if re.search(pattern_right, line):
+            new_err = line.replace(pattern_right, "")
+            ret_set.add(new_err)
+    return ret_set   
+
+
+def find_all_supersetted(err: str, data: List[str]) -> Set[str]:
+    ret_set = find_direct_sets(err, data, "super")
+    for error in list(ret_set):
+        lib, err = error.split('/')
+        ret_set = ret_set.union(find_all_equal_errors(lib, err, data))
+    for error in list(ret_set):
+        ret_set = ret_set.union(find_all_supersetted(error, data))
+    return ret_set
+
+
+def find_all_subsetted(err: str, data: List[str]) -> Set[str]:
+    ret_set = find_direct_sets(err, data, "sub")
+    for error in list(ret_set):
+        lib, err = error.split('/')
+        ret_set = ret_set.union(find_all_equal_errors(lib, err, data))
+    for error in list(ret_set):
+        ret_set = ret_set.union(find_all_subsetted(error, data))
+    return ret_set
+
+
+def remove_all_whitespace(line: str) -> str:
+    ret_line = ""
+    for char in line:
+        if char != ' ' and char != '\t':
+            ret_line += char
+    return ret_line
 
 
 # appends file correctly with provided errors as equals
 # usage: append_file_equal(<list of lib/err strings>, <file object>)
 
-def append_file_equal(errs: List[str], file: TextIO):
-    file.write("equal:\n")
+def append_file(errs: List[str], file: TextIO, category: str) -> None:
+    if category not in ["equal", "superset", "subset"]:
+        raise Exception("WrongArgument")
+    file.write(category + ":\n")
     prev_lib = ""
     for line in errs:
         lib, err = line.split('/')
@@ -96,9 +157,34 @@ output_file = mapping_folder + "/" + library + "/" + error + ".yml"
 # the script
 
 makedirs(mapping_folder + "/" + library, exist_ok=True)
-errors = find_all_equal_errors(library, error, mapping_data)
+
+# equal
+
+errors_equal = sorted(list(find_all_equal_errors(library, error, mapping_data)))
+
+file = open(output_file, "w")
+
+if errors_equal:
+    append_file(errors_equal, file, "equal")
+
+# superset
+
+errors_set = find_all_supersetted(library + '/' + error, mapping_data)
+for current in errors_equal:
+    errors_set = errors_set.union(find_all_supersetted(current, mapping_data))
+errors = sorted(list(errors_set))
 
 if errors:
-    file = open(output_file, "w")
-    append_file_equal(errors, file)
-    file.close()
+    append_file(errors, file, "superset")
+    
+# superset
+
+errors_set = find_all_subsetted(library + '/' + error, mapping_data)
+for current in errors_equal:
+    errors_set = errors_set.union(find_all_subsetted(current, mapping_data))
+errors = sorted(list(errors_set))
+
+if errors:
+    append_file(errors, file, "subset")
+
+file.close()
