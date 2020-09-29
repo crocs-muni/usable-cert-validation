@@ -3,9 +3,6 @@ slug: x509-v-err-path-length-exceeded
 tags: [ extension ]
 docs: |
   The basicConstraints pathlength parameter has been exceeded.
-gnutls-code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
-botan-code: CERT_CHAIN_TOO_LONG
-mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 weight: 302
 verify-cert: X509_V_ERR_PATH_LENGTH_EXCEEDED
 verify-command: |

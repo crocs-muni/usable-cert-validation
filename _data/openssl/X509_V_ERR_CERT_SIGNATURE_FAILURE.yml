@@ -3,9 +3,6 @@ slug: x509-v-err-cert-signature-failure
 tags: [ format ]
 docs: |
   The signature of the certificate is invalid.
-gnutls-code: GNUTLS_CERT_SIGNATURE_FAILURE
-botan-code: SIGNATURE_ERROR
-mbed-code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
 weight: 701
 verify-cert: X509_V_ERR_CERT_SIGNATURE_FAILURE
 verify-command: |

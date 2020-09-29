@@ -3,8 +3,6 @@ slug: x509-v-err-ca-key-too-small
 tags: [ algorithm ]
 docs: |
   CA certificate key too weak.
-botan-code: SIGNATURE_METHOD_TOO_WEAK
-mbed-code: MBEDTLS_X509_BADCERT_BAD_KEY
 weight: 602
 verify-cert: X509_V_ERR_CA_KEY_TOO_SMALL
 verify-command: |

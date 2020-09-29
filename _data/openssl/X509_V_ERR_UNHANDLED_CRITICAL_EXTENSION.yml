@@ -3,8 +3,6 @@ slug: x509-v-err-unhandled-critical-extension
 tags: [ extension ]
 docs: |
   Unhandled critical extension.
-gnutls-code: GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS
-botan-code: UNKNOWN_CRITICAL_EXTENSION
 weight: 303
 verify-cert: X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION
 verify-command: |

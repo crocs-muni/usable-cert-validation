@@ -3,9 +3,6 @@ slug: x509-v-err-cert-revoked
 tags: [ time ]
 docs: |
   The certificate has been revoked.
-gnutls-code: GNUTLS_CERT_REVOKED
-botan-code: CERT_IS_REVOKED
-mbed-code: MBEDTLS_X509_BADCERT_REVOKED
 weight: 105
 verify-cert: X509_V_ERR_CERT_REVOKED
 verify-command: |

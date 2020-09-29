@@ -3,8 +3,6 @@ slug: x509-v-err-crl-not-yet-valid
 tags: [ time ]
 docs: |
   The CRL is not yet valid.
-gnutls-code: GNUTLS_CERT_REVOCATION_DATA_ISSUED_IN_FUTURE
-mbed-code: MBEDTLS_X509_BADCRL_FUTURE
 weight: 103
 verify-cert: X509_V_ERR_CRL_NOT_YET_VALID
 verify-command: |
