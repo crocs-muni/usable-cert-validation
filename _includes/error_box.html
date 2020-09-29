@@ -1,4 +1,4 @@
-<div class="error-box">
+<div class="error-box linked-anchor" id="{{ include.page.slug }}-link">
 <div class="card-header clearfix" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="true" aria-controls="#{{ include.page.slug }}">
     <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
     <span class="openssl-code" title="{{ include.page.error-code }}">{{ include.page.error-code | replace: "_", "_&shy;" }}</span>
@@ -8,25 +8,38 @@
     {% if include.page.unused %}
         {% include icon.html icon="unused" float="float-right" %}
     {% endif %}
-    {% if include.page.mbed-code %}
+    {% if site.data.mapping[page.library][include.page.error-code].equal.mbed or site.data.mapping[page.library][include.page.error-code].subset.mbed or site.data.mapping[page.library][include.page.error-code].superset.mbed %}
         {% include icon.html icon="mbed-book" float="float-right" %}
     {% endif %}
-    {% if include.page.botan-code %}
+    {% if site.data.mapping[page.library][include.page.error-code].equal.botan or site.data.mapping[page.library][include.page.error-code].subset.botan or site.data.mapping[page.library][include.page.error-code].superset.botan %}
         {% include icon.html icon="botan-book" float="float-right" %}
     {% endif %}
-    {% if include.page.gnutls-code %}
+    {% if site.data.mapping[page.library][include.page.error-code].equal.gnutls or site.data.mapping[page.library][include.page.error-code].subset.gnutls or site.data.mapping[page.library][include.page.error-code].superset.gnutls %}
         {% include icon.html icon="gnutls-book" float="float-right" %}
     {% endif %}
-    {% if include.page.openssl-code %}
+    {% if site.data.mapping[page.library][include.page.error-code].equal.openssl or site.data.mapping[page.library][include.page.error-code].subset.openssl or site.data.mapping[page.library][include.page.error-code].superset.openssl %}
         {% include icon.html icon="openssl-book" float="float-right" %}
     {% endif %}
+    {% assign lib-book=page.library | append: "-book" %}
     {% if include.page.docs %}
-        {% assign lib-book=page.library | append: "-book" %}
         {% include icon.html icon=lib-book float="float-right" %}
     {% endif %}
 </div>
 <div class="collapse show" id="{{ include.page.slug }}">
     <div class="card card-body">
+        {% if include.page.error-code %}
+            {% assign library=site.data.libraries | where: "name", page.library | first %}
+            {% if include.page.docs %}
+                <h3>{% include icon.html icon=lib-book %}Documentation:</h3>
+                <p>{{ include.page.docs }}<span class="text-muted">(<a class="color-reset" href="{{ library.source }}">source</a>)</span></p>
+            {% else %}
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            {% endif %}
+        {% endif %}
+        {% if include.page.unused %}
+            <p><i><b>{% include icon.html icon="unused" %}Unused: </b>{{ include.page.unused }}</i></p>
+        {% endif %}
+
         {% if include.page.verify-cert %}
         <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
         <p>Download <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
@@ -46,41 +59,20 @@
 
         </ul>
         {% endif %}
-        {% if include.page.error-code %}
-            <h3>
-            {% assign lib-book=page.library | append: "-book" %}
-            {% include icon.html icon=lib-book %}
-            {% assign library=site.data.libraries | where: "name", page.library | first %}
-            {{ library.title }}: {{ include.page.error-code | replace: "_", "_&shy;" }}
-            <span class="text-muted small">(<a class="color-reset" href="{{ library.source }}">source</a>)</span>
-            </h3>
-            {% if include.page.docs %}
-                <p>{{ include.page.docs }}</p>
-            {% else %}
-                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
-            {% endif %}
+        
+        {% if site.data.mapping[page.library][include.page.error-code] %}
+            <h3>{% include icon.html icon="error-link" %}Linked errors:</h3>
+            {% for group in site.data.mapping-file %}
+                {% for library in site.data.libraries %}
+                    {% for error in site.data.mapping[page.library][include.page.error-code][group.name][library.name] %}
+                        <p>
+                            {% include icon.html icon=group.name %}
+                            <a href="/{% if library.name != "openssl" %}{{ library.name }}{% endif %}#{{ library.name }}">{{ library.name }}</a>/<a href="/{% if library.name != "openssl" %}{{ library.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
+                        </p>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
         {% endif %}
-        {% if include.page.unused %}
-            <p><i><b>{% include icon.html icon="unused" %}Unused: </b>{{ include.page.unused }}</i></p>
-        {% endif %}
-
-        {% for library in site.data.libraries %}
-            {% assign lib-w-code = library.name | append: "-code" %}
-            {% if include.page[lib-w-code] %}
-                {% assign lib-code = include.page[lib-w-code] %}
-                <h3>
-                {% assign library-icon = library.name | append: "-book" %}
-                {% include icon.html icon=library-icon %}
-                {{ library.title }}:  {{ lib-code }}
-                <span class="text-muted small">(<a class="color-reset" href="{{ library.source }}">source</a>)</span>
-                </h3>
-                {% if site.data[library.name][lib-code].docs %}
-                    <p>{{ site.data[library.name][lib-code].docs }}</p>
-                {% else %}
-                    <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
-                {% endif %}
-            {% endif %}
-        {% endfor %}
   </div>
 </div>
 </div>
