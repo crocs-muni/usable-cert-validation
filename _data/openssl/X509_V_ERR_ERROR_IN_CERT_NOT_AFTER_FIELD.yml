@@ -4,3 +4,10 @@ tags: [ format ]
 docs: |
   The certificate notAfter field contains an invalid time.
 weight: 704
+verify-cert: X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD
+verify-command: |
+  openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+  error 14 at 0 depth lookup: format error in certificate's notAfter field
+
+
