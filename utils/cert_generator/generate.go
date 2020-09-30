@@ -9,6 +9,7 @@ import (
 	"flag"
 	"fmt"
 	"golang.org/x/crypto/cryptobyte"
+	cryptobyteasn1 "golang.org/x/crypto/cryptobyte/asn1"
 	"io/ioutil"
 )
 
@@ -123,6 +124,8 @@ func main() {
 	var signingKeyFile = flag.String("signingKey", "", "The private key file of the signer")
 	var templateFile = flag.String("templateFile", "", "The template yml file")
 	var outFile = flag.String("outFile", "", "The output filename")
+	var issuerFile = flag.String("issuerFile", "", "The signing certificate authority file")
+	var privateKeyFile = flag.String("privateKey", "", "The private counterpart of the signed public key")
 
 	flag.Parse()
 
@@ -139,6 +142,31 @@ func main() {
 	}
 
 	var cert certificate
+
+	if *issuerFile != "" {
+		c, err := LoadCertificate(*issuerFile)
+		if err != nil {
+			panic(err)
+		}
+		cert.TBSCertificate.Issuer.FullBytes = c.RawSubject
+	}
+
+	if *privateKeyFile != "" {
+		bytes, err := buildPublicKeyInfo(*privateKeyFile)
+		if err != nil {
+			panic(err)
+		}
+		var builder cryptobyte.Builder
+		builder.AddASN1(cryptobyteasn1.SEQUENCE, func(b *cryptobyte.Builder) {
+			b.AddASN1(cryptobyteasn1.SEQUENCE, func(b1 *cryptobyte.Builder) {
+				b1.AddASN1ObjectIdentifier(asn1.ObjectIdentifier{1,2,840,113549,1,1,1}, nil)
+				b1.AddASN1NULL()
+			})
+			b.AddASN1BitString(bytes, nil)
+		})
+		cert.TBSCertificate.SubjectPublicKeyInfo.FullBytes, _ = builder.Bytes()
+	}
+
 	err = loadData(&obj, &cert)
 	if err != nil {
 		fmt.Println(err)
