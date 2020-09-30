@@ -23,7 +23,6 @@ VERIFY_OUTPUT_FILE=openssl-verify.txt
 cd $CERTS_BUILD_FOLDER/$VERIFY_CERT
 eval $VERIFY_COMMAND >$VERIFY_OUTPUT_FILE 2>&1
 GREP_RESULT=`grep -F "$VERIFY_EXPECTED" $VERIFY_OUTPUT_FILE | wc -l`
-rm -f $VERIFY_OUTPUT_FILE
 
 if [ ! $GREP_RESULT -eq 1 ]
 then
@@ -35,3 +34,5 @@ then
     echo "====== (end) ======"
     exit -2
 fi
+
+rm -f $VERIFY_OUTPUT_FILE
