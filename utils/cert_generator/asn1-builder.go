@@ -99,6 +99,11 @@ func BuildASN1(obj *Object,  builder *cryptobyte.Builder) error {
 		implicit = &t
 	}
 
+	if tag == "OVERRIDE" {
+		t := cryptobyteasn1.Tag(number)
+		implicit = &t
+	}
+
 	switch typename {
 	case "SEQUENCE":
 		builder.AddASN1(cryptobyteasn1.SEQUENCE, buildChildren)
