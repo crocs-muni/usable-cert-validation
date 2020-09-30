@@ -6,6 +6,7 @@ CERTS_ARCHIVES_FOLDER=assets/certs-archives
 MAPPING_FOLDER=_data/mapping
 VERBOSITY=">/dev/null 2>&1"
 ERRORS_FOLDER=_data
+CERT_GENERATOR_FOLDER=utils/cert_generator
 
 # Computed variables
 CERTS_IDS_ALL=$(notdir $(wildcard $(CERTS_FOLDER)/*))
@@ -14,7 +15,10 @@ CERTS_ARCHIVES_ALL=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(CE
 ERRORS_ALL=$(wildcard $(ERRORS_FOLDER)/*/*.yml)
 ERRORS_WITH_LIBS_ALL=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERRORS_FOLDER)/*/*.yml))
 
-all: $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
+all: $(CERT_GENERATOR_FOLDER)/generate $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
+
+$(CERT_GENERATOR_FOLDER)/generate:
+	cd $(CERT_GENERATOR_FOLDER) && go build -o generate *.go
 
 # Generate certificates
 $(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/%/*.cfg))
