@@ -15,7 +15,6 @@ before_install:
   - export GOPATH=$HOME/go
   - export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
   - go get gopkg.in/yaml.v3
-  - mkdir -p $GOPATH/golang.org/x
   - git clone https://github.com/zacikpa/crypto $GOPATH/src/golang.org/x/crypto
 
 

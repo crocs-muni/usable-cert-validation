@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/asn1"
 	"errors"
 	"golang.org/x/crypto/cryptobyte"
 	cryptobyteasn1 "golang.org/x/crypto/cryptobyte/asn1"
@@ -9,6 +10,7 @@ import (
 	"time"
 )
 
+// parse the name/tag of the to-be ASN.1 value
 func parseName(name string) (string, string, int, error) {
 	data := strings.Split(name, " ")
 
@@ -24,6 +26,7 @@ func parseName(name string) (string, string, int, error) {
 	return data[0], data[1], number, nil
 }
 
+// parse OID from string into array of integers
 func parseOID(data string) ([]int, error) {
 	numbers := strings.Split(data, ".")
 	var oid []int
@@ -37,6 +40,7 @@ func parseOID(data string) ([]int, error) {
 	return oid, nil
 }
 
+// write obj children ASN.1 data into byte array
 func buildCapsule(obj *Object) ([]byte, error) {
 	var b cryptobyte.Builder
 	for _, ch := range obj.Children {
@@ -49,7 +53,8 @@ func buildCapsule(obj *Object) ([]byte, error) {
 	return bytes, nil
 }
 
-func buildPublicKeyInfo(filename string) ([]byte, error) {
+// build ASN.1 structure for subjectPublicKey certificate field
+func buildSubjectPublicKey(filename string) ([]byte, error) {
 	key, err := LoadPrivateKey(filename)
 	if err != nil {
 		return nil, err
@@ -61,6 +66,19 @@ func buildPublicKeyInfo(filename string) ([]byte, error) {
 	})
 	bytes, _ := subB.Bytes()
 	return bytes, nil
+}
+
+// build ASN.1 structure for subjectPublicKeyInfo certificate field
+func buildPublicKeyInfo(algorithm asn1.ObjectIdentifier, key []byte) ([]byte, error) {
+	var builder cryptobyte.Builder
+	builder.AddASN1(cryptobyteasn1.SEQUENCE, func(b *cryptobyte.Builder) {
+		b.AddASN1(cryptobyteasn1.SEQUENCE, func(b1 *cryptobyte.Builder) {
+			b1.AddASN1ObjectIdentifier(algorithm, nil)
+			b1.AddASN1NULL()
+		})
+		b.AddASN1BitString(key, nil)
+	})
+	return builder.Bytes()
 }
 
 // Builds ASN.1 DER data from a given Object
@@ -157,7 +175,7 @@ func BuildASN1(obj *Object,  builder *cryptobyte.Builder) error {
 	case "OCTETSTRING":
 		builder.AddASN1OctetString([]byte(obj.Content), implicit)
 	case "PRIVATEKEY":
-		bytes, err := buildPublicKeyInfo(obj.Content)
+		bytes, err := buildSubjectPublicKey(obj.Content)
 		if err != nil {
 			return err
 		}

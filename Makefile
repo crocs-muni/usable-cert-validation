@@ -18,7 +18,7 @@ ERRORS_WITH_LIBS_ALL=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERR
 all: $(CERT_GENERATOR_FOLDER)/generate $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
 
 $(CERT_GENERATOR_FOLDER)/generate:
-	cd $(CERT_GENERATOR_FOLDER) && go build -o generate *.go
+	@cd $(CERT_GENERATOR_FOLDER) && go build -o generate *.go
 
 # Generate certificates
 $(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/%/*.cfg))

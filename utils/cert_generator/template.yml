@@ -1,58 +1,72 @@
 ---
+# each certificate field can be filled with arbitrary ASN.1 structure, though
+# only some structures will create a valid certificate
+
+# To see the specification of x509 certificate structure, see RFC5280
+
+# certificate.tbsCertificate.version
 version:
-  INTEGER EXPLICIT 0: 2
+  INTEGER EXPLICIT 0: 2                       # this will be a v3 certificate
 
+# certificate.tbsCertificate.serialNumber
 serialNumber:
-  INTEGER: 1234
+  INTEGER: 1234                               # serialNumber must be any non-negative integer
 
+# certificate.tbsCertificate.signature
 signature:
-  SEQUENCE:
-    OID: 1.2.840.113549.1.1.11
-    NULLTAG: NULL
+  SEQUENCE:                        
+    OID: 1.2.840.113549.1.1.11                # sha256WithRSAEncryption is the signing algorithm
+    NULLTAG: NULL                  
 
+# certificate.tbsCertificate.issuer
 issuer:
-  ISSUERCERT: ca.pem
+  ISSUERCERT: ca.pem                          # the issuer data is taken as subject data of ca.pem
 
+# certificate.tbsCertificate.validity
 validity:
-  SEQUENCE:
-    YEAROFFSET: 0
-    YEAROFFSET: 1
+  SEQUENCE:                         
+    YEAROFFSET: 1                             # validity period starts now + 1 year
+    DATE: 2025/01/01                          # validity period end with the year 2025
 
+# certificate.tbsCertificate.subject
 subject:
   SEQUENCE:
     SET:
       SEQUENCE:
-        OID: 2.5.4.3
-        IA5STRING: Some subject name
+        OID: 2.5.4.3                          # commonName will be "Roy"
+        IA5STRING: Roy
 
+# certificate.tbsCertificate.subjectPublicKeyInfo
 subjectPublicKeyInfo:
   SEQUENCE:
     SEQUENCE:
-      OID: 1.2.840.113549.1.1.1
+      OID: 1.2.840.113549.1.1.1               # rsaEncryption
       NULLTAG: NULL
-    PRIVATEKEY: ca_privkey.pem
+    PRIVATEKEY: privkey.pem                   # public key signed is the counterpart of privkey.pem (a private key)
 
+# certificate.tbsCertificate.extension
 extensions:
     SEQUENCE EXPLICIT 3:
       
       SEQUENCE:
-        OID: 2.5.29.30
-        BOOLEAN: true
+        OID: 2.5.29.30                        # nameConstraints extension
+        BOOLEAN: false                        # not critical
         OCTETCAPSULE:
           SEQUENCE:
             SEQUENCE EXPLICIT 0:
-              IA5STRING IMPLICIT 1: name.com
+              IA5STRING IMPLICIT 1: name.org  # permitted emails ...@name.org 
 
-      SEQUENCE:
-        OID: 2.5.29.19
-        BOOLEAN: true
+      
+      SEQUENCE:                     
+        OID: 2.5.29.19                        # basicConstraints extension
+        BOOLEAN: true                         # critical
         OCTETCAPSULE:
           SEQUENCE:
-            BOOLEAN: true
-            INTEGER: 2
+            BOOLEAN: false                    # CA = false
 
+# certificate.signatureAlgorithm
 signatureAlgorithm:
   SEQUENCE:
-    OID: 1.2.840.113549.1.1.11
+    OID: 1.2.840.113549.1.1.11                # sha256WithRSAEncryption is the signing algorithm
     NULLTAG: NULL
 ...
