@@ -9,7 +9,6 @@ import (
 	"flag"
 	"fmt"
 	"golang.org/x/crypto/cryptobyte"
-	cryptobyteasn1 "golang.org/x/crypto/cryptobyte/asn1"
 	"io/ioutil"
 )
 
@@ -152,19 +151,15 @@ func main() {
 	}
 
 	if *privateKeyFile != "" {
-		bytes, err := buildPublicKeyInfo(*privateKeyFile)
+		bytes, err := buildSubjectPublicKey(*privateKeyFile)
 		if err != nil {
 			panic(err)
 		}
-		var builder cryptobyte.Builder
-		builder.AddASN1(cryptobyteasn1.SEQUENCE, func(b *cryptobyte.Builder) {
-			b.AddASN1(cryptobyteasn1.SEQUENCE, func(b1 *cryptobyte.Builder) {
-				b1.AddASN1ObjectIdentifier(asn1.ObjectIdentifier{1,2,840,113549,1,1,1}, nil)
-				b1.AddASN1NULL()
-			})
-			b.AddASN1BitString(bytes, nil)
-		})
-		cert.TBSCertificate.SubjectPublicKeyInfo.FullBytes, _ = builder.Bytes()
+		ret, err := buildPublicKeyInfo(asn1.ObjectIdentifier{1,2,840,113549,1,1,1}, bytes)
+		if err != nil {
+			panic(err)
+		}
+		cert.TBSCertificate.SubjectPublicKeyInfo.FullBytes = ret
 	}
 
 	err = loadData(&obj, &cert)

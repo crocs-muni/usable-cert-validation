@@ -9,6 +9,7 @@ import (
 	"os"
 )
 
+// Loads a PEM file into DER bytes
 func LoadPEM(filename string) ([]byte, error) {
 	pemBytes, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -60,6 +61,7 @@ func LoadPrivateKey(filename string) (*rsa.PrivateKey, error) {
 	return key, nil
 }
 
+// Load a PEM certificate from a file into x509.Certificate structure
 func LoadCertificate(filename string) (*x509.Certificate, error) {
 	bytes, err := LoadPEM(filename)
 	if err != nil {
