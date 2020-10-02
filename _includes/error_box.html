@@ -41,26 +41,28 @@
         {% endif %}
 
         {% if include.page.verify-cert %}
-        <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
-        <p>Download <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}the certificate archive</a>. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>. To get the validation error, run the command as indicated below.</p>
-        {% if include.page.verify-command %}
-        {% assign library=site.data.libraries | where: "name", page.library | first %}
-        <p><code class="highlighter-rouge">{{ include.page.verify-command }}</code></p>
-        {% endif %}
+            <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
+            <p>Download the <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}certificate archive</a> and validate the contents using a command indicated below. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>.</p>
+            {% if include.page.verify-command %}
+                {% assign library=site.data.libraries | where: "name", page.library | first %}
+                <p>Validate with: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></p>
+            {% endif %}
         {% endif %}
         
         {% if site.data.mapping[page.library][include.page.error-code] %}
-            <h3>{% include icon.html icon="error-link" %}Linked errors:</h3>
+            <h3>{% include icon.html icon="error-link" %}Corresponding errors:</h3>
+            <ul class="list-unstyled mb-0">
             {% for group in site.data.mapping-file %}
                 {% for library in site.data.libraries %}
                     {% for error in site.data.mapping[page.library][include.page.error-code][group.name][library.name] %}
-                        <p>
+                        <li>
                             {% include icon.html icon=group.name %}
-                            <a href="/{% if library.name != "openssl" %}{{ library.name }}{% endif %}#{{ library.name }}">{{ library.name }}</a>/<a href="/{% if library.name != "openssl" %}{{ library.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
-                        </p>
+                            {{ library.title }}/<a href="/{% if library.name != "openssl" %}{{ library.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
+                        </li>
                     {% endfor %}
                 {% endfor %}
             {% endfor %}
+            </ul>
         {% endif %}
   </div>
 </div>
