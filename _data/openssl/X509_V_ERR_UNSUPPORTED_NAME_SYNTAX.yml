@@ -4,3 +4,8 @@ tags: [ name ]
 docs: |
   Unsupported or invalid name syntax.
 weight: 409
+verify-cert: X509_V_ERR_UNSUPPORTED_NAME_SYNTAX
+verify-command: |
+  openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+  error 53 at 0 depth lookup: unsupported or invalid name syntax
