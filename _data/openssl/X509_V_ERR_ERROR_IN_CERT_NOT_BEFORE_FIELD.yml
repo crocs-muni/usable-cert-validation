@@ -4,3 +4,8 @@ tags: [ format ]
 docs: |
   The certificate notBefore field contains an invalid time.
 weight: 703
+verify-cert: X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD
+verify-command: |
+  openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+  error 13 at 0 depth lookup: format error in certificate's notBefore field
