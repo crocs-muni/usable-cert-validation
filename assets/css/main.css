@@ -150,7 +150,7 @@ blockquote {
 }
 
 .section:nth-of-type(even) {
-    background: #FAFAFA;
+    background: #F8F8FB;
 }
 
 .navbar-scrolled {
