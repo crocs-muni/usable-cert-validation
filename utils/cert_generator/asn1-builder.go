@@ -164,7 +164,7 @@ func BuildASN1(obj *Object,  builder *cryptobyte.Builder) error {
 		if err != nil {
 			return err
 		}
-		t := time.Now().AddDate(years, 0, 0)
+		t := time.Now().UTC().AddDate(years, 0, 0)
 		builder.AddASN1GeneralizedTime(t, implicit)
 	case "OCTETCAPSULE":
 		bytes, err := buildCapsule(obj)
