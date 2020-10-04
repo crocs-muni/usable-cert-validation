@@ -123,6 +123,16 @@ Valid value is a filename of a PEM encoded certificate.
 
     ISSUERFILE: ca.pem
     
+**BITSTRING** is equivalent to **ASN.1 BITSTRING**
+Possible values are arbitrary number of integers 0-255 separated by spaces arbitrarily.
+
+    BITSTRING: 0 1 156 201
+    
+**OCTETSTRING** is equivalent to **ASN.1 OCTETSTRING**
+Possible values are arbitrary number of integers 0-255 separated by spaces arbitrarily.
+    
+        BITSTRING: 192 168 2 1
+
 ## Implicit, explicit and override tags
 
 Additionally, tags can be appended with keywords **EXPLICIT**, **IMPLICIT** and **OVERRIDE** plus tag number to manipulate the final ASN.1 structure.
