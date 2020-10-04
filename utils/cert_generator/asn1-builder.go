@@ -40,6 +40,20 @@ func parseOID(data string) ([]int, error) {
 	return oid, nil
 }
 
+// parse OID from string into array of integers
+func parseBitOrOctetString(data string) ([]byte, error) {
+	numbers := strings.Split(data, " ")
+	var oid []byte
+	for _, c := range numbers {
+		next, err := strconv.Atoi(c)
+		if err != nil {
+			return nil, err
+		}
+		oid = append(oid, byte(next))
+	}
+	return oid, nil
+}
+
 // write obj children ASN.1 data into byte array
 func buildCapsule(obj *Object) ([]byte, error) {
 	var b cryptobyte.Builder
@@ -173,7 +187,17 @@ func BuildASN1(obj *Object,  builder *cryptobyte.Builder) error {
 		}
 		builder.AddASN1OctetString(bytes, implicit)
 	case "OCTETSTRING":
-		builder.AddASN1OctetString([]byte(obj.Content), implicit)
+		bytes, err := parseBitOrOctetString(obj.Content)
+		if err != nil {
+			return err
+		}
+		builder.AddASN1OctetString(bytes, implicit)
+	case "BITSTRING":
+		bytes, err := parseBitOrOctetString(obj.Content)
+		if err != nil {
+			return err
+		}
+		builder.AddASN1BitString(bytes, implicit)
 	case "PRIVATEKEY":
 		bytes, err := buildSubjectPublicKey(obj.Content)
 		if err != nil {
