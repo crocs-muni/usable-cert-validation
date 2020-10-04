@@ -21,7 +21,7 @@
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
                         {% for library in site.data.libraries %}
                           <a class="dropdown-item" href=
-                          "{% if page.library != library.name %}/{% if library.name != 'openssl' %}{{ library.name }}{% endif %}{% endif %}#errors">
+                          "{% if page.library != library.name %}/{% if library.name != 'openssl' %}{{ library.name }}{% endif %}{% endif %}#{{ library.name }}">
                           {{ library.title }}</a>
                         {% endfor %}
                     </div>

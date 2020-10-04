@@ -1,4 +1,3 @@
-
 {% for category in site.data.errors %}
 
 {% assign errors = site.data[page.library] | where:"tags", category.tag | sort: 'weight' %}
