@@ -72,5 +72,6 @@ clean:
 	rm -rf $(CERTS_ARCHIVES_FOLDER)
 	rm -rf $(MAPPING_FOLDER)
 	rm -rf _site
+	rm -rf $(CERT_GENERATOR_FOLDER)/generate
 
 .PHONY: all clean test local $(ERRORS_ALL)
