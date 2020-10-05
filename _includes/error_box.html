@@ -52,11 +52,12 @@
         {% if site.data.mapping[page.library][include.page.error-code] %}
             <h3>{% include icon.html icon="error-link" %}Corresponding errors:</h3>
             <ul class="list-unstyled mb-0">
-            {% for group in site.data.mapping-file %}
+            {% assign groups = "equal,superset,subset" | split:"," %}
+            {% for group in groups %}
                 {% for library in site.data.libraries %}
-                    {% for error in site.data.mapping[page.library][include.page.error-code][group.name][library.name] %}
+                    {% for error in site.data.mapping[page.library][include.page.error-code][group][library.name] %}
                         <li>
-                            {% include icon.html icon=group.name %}
+                            {% include icon.html icon=group %}
                             {{ library.title }}/<a href="/{% if library.name != "openssl" %}{{ library.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
                         </li>
                     {% endfor %}
