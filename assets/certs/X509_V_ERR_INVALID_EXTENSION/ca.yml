@@ -1,0 +1,80 @@
+---
+version:
+  INTEGER EXPLICIT 0: 2
+
+serialNumber:
+  INTEGER: 1
+
+signature:
+  SEQUENCE:
+    OID: 1.2.840.113549.1.1.11
+    NULLTAG: NULL
+
+issuer:
+  SEQUENCE:
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.3
+        IA5STRING: "Usable cert validation: Temporary CA"
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.6 
+        PRINTABLESTRING: CZ
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.10
+        IA5STRING: Masaryk University
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.11
+        IA5STRING: Centre for Research on Cryptography and Security
+
+validity:
+  SEQUENCE:
+    YEAROFFSET: 0
+    YEAROFFSET: 1
+    
+subject:
+  SEQUENCE:
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.3
+        IA5STRING: "Usable cert validation: Temporary CA"
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.6 
+        PRINTABLESTRING: CZ
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.10
+        IA5STRING: Masaryk University
+    SET:
+      SEQUENCE:
+        OID: 2.5.4.11
+        IA5STRING: Centre for Research on Cryptography and Security
+
+extensions:
+    SEQUENCE EXPLICIT 3:
+
+      SEQUENCE:
+        OID: 2.5.29.19
+        BOOLEAN: true
+        OCTETCAPSULE:
+          SEQUENCE:
+            BOOLEAN: true
+
+      SEQUENCE:
+        OID: 1.3.6.1.5.5.7.1.7
+        BOOLEAN: true
+        OCTETCAPSULE:
+          SEQUENCE:
+            SEQUENCE:
+              OCTETSTRING: 0 1 2 3
+              SEQUENCE:
+                BITSTRING: 192 168 1 1
+
+signatureAlgorithm:
+  SEQUENCE:
+    OID: 1.2.840.113549.1.1.11
+    NULLTAG: NULL
+...
