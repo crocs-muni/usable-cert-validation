@@ -4,3 +4,8 @@ tags: [ name ]
 docs: |
   RFC 3779 resource not subset of parent's resources.
 weight: 411
+verify-cert: X509_V_ERR_UNNESTED_RESOURCE
+verify-command: |
+  openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+  error 46 at 1 depth lookup: RFC 3779 resource not subset of parent's resources

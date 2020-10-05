@@ -4,3 +4,8 @@ tags: [ extension ]
 docs: |
   Invalid or inconsistent certificate extension.
 weight: 305
+verify-cert: X509_V_ERR_INVALID_EXTENSION
+verify-command: |
+  openssl verify -CAfile ca.crt endpoint.crt
+verify-expected: |
+ error 41 at 0 depth lookup: invalid or inconsistent certificate extension
