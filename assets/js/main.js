@@ -4,6 +4,12 @@ $(document).ready(function(){
         .removeClass('show')
         .siblings('.card-header')
         .addClass('collapsed');
+    currentHref = window.location.href
+    if (currentHref.includes('#') && currentHref.endsWith('-link')) {
+        error = window.location.href.split('#')[1];
+        error = error.substring(0, error.length - 5);
+        $('#' + error).collapse('show');
+    };
 });
 
 // Show navbar if necessary at page load and after scroll
