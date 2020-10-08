@@ -36,7 +36,7 @@ $(CERTS_ARCHIVES_FOLDER)/%.zip: $(CERTS_BUILD_FOLDER)/% $$(wildcard $(CERTS_BUIL
 	@printf "[ OK ]\n"
 
 # Generate mapping files
-$(MAPPING_FOLDER)/%.yml:
+$(MAPPING_FOLDER)/%.yml: _data/mapping.txt
 	$(eval ERROR=$(basename $(notdir $@)))
 	$(eval LIBRARY=$(subst .yml,,$(patsubst %/,%,$(subst $(MAPPING_FOLDER)/,,$(dir $@)))))
 	@printf "Generating mapping for %-62s" "$(LIBRARY)/$(basename $(ERROR))"
