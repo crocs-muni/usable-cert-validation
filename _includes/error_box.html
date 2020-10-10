@@ -24,13 +24,37 @@
     {% if include.page.docs %}
         {% include icon.html icon=lib-book float="float-right" %}
     {% endif %}
+    {% if include.new-docs-oneliner or include.page.new-docs-explanation or include.page.new-docs-security-perspective or include.page.new-docs-consequences or include.page.new-docs-what-to-do %}
+        {% include icon.html icon="new-docs-book" float="float-right" %}
+    {% endif %}
 </div>
 <div class="collapse show" id="{{ include.page.slug }}">
     <div class="card card-body">
         {% if include.page.error-code %}
             {% assign library=site.data.libraries | where: "name", page.library | first %}
+
+            <!-- new docs -->
+            {% if include.new-docs-oneliner or include.page.new-docs-explanation or include.page.new-docs-security-perspective or include.page.new-docs-consequences or include.page.new-docs-what-to-do %}
+                <h3>{% include icon.html icon="new-docs-book" %}Our documentation:</h3>
+            {% endif %}
+            {% if include.page.new-docs-oneliner %}
+                <p>{{ include.page.new-docs-oneliner}}</p>
+            {% endif %}
+            {% if include.page.new-docs-explanation %}
+                <p>{{ include.page.new-docs-explanation}}</p>
+            {% endif %}
+            {% if include.page.new-docs-security-perspective %}
+                <p>{{ include.page.new-docs-security-perspective}}</p>
+            {% endif %}
+            {% if include.page.new-docs-consequences %}
+                <p>{{ include.page.new-docs-consequences}}</p>
+            {% endif %}
+            {% if include.page.new-docs-what-to-do %}
+                <p>{{ include.page.new-docs-what-to-do}}</p>
+            {% endif %}
+
             {% if include.page.docs %}
-                <h3>{% include icon.html icon=lib-book %}Documentation:</h3>
+                <h3>{% include icon.html icon=lib-book %}Original documentation:</h3>
                 <p>{{ include.page.docs }}<span class="text-muted">(<a class="color-reset" href="{{ library.source }}">source</a>)</span></p>
             {% else %}
                 <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
