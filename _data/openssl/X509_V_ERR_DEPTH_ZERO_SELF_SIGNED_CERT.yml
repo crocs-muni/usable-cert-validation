@@ -9,3 +9,13 @@ verify-command: |
   openssl verify endpoint.crt
 verify-expected: |
   error 18 at 0 depth lookup: self signed certificate
+new-docs-oneliner: |
+  The provided certificate is self-signed and it cannot be found in the list of trusted certificates.
+new-docs-explanation: |
+  The provided certificate (at zero depth) is self-signed (<i>issuer</i> and <i>subject</i> fields are the same). Self-signed certificates serve as certification authorities, which need to be explicitly trusted. However, this certificate is not in the list of trusted certificates.
+new-docs-security-perspective: |
+  The certificate could be issued by anyone so the information contained in the certificate is not reliable (there can be written almost anything, so it may look like a certificate of a well-known company while it is certificate of a fraud).
+new-docs-consequences: |
+  If you trust the certificate without verifying the issuer, you may trust the certificates, which do not contain trustworthy information.
+new-docs-what-to-do: |
+  Use self-signed certificates only for test purposes. Otherwise, let your certificate to be signed by a recognized certification authority.
