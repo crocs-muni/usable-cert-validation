@@ -23,13 +23,13 @@ Install the modified fork of golang.org/x/crypto:
 
 To build, run:
 
-    go build -o generate *.go
+    go build -o yml2cert *.go
 
 ## Usage
 
 Run the application by using the command:
 
-    ./generate -signingKey key.pem --templateFile template --outFile out.pem [--privateKey priv.pem] [--issuerFile ca.pem]
+    ./yml2cert -signingKey key.pem --templateFile template --outFile out.pem [--privateKey priv.pem] [--issuerFile ca.pem]
 
 *signingKey* is a filename of an RSA key to be used to sign the final certificate.
 
