@@ -6,7 +6,7 @@ CERTS_ARCHIVES_FOLDER=assets/certs-archives
 MAPPING_FOLDER=_data/mapping
 VERBOSITY=">/dev/null 2>&1"
 ERRORS_FOLDER=_data
-CERT_GENERATOR_FOLDER=utils/cert_generator
+YML2CERT_FOLDER=utils/yml2cert
 
 # Computed variables
 CERTS_IDS_ALL=$(notdir $(wildcard $(CERTS_FOLDER)/*))
@@ -15,16 +15,16 @@ CERTS_ARCHIVES_ALL=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(CE
 ERRORS_ALL=$(wildcard $(ERRORS_FOLDER)/*/*.yml)
 ERRORS_WITH_LIBS_ALL=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERRORS_FOLDER)/*/*.yml))
 
-all: $(CERT_GENERATOR_FOLDER)/generate $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
+all: $(YML2CERT_FOLDER)/yml2cert $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
 
-$(CERT_GENERATOR_FOLDER)/generate: $(CERT_GENERATOR_FOLDER)/*.go
-	@cd $(CERT_GENERATOR_FOLDER) && go build -o generate *.go
+$(YML2CERT_FOLDER)/yml2cert: $(YML2CERT_FOLDER)/*.go
+	@cd $(YML2CERT_FOLDER) && go build -o yml2cert *.go
 
 # Generate certificates
 $(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/%/*.cfg))
 	@printf "Generating certs for %-64s" $(*F)
 	@mkdir -p $@
-	@$(MAKE) --silent --directory=$(CERTS_FOLDER)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) generate-cert
+	@$(MAKE) --silent --directory=$(CERTS_FOLDER)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) YML2CERT=$(CURDIR)/$(YML2CERT_FOLDER)/yml2cert generate-cert
 	@printf "[ OK ]\n"
 #	@printf "Testing OpenSSL validation for %-50s" $(*F)
 #	@utils/test-cert-validation.sh $(CERTS_FOLDER)/$(@F) $(CURDIR)/$@ && [ $$? -eq 0 ] || \
@@ -72,6 +72,6 @@ clean:
 	rm -rf $(CERTS_ARCHIVES_FOLDER)
 	rm -rf $(MAPPING_FOLDER)
 	rm -rf _site
-	rm -rf $(CERT_GENERATOR_FOLDER)/generate
+	rm -rf $(YML2CERT_FOLDER)/yml2cert
 
 .PHONY: all clean test local $(ERRORS_ALL)
