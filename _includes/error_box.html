@@ -34,23 +34,27 @@
             {% assign library=site.data.libraries | where: "name", page.library | first %}
 
             <!-- new docs -->
-            {% if include.new-docs-oneliner or include.page.new-docs-explanation or include.page.new-docs-security-perspective or include.page.new-docs-consequences or include.page.new-docs-what-to-do %}
-                <h3>{% include icon.html icon="new-docs-book" %}Our documentation:</h3>
+            {% if include.page.new-docs or include.new-docs-oneliner or include.page.new-docs-explanation or include.page.new-docs-security-perspective or include.page.new-docs-consequences or include.page.new-docs-what-to-do %}
+                <h3>{% include icon.html icon="new-docs-book" %}Redesigned documentation:</h3>
             {% endif %}
-            {% if include.page.new-docs-oneliner %}
-                <p>{{ include.page.new-docs-oneliner}}</p>
-            {% endif %}
-            {% if include.page.new-docs-explanation %}
-                <p>{{ include.page.new-docs-explanation}}</p>
-            {% endif %}
-            {% if include.page.new-docs-security-perspective %}
-                <p>{{ include.page.new-docs-security-perspective}}</p>
-            {% endif %}
-            {% if include.page.new-docs-consequences %}
-                <p>{{ include.page.new-docs-consequences}}</p>
-            {% endif %}
-            {% if include.page.new-docs-what-to-do %}
-                <p>{{ include.page.new-docs-what-to-do}}</p>
+            {% if include.page.new-docs %}
+                {{ include.page.new-docs | markdownify }}
+            {% else %}
+                {% if include.page.new-docs-oneliner %}
+                    <p>{{ include.page.new-docs-oneliner}}</p>
+                {% endif %}
+                {% if include.page.new-docs-explanation %}
+                    <p>{{ include.page.new-docs-explanation}}</p>
+                {% endif %}
+                {% if include.page.new-docs-security-perspective %}
+                    <p>{{ include.page.new-docs-security-perspective}}</p>
+                {% endif %}
+                {% if include.page.new-docs-consequences %}
+                    <p>{{ include.page.new-docs-consequences}}</p>
+                {% endif %}
+                {% if include.page.new-docs-what-to-do %}
+                    <p>{{ include.page.new-docs-what-to-do}}</p>
+                {% endif %}
             {% endif %}
 
             {% if include.page.docs %}
