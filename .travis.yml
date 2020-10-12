@@ -8,15 +8,6 @@ before_install:
   - sudo apt install python3.8
   - sudo apt install -y python-pip && pip install shyaml
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
-  - wget https://dl.google.com/go/go1.11.linux-amd64.tar.gz
-  - sudo tar -xf go1.11.linux-amd64.tar.gz
-  - sudo mv go /usr/local
-  - export GOROOT=/usr/local/go
-  - export GOPATH=$HOME/go
-  - export PATH=$GOPATH/bin:$GOROOT/bin:$PATH
-  - go get gopkg.in/yaml.v3
-  - git clone https://github.com/zacikpa/crypto $GOPATH/src/golang.org/x/crypto
-
 
 script: 
   - ./git-tools/git-restore-mtime

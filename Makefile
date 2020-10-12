@@ -15,7 +15,7 @@ CERTS_ARCHIVES_ALL=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(CE
 ERRORS_ALL=$(wildcard $(ERRORS_FOLDER)/*/*.yml)
 ERRORS_WITH_LIBS_ALL=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERRORS_FOLDER)/*/*.yml))
 
-all: $(YML2CERT_FOLDER)/yml2cert $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
+all: go $(YML2CERT_FOLDER)/yml2cert $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
 
 $(YML2CERT_FOLDER)/yml2cert: $(YML2CERT_FOLDER)/*.go
 	@cd $(YML2CERT_FOLDER) && go build -o yml2cert *.go
@@ -63,6 +63,11 @@ $(ERRORS_FOLDER)/*/*.yml:
 # Web targets
 local: all
 	bundle exec jekyll serve
+
+# Get necessary go packages
+go:
+	@go get gopkg.in/yaml.v3
+	@git clone https://github.com/zacikpa/crypto $$GOPATH/src/golang.org/x/crypto
 
 # Utility targets
 clean:

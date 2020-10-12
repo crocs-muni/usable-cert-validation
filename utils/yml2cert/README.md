@@ -11,11 +11,11 @@ Install the GO language at:
     
     golang.org/doc/install
 
-Install the yaml v3:
+Install the yaml.v3 GO package. It is used for parsing YAML certificate templates:
 
     go get gopkg.in/yaml.v3
 
-Install the modified fork of golang.org/x/crypto:
+Install the modified fork of golang.org/x/crypto. It is used for generating ASN.1 data:
 
     git clone https://github.com/zacikpa/crypto.git $GOPATH/src/golang.org/x/crypto
 
