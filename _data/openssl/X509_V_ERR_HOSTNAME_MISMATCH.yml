@@ -9,13 +9,22 @@ verify-command: |
   openssl verify -CAfile ca.crt -verify_hostname www.crocs.muni.cz endpoint.crt
 verify-expected: |
   error 62 at 0 depth lookup: Hostname mismatch
-new-docs-oneliner: |
+
+new-docs: |
   The requested hostname does not match the subject name in the certificate.
-new-docs-explanation: |
-  Information about the certificate’s holder (an entity that is associated with the certificate’s public key) is held in <i>subject</i> field and/or in the <i>subjectAltName</i> extension. In this case, the certificate was issued to the entity specified in those fields, but it is different than the server hostname.
-new-docs-security-perspective: |
+
+  #### Explanation
+
+  Information about the certificate’s holder (an entity that is associated with the certificate’s public key) is held in `subject` field and/or in the `subjectAltName` extension. In this case, the certificate was issued to the entity specified in those fields, but it is different than the server hostname.
+
+  #### Security perspective
+
   The server pretends to be another server. It can be caused by an attacker who may want to steal your information shared with the server (e.g., username and password). Another reason can be a misconfiguration of the server or incomplete information in the certificate.
-new-docs-consequences: |
+
+  #### Consequences
+
   If you access another server than you think, you may receive wrong or malicious content. Moreover, all information provided to this server can be misused.
-new-docs-what-to-do: |
-  Check whether all possible hostnames are listed in the certificate, either in the <i>subject</i> field or in the <i>subjectAltName</i> extension (e.g., ’example.com’ and also ‘www.example.com’). Try to redirect all associated traffic to the hostname indicated in the <i>subject</i> field or in the <i>subjectAltName</i> extension (e.g., redirect ‘example.com’ to ‘www.example.com’).
+
+  #### Next steps
+
+  Check whether all possible hostnames are listed in the certificate, either in the `subject` field or in the `subjectAltName` extension (e.g., ’example.com’ and also ‘www.example.com’). Try to redirect all associated traffic to the hostname indicated in the `subject` field or in the `subjectAltName` extension (e.g., redirect ‘example.com’ to ‘www.example.com’).
