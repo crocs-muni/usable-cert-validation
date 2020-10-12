@@ -162,9 +162,11 @@ makedirs(mapping_folder + "/" + library, exist_ok=True)
 
 errors_equal = sorted(list(find_all_equal_errors(library, error, mapping_data)))
 
-file = open(output_file, "w")
+file = None
 
 if errors_equal:
+    if not file:
+        file = open(output_file, "w")
     append_file(errors_equal, file, "equal")
 
 # superset
@@ -175,6 +177,8 @@ for current in errors_equal:
 errors = sorted(list(errors_set))
 
 if errors:
+    if not file:
+        file = open(output_file, "w")
     append_file(errors, file, "superset")
     
 # superset
@@ -185,6 +189,9 @@ for current in errors_equal:
 errors = sorted(list(errors_set))
 
 if errors:
+    if not file:
+        file = open(output_file, "w")
     append_file(errors, file, "subset")
 
-file.close()
+if file:
+    file.close()
