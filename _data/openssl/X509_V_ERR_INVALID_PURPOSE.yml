@@ -9,11 +9,18 @@ verify-command: |
   openssl verify -CAfile ca.crt -purpose sslserver endpoint.crt
 verify-expected: |
   error 26 at 0 depth lookup: unsupported certificate purpose
-new-docs-oneliner: |
+
+new-docs: |
   The certificate’s key is being used for another purpose than it is allowed.
-new-docs-explanation: |
+
+  #### Explanation
+
   Certificates can be used for various purposes. It might be desirable to use a certificate only for specific purpose(s). It is achieved by <i>KeyUsage</i> extension, which identifies 9 usages of the certificate. End entity certificates can contain also <i>ExtKeyUsageSyntax</i> extension, which indicates different usages of the certificate’s key than the previous extension. If both extensions are used, the certificate must be used only for purposes consistent with both of them.
-new-docs-security-perspective: |
+
+  #### Security perspective
+
   The wrong use of the key can be caused by malicious intent or by mistake.
-new-docs-what-to-do: |
+
+  #### Next steps
+
   Check both extensions whether contain purposes, for which the certificate is used.

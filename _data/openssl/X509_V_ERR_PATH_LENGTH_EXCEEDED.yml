@@ -9,11 +9,18 @@ verify-command: |
   openssl verify -CAfile ca.crt -untrusted subca1.crt -untrusted subca2.crt endpoint.crt
 verify-expected: |
   error 25 at 2 depth lookup: path length constraint exceeded
-new-docs-oneliner: |
+
+new-docs: |
   The allowed length of the certification path was exceeded.
-new-docs-explanation: |
-  To validate the signature of the given certificate, we need to obtain public key of the issuer from the issuer certificate. Then we have to validate also signature of the issuer certificate, so we need to obtain a certificate of its issuer. The process continues until trusted anchor (usually top-level Certification Authority) is reached. The obtained chain of the certificates is called certification path. The maximal length of the certification path is determined by the field <i>pathLenConstraint</i> in the <i>BasicConstraints</i> extension (meaningful only for CA certificates). This limit includes only intermediate certificates, the first (CA certificate) and the last (target certificate) certificates are excluded.
-new-docs-security-perspective: |
+
+  #### Explanation
+
+  To validate the signature of the given certificate, we need to obtain public key of the issuer from the issuer certificate. Then we have to validate also signature of the issuer certificate, so we need to obtain a certificate of its issuer. The process continues until trusted anchor (usually top-level Certification Authority) is reached. The obtained chain of the certificates is called certification path. The maximal length of the certification path is determined by the field `pathLenConstraint` in the `BasicConstraints` extension (meaningful only for CA certificates). This limit includes only intermediate certificates, the first (CA certificate) and the last (target certificate) certificates are excluded.
+
+  #### Security perspective
+
   If the certificate path is exceeded, there is a possibility that CA, which is allowed to issue only end entity certificates, issued a certificate to a Certification Authority.
-new-docs-what-to-do: |
-  Find the certificate, which has exceeded the certification path and set the <i>pathLenConstraint</i> field in the <i>BasicConstraints</i> extension properly.
+
+  #### Next steps
+
+  Find the certificate, which has exceeded the certification path and set the `pathLenConstraint` field in the `BasicConstraints` extension properly.
