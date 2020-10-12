@@ -1,14 +1,8 @@
 {% case include.icon %}
-  {% when 'openssl-book' %}
-    <span class="fas fa-fw fa-book {{ include.float }} color-firebrick" title="OpenSSL documentation"></span>
-  {% when 'gnutls-book' %}
-    <span class="fas fa-fw fa-book {{ include.float }} color-cornflowerblue" title="GnuTLS documentation"></span>
-  {% when 'botan-book' %}
-    <span class="fas fa-fw fa-book {{ include.float }} color-green" title="Botan documentation"></span>
-  {% when 'mbed-book' %}
-    <span class="fas fa-fw fa-book {{ include.float }} color-gold" title="mbedTLS documentation"></span>
-  {% when 'new-docs-book' %}
-    <span class="fas fa-fw fa-book {{ include.float }}" title="Our documentation"></span>
+  {% when 'docs-book' %}
+    <span class="fas fa-fw fa-book {{ include.float }}" title="Original documentation"></span>
+  {% when 'our-docs' %}
+    <span class="fas fa-fw fa-flag {{ include.float }} text-primary" title="Our documentation"></span>
   {% when 'unused' %}
     <span class="fas fa-fw fa-times {{ include.float }} color-verylightgray" title="Unused or deprecated"></span>
   {% when 'certificate' %}

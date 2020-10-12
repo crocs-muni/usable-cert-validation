@@ -2,30 +2,17 @@
 <div class="card-header clearfix" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="true" aria-controls="#{{ include.page.slug }}">
     <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
     <span class="openssl-code" title="{{ include.page.error-code }}">{{ include.page.error-code | replace: "_", "_&shy;" }}</span>
-    {% if include.page.verify-command %}
+    {% if include.page.verify-command and include.page.verify-cert %}
         {% include icon.html icon="certificate" float="float-right" %}
     {% endif %}
     {% if include.page.unused %}
         {% include icon.html icon="unused" float="float-right" %}
     {% endif %}
-    {% if site.data.mapping[page.library][include.page.error-code].equal.mbed or site.data.mapping[page.library][include.page.error-code].subset.mbed or site.data.mapping[page.library][include.page.error-code].superset.mbed %}
-        {% include icon.html icon="mbed-book" float="float-right" %}
+    {% if site.data.mapping[page.library][include.page.error-code] %}
+        {% include icon.html icon="error-link" float="float-right" %}
     {% endif %}
-    {% if site.data.mapping[page.library][include.page.error-code].equal.botan or site.data.mapping[page.library][include.page.error-code].subset.botan or site.data.mapping[page.library][include.page.error-code].superset.botan %}
-        {% include icon.html icon="botan-book" float="float-right" %}
-    {% endif %}
-    {% if site.data.mapping[page.library][include.page.error-code].equal.gnutls or site.data.mapping[page.library][include.page.error-code].subset.gnutls or site.data.mapping[page.library][include.page.error-code].superset.gnutls %}
-        {% include icon.html icon="gnutls-book" float="float-right" %}
-    {% endif %}
-    {% if site.data.mapping[page.library][include.page.error-code].equal.openssl or site.data.mapping[page.library][include.page.error-code].subset.openssl or site.data.mapping[page.library][include.page.error-code].superset.openssl %}
-        {% include icon.html icon="openssl-book" float="float-right" %}
-    {% endif %}
-    {% assign lib-book=page.library | append: "-book" %}
-    {% if include.page.docs %}
-        {% include icon.html icon=lib-book float="float-right" %}
-    {% endif %}
-    {% if include.new-docs-oneliner or include.page.new-docs-explanation or include.page.new-docs-security-perspective or include.page.new-docs-consequences or include.page.new-docs-what-to-do %}
-        {% include icon.html icon="new-docs-book" float="float-right" %}
+    {% if include.page.new-docs %}
+        {% include icon.html icon="our-docs" float="float-right" %}
     {% endif %}
 </div>
 <div class="collapse show" id="{{ include.page.slug }}">
@@ -34,31 +21,13 @@
             {% assign library=site.data.libraries | where: "name", page.library | first %}
 
             <!-- new docs -->
-            {% if include.page.new-docs or include.new-docs-oneliner or include.page.new-docs-explanation or include.page.new-docs-security-perspective or include.page.new-docs-consequences or include.page.new-docs-what-to-do %}
-                <h3>{% include icon.html icon="new-docs-book" %}Redesigned documentation:</h3>
-            {% endif %}
             {% if include.page.new-docs %}
+                <h3>{% include icon.html icon="our-docs" %}Redesigned documentation:</h3>
                 {{ include.page.new-docs | markdownify }}
-            {% else %}
-                {% if include.page.new-docs-oneliner %}
-                    <p>{{ include.page.new-docs-oneliner}}</p>
-                {% endif %}
-                {% if include.page.new-docs-explanation %}
-                    <p>{{ include.page.new-docs-explanation}}</p>
-                {% endif %}
-                {% if include.page.new-docs-security-perspective %}
-                    <p>{{ include.page.new-docs-security-perspective}}</p>
-                {% endif %}
-                {% if include.page.new-docs-consequences %}
-                    <p>{{ include.page.new-docs-consequences}}</p>
-                {% endif %}
-                {% if include.page.new-docs-what-to-do %}
-                    <p>{{ include.page.new-docs-what-to-do}}</p>
-                {% endif %}
             {% endif %}
 
             {% if include.page.docs %}
-                <h3>{% include icon.html icon=lib-book %}Original documentation:</h3>
+                <h3>{% include icon.html icon="docs-book" %}Original documentation:</h3>
                 <p>{{ include.page.docs }}<span class="text-muted">(<a class="color-reset" href="{{ library.source }}">source</a>)</span></p>
             {% else %}
                 <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
@@ -68,7 +37,7 @@
             <p><i><b>{% include icon.html icon="unused" %}Unused: </b>{{ include.page.unused }}</i></p>
         {% endif %}
 
-        {% if include.page.verify-cert %}
+        {% if include.page.verify-cert and include.page.verify-command %}
             <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
             <p>Download the <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}certificate archive</a> and validate the contents using a command indicated below. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>.</p>
             {% if include.page.verify-command %}
