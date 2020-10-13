@@ -7,7 +7,7 @@ To view an example of such a template, see *template.yml*.
 
 ## Pre-Build
 
-Install the [https://golang.org/doc/install](GO) language. Minimal version required is 1.13.
+Install the [GO](https://golang.org/doc/install) language. Minimal version required is 1.13.
 
 ## Build
 
