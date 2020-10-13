@@ -1,10 +1,11 @@
 package main
 
 import (
+	"github.com/crocs-muni/usable-cert-validation/utils/yml2cert/cryptobyte"
 	"encoding/asn1"
 	"errors"
-	"golang.org/x/crypto/cryptobyte"
-	cryptobyteasn1 "golang.org/x/crypto/cryptobyte/asn1"
+	//"golang.org/x/crypto/cryptobyte"
+	cryptobyteasn1 "github.com/crocs-muni/usable-cert-validation/utils/yml2cert/cryptobyte/asn1"
 	"strconv"
 	"strings"
 	"time"
