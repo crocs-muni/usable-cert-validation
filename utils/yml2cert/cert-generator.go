@@ -8,7 +8,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"golang.org/x/crypto/cryptobyte"
+	"github.com/crocs-muni/usable-cert-validation/utils/yml2cert/cryptobyte"
 	"io/ioutil"
 )
 
