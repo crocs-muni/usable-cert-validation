@@ -121,7 +121,7 @@ Possible values are arbitrary number of integers 0-255 separated by spaces arbit
 **OCTETSTRING** is equivalent to **ASN.1 OCTETSTRING**
 Possible values are arbitrary number of integers 0-255 separated by spaces arbitrarily.
     
-        BITSTRING: 192 168 2 1
+    OCTETSTRING: 192 168 2 1
 
 ## Implicit, explicit and override tags
 
