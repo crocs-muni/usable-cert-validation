@@ -1,4 +1,4 @@
-# YML2CERT GENERATOR
+# yml2cert generator
 
 This application can generate a certificate using a YAML template which describes the ASN.1 certificate structure.
 

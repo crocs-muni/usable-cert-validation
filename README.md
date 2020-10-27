@@ -23,7 +23,7 @@ In the future, we plan the possibility of reorganization based on the other libr
   
 ## Local build
 
-The website is build using [Jekyll](https://jekyllrb.com/). To develop locally, install Jekyll (e.g. according to [this guide](https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll). Then run `make web-local` and see the website served at `localhost:4000`.
+The website is build using [Jekyll](https://jekyllrb.com/). To develop locally, install Jekyll (e.g. according to [this guide](https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll). Then run `make local` and see the website served at `localhost:4000`.
 
 Generating certificates requires the [GO language](https://golang.org/), version 1.13 minimum. See _utils/yml2cert/README.md_ if you want to generate arbitrary certificates yourself.
 
