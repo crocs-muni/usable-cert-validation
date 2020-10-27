@@ -2,13 +2,17 @@ dist: bionic    # Ubuntu 18.04 LTS
 language: ruby
 gemfile: Gemfile
 
+addons:
+  apt:
+    update: true
+    packages:
+    - gnutls-bin
+    - python3-pip
+
 before_install: 
-  - sudo apt update
-  - sudo apt install -y gnutls-bin
-  - sudo apt install python3.8
-  - sudo apt install -y python-pip && pip install shyaml
+  - sudo pip3 install shyaml
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
-  - eval "$(gimme stable)"
+  - eval "$(gimme stable)" # Install Go using Gimme (https://github.com/travis-ci/gimme)
 
 script: 
   - ./git-tools/git-restore-mtime
