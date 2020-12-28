@@ -1,31 +1,13 @@
 <div class="section"><div class="container">
     <h1 id="home">{{ page.title }}</h1>
     <div class="lead">
-    <p>Validating X.509 certificates correctly turns out to be pretty complicated (e.g. <a href="http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf">Georgiev2012</a>, <a href="https://crocs.fi.muni.cz/papers/acsac2019">Ukrop2019</a>). Yet certificate validation is absolutely crucial for secure communication on the Internet (think <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a>).</p>
-    <p>Our goal is to simplify the ecosystem by consolidating the errors and their documentation (similarly to <a href="https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/">web documentation</a>) and by explaining better what the validation errors mean.</p>
-    <p>For every error, we aim to provide our redesigned documentation ({% include icon.html icon="our-docs" %}), an example certificate ({% include icon.html icon="certificate" %}), original documentation provided by the library ({% include icon.html icon="docs-book" %}, unused or deprecated errors denoted by {% include icon.html icon="unused" %}), and links to corresponding errors from other libraries ({% include icon.html icon="error-link" %}). In the future, we plan on adding error frequencies based on IP-wide scans and elaborating on the consequences of individual errors.</p>
-    </div>
-    <div class="row intro">
-    <div class="col-md-4">
-        <div class="card card-body">
-            <h4>Multiple libraries</h4>
-            <p>Our consolidated taxonomy aims for eight most used TLS-enabled libraries. The main structure is based on <a href="https://www.openssl.org/">OpenSSL</a> as it is by far the most used library in the domain of TLS.</p>
-            <a href="https://docs.google.com/spreadsheets/d/1AYX02k49lBhrZ7fLoh5UsEaXU-OND27zX4LexnzVR-k/edit?usp=sharing" class="btn btn-primary">{% include icon.html icon="button-table" %} Error mapping</a>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-body">
-            <h4>Further details</h4>
-            <p>We extend the existing research on security, TLS and documentation design. Details are described in the frequently asked questions on a separate page.</p>
-            <a href="/faq" class="btn btn-primary">{% include icon.html icon="button-methodology" %} FAQ with details</a>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card card-body">
-            <h4>Feedback welcome!</h4>
-            <p>Like the project? Think it's useless? Found something not working? Please let us know, we are grateful for all feedback.</p>
-            <a href="{{ site.repo-url }}/issues/new?labels=bug&title=Bug+report&body=Please+describe+what+does+not+work..." class="btn btn-primary">{% include icon.html icon="button-bug" %} Bug report</a><a href="mailto:webmaster@x509errors.org" class="btn btn-primary">{% include icon.html icon="button-email" %} Email us!</a>
-        </div>
-    </div>
+        <p class="collapse multi-collapse show" id="collapseUpper">Validating X.509 certificates correctly turns out to be pretty complicated (e.g. <a href="http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf">Georgiev2012</a>, <a href="https://crocs.fi.muni.cz/papers/acsac2019">Ukrop2019</a>). Yet certificate validation is absolutely crucial for secure communication on the Internet (think <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security">TLS</a>).</p>
+        <p>Our goal is to simplify the ecosystem by consolidating the errors and their documentation (similarly to <a href="https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/">web documentation</a>) and by explaining better what the validation errors mean.</p>
+        <p class="collapse multi-collapse show" id="collapseLower">For every error, we aim to provide our redesigned documentation ({% include icon.html icon="our-docs" %}), an example certificate ({% include icon.html icon="certificate" %}), original documentation provided by the library ({% include icon.html icon="docs-book" %}, unused or deprecated errors denoted by {% include icon.html icon="unused" %}), and links to corresponding errors from other libraries ({% include icon.html icon="error-link" %}). In the future, we plan on adding error frequencies based on IP-wide scans and elaborating on the consequences of individual errors.</p>
+        <p class="collapse multi-collapse text-center" id="intro-button">
+            <button class="btn btn-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="collapseExample">
+                Learn more
+            </button>
+        </p>
     </div>
 </div></div>

@@ -4,6 +4,7 @@ $(document).ready(function(){
         .removeClass('show')
         .siblings('.card-header')
         .addClass('collapsed');
+    $('#intro-button').addClass('show');
     currentHref = window.location.href
     if (currentHref.includes('#') && currentHref.endsWith('-link')) {
         error = window.location.href.split('#')[1];
