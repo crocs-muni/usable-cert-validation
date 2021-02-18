@@ -11,20 +11,15 @@ verify-expected: |
   error 34 at 0 depth lookup: unhandled critical extension
 
 new-docs: |
-  Either critical extension was not recognized, or information in critical extension could not be processed.
-
+  A critical extension was not recognized or could not be processed.
+  
   #### Explanation
-
-  Certificate extensions can be used for incorporating additional information into a certificate. The extensions can be critical or non-critical (determined by `critical` field for every extension in the certificate). All extensions marked as critical must be processed. If a system, which processes a certificate, cannot recognize a critical extension, it must reject the certificate. The certificate has to be rejected also when the system is unable to process the information contained in the critical extension.
-
+  
+  Certificate extensions can be used for extending certificates with additional information. Each extension is either marked as critical or non-critical (in the `critical` field in the extension). If an extension is marked as critical, it must be processed. If the processing system cannot recognize or process a critical extension, it must reject the certificate.
+  
   #### Security perspective
-
-  An extension can carry arbitrary information, and marking it as critical means that it is crucial to process it. If it cannot be processed, there is a security risk that a certificate’s key will be used in a manner it must not be, e.g., that a certificate’s key will be used for another purpose that it was aimed or that a Certification Authority will issue a certificate for subject name for which it is not allowed to issue certificates, or many other security risks.
-
-  #### Consequences
-
-  If you ignore critical extensions that cannot be processed, it may result in unauthorized use of the certificate.
-
+  
+  Marking an extension as critical is a way for the certificate issuer to denote it is _absolutely essential_ to process and understand it. If it is not processed, we may lack the necessary information and misuse the certificate. We may, for example, miss the intended purpose or key usage constraint. Inappropriateong usage circumvents the guarantees of the certificate authority, possibly putting our systems at risk.
+  
   #### Next steps
-
-  Make sure that only necessary extensions are marked as critical and that the values of critical extensions are meaningful. It is recommended to use standard extensions (specified in the [RFC 5280](https://tools.ietf.org/html/rfc5280#section-4.2.1)). Marking non-standard extensions as critical may cause problems in the general context.
+  Inspect the certificate extensions marked with `critical: true` to find the offender. Make sure that only the necessary extensions are marked as critical. Marking non-standard extensions as critical may cause problems in the general context.
