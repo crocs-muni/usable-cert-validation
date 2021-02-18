@@ -5,7 +5,6 @@ _debug
 assets/certs-archives
 
 # Go compiled filed
-utils/yml2cert/go.sum
 utils/yml2cert/yml2cert
 
 # Automatically generated linking files

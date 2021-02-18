@@ -10,10 +10,14 @@ addons:
     - python3-pip
 
 before_install: 
-  - sudo pip3 install shyaml
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
   - ./git-tools/git-restore-mtime
+  - rm -rf ./git-tools
+
+install:
+  - sudo pip3 install shyaml
   - eval "$(gimme stable)" # Install Go using Gimme (https://github.com/travis-ci/gimme)
+  - bundle install
 
 script: 
   - make test
