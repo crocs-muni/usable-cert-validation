@@ -12,10 +12,10 @@ addons:
 before_install: 
   - sudo pip3 install shyaml
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
+  - ./git-tools/git-restore-mtime
   - eval "$(gimme stable)" # Install Go using Gimme (https://github.com/travis-ci/gimme)
 
 script: 
-  - ./git-tools/git-restore-mtime
   - make test
 
 env:
