@@ -21,3 +21,6 @@ Gemfile.lock
 
 # VS Code project files
 .vscode
+
+# Local bundle configuration and gems
+vendor
