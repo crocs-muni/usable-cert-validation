@@ -12,15 +12,15 @@ verify-expected: |
 
 new-docs: |
   The allowed length of the certification path was exceeded.
-
+  
   #### Explanation
-
-  To validate the signature of the given certificate, we need to obtain public key of the issuer from the issuer certificate. Then we have to validate also signature of the issuer certificate, so we need to obtain a certificate of its issuer. The process continues until trusted anchor (usually top-level Certification Authority) is reached. The obtained chain of the certificates is called certification path. The maximal length of the certification path is determined by the field `pathLenConstraint` in the `BasicConstraints` extension (meaningful only for CA certificates). This limit includes only intermediate certificates, the first (CA certificate) and the last (target certificate) certificates are excluded.
-
+  
+  Certification Authorities (CAs) can mandate the maximal length of the trusted certificate chains below their certificate. This is done using the `pathLenConstraint` field in the `basicConstraints` extension. If the certificate chain created during validation is longer than this limit, the validation fails due to the violated path length constraint. This limit includes only intermediate certificates – the first (CA) and the last (endpoint) certificates are excluded.
+  
   #### Security perspective
-
-  If the certificate path is exceeded, there is a possibility that CA, which is allowed to issue only end entity certificates, issued a certificate to a Certification Authority.
-
+  
+  An exceeded certificate path length signifies that one of the sub-authorities issued a certificate it was not allowed. Therefore, the CA or one of the sub-authorities may not be trustworthy.
+  
   #### Next steps
-
-  Find the certificate, which has exceeded the certification path and set the `pathLenConstraint` field in the `BasicConstraints` extension properly.
+  
+  Inspect the certificate chain to find the `pathLenConstraint` in the `basicConstraints` extension that was violated. Inform the (sub-)authority issuing this certificate about the violation lower in the certificate chain.

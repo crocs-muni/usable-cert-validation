@@ -11,21 +11,16 @@ verify-expected: |
   error 10 at 0 depth lookup: certificate has expired
 
 new-docs: |
-  Validity of the certificate has expired.
+  The certificate has expired (its validity period passed).
   
   #### Explanation
   
-  Every certificate is delivered for a certain time period (determined by `notBefore` and `notAfter` fields in certificate). The time period determines the validity of certificate. When time period elapses, the certificate becomes expired.
+  Every certificate is issued for a specific time period (determined by `notBefore` and `notAfter` fields in the certificate). The current time seems to be past the `notAfter` value. Therefore, the certificate is no longer valid.
   
   #### Security perspective
   
-  The certificate is not valid anymore which means that issuing Certification Authority (CA) does not maintain information about the certificate and does not guarantee the correctness of information provided in the certificate. Moreover, expired certificates are removed from Certificate Revocation Lists (CRLs) which means that a certificate might be revoked in the past (e.g. because of revealed private key), but we do not get this information about expired certificate.
-  
-  #### Consequences
-  
-  The expired certificate is untrustworthy, which may harm your business. If you decide to trust to it, you may communicate with another person/entity than you think which may lead to theft of personal information.
+  The certificate is not valid anymore. That means the issuing Certificate Authority (CA) does guarantee the information in it is still correct. Moreover, expired certificates are removed from Certificate Revocation Lists (CRLs). That means the certificate might have been revoked in the past (e.g., because of a leaked private key), but we cannot check anymore. Thus, the server presenting this certificate may not be who it claims.
   
   #### Next steps
   
-  Ensure that date, time and time zone are set correctly on your device. If the time settings are correct, you should get new valid certificate from the CA. In this case, contact either the CA which issued the previous certificate or another CA.
-
+  First, ensure that the date, time and time zone are set correctly on your device to eliminate the possibility of local misconfiguration. If the time settings are correct, you should get a new valid certificate from the CA.

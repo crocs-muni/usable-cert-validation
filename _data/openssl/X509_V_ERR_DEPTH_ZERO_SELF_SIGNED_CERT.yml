@@ -11,20 +11,17 @@ verify-expected: |
   error 18 at 0 depth lookup: self signed certificate
 
 new-docs: |
-  The provided certificate is self-signed and it cannot be found in the list of trusted certificates.
-
+  The provided certificate is self-signed and it is not present in the list of trusted certificates.
+  
   #### Explanation
-
-  The provided certificate (at zero depth) is self-signed (`issuer` and `subject` fields are the same). Self-signed certificates serve as certification authorities, which need to be explicitly trusted. However, this certificate is not in the list of trusted certificates.
-
+  
+  The provided certificate is self-signed (the `issuer` and `subject` fields are the same). Self-signed certificates usually serve as the root of trust in certificate chains belonging to the Certificate Authorities (CA). However, this certificate is at "zero depth," i.e., it does not form a certificate chain. Neither is it present in the list of explicitly trusted CAs in your system.
+  
   #### Security perspective
-
-  The certificate could be issued by anyone so the information contained in the certificate is not reliable (there can be written almost anything, so it may look like a certificate of a well-known company while it is certificate of a fraud).
-
-  #### Consequences
-
-  If you trust the certificate without verifying the issuer, you may trust the certificates, which do not contain trustworthy information.
-
+  
+  Anyone can issue a self-signed certificate. Thus, the information contained in the certificate is not reliable. Therefore, the server presenting this certificate may not be who it claims.
+  
   #### Next steps
-
-  Use self-signed certificates only for test purposes. Otherwise, let your certificate to be signed by a recognized certification authority.
+  
+  Try to find out if the self-signed certificate was expected at this place. Try to get a proper CA-signed certificated as self-signed certificates are not recommended even for testing purposes. If you are _absolutely certain_ this is the certificate issued by a trustworthy party, you can mark it as trusted by your system.
+  The provided certificate is self-signed and it cannot be found in the list of trusted certificates.
