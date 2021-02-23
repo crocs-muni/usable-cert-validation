@@ -1,10 +1,19 @@
-// Collapse error details at page load
+// Page load routines
 $(document).ready(function(){
+
+    // Collapse error details at page load
     $('.collapse.show')
         .removeClass('show')
         .siblings('.card-header')
         .addClass('collapsed');
+
+    // show the intro button
     $('#intro-button').addClass('show');
+
+    // show the gradient text-blocker (implicitly hidden for non JS users)
+    document.getElementById("intro-fadeout").hidden = false;
+
+    // show error if the url redirects to it
     currentHref = window.location.href
     if (currentHref.includes('#') && currentHref.endsWith('-link')) {
         error = window.location.href.split('#')[1];
@@ -44,3 +53,8 @@ $(function() {
         $(this).addClass('justShown');
 	});
 });
+
+// on button click reveal the fadeout text
+function hideIntroFadeout() {
+    document.getElementById('intro-fadeout').hidden = true;
+}
