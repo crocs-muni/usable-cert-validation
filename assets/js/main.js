@@ -56,5 +56,17 @@ $(function() {
 
 // on button click reveal the fadeout text
 function hideIntroFadeout() {
-    document.getElementById('intro-fadeout').hidden = true;
+    var id = setInterval(lowerOpacity, 20);
+    var opacity = 1;
+
+    function lowerOpacity() {
+        if (opacity < 0) {
+            clearInterval(id);
+            document.getElementById("intro-fadeout").hidden = true;
+        } else {
+            opacity -= 0.05;
+            document.getElementById('intro-fadeout').style.opacity = opacity;
+            console.log(opacity);
+        }
+    }
 }
