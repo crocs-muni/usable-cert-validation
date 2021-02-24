@@ -9,7 +9,6 @@ $(document).ready(function(){
 
     // show the intro button
     $('#intro-button').addClass('show');
-
     // show the gradient text-blocker (implicitly hidden for non JS users)
     document.getElementById("intro-fadeout").hidden = false;
 
@@ -66,7 +65,6 @@ function hideIntroFadeout() {
         } else {
             opacity -= 0.05;
             document.getElementById('intro-fadeout').style.opacity = opacity;
-            console.log(opacity);
         }
     }
 }
