@@ -3,15 +3,15 @@ import re
 from typing import List, TextIO, Set
 from os import makedirs
 
-# usage: ./find_all_linked_errors.sh <library> <errors>
+# usage: ./find_all_linked_errors.sh <library> <errors> <mapping file> <mapping folder>
 #       - library: library, from which the errors is
 #       - error: error that we are trying to find linked errors to
+#       - mapping file: location of the file with all the mapping data
+#       - mapping folder: folder, where the generated error files should be in.
 # 
-# searches through _data/mapping.txt and finds all the linked errors.
-# right now, just focus on the ones that are equal, we can figure out
-# the other possibilites later
+# searches through <mapping file> and finds all the linked errors.
 #
-# creates file _data/mapping/<library>/<error>.yml filled like this:
+# creates file <mapping folder>/<library>/<error>.yml filled like this:
 #
 #       equal:
 #         openssl:
@@ -137,20 +137,20 @@ def append_file(errs: List[str], file: TextIO, category: str) -> None:
 
 # check input
 
-if len(sys.argv) != 3:
-    print("Usage: {} <library> <error>".format(sys.argv[0]))
+if len(sys.argv) != 5:
+    print("Usage: {} <library> <error> <mapping file> <mapping folder>".format(sys.argv[0]))
     sys.exit(1)
 
 # variables
 
 library = sys.argv[1]
 error = sys.argv[2]
+mapping_file_location = sys.argv[3]
+mapping_folder = sys.argv[4]
 
-mapping_file = open("_data/mapping.txt", "r")
+mapping_file = open(mapping_file_location, "r")
 mapping_data = mapping_file.read().split('\n')
 mapping_file.close()
-
-mapping_folder = "_data/mapping"
 
 output_file = mapping_folder + "/" + library + "/" + error + ".yml"
 

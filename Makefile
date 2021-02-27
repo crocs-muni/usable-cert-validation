@@ -4,6 +4,7 @@ CERTS_BUILD_FOLDER=assets/certs-build
 CERTS_BUILD_DEBUG_FOLDER=assets/certs-build/_debug
 CERTS_ARCHIVES_FOLDER=assets/certs-archives
 MAPPING_FOLDER=_data/mapping
+MAPPING_DATA_FILE=_data/mapping.txt
 VERBOSITY=">/dev/null 2>&1"
 ERRORS_FOLDER=_data
 YML2CERT_FOLDER=utils/yml2cert
@@ -44,7 +45,7 @@ $(MAPPING_FOLDER)/%.yml: _data/mapping.txt
 	$(eval ERROR=$(basename $(notdir $@)))
 	$(eval LIBRARY=$(subst .yml,,$(patsubst %/,%,$(subst $(MAPPING_FOLDER)/,,$(dir $@)))))
 	@printf "Generating mapping for %-62s" "$(LIBRARY)/$(basename $(ERROR))"
-	@python3 utils/find_all_linked_errors.py $(LIBRARY) $(ERROR)
+	@python3 utils/find_all_linked_errors.py $(LIBRARY) $(ERROR) $(MAPPING_DATA_FILE) $(MAPPING_FOLDER)
 	@printf "[ OK ]\n"
 
 # Test web consistency
