@@ -14,9 +14,9 @@ CERTS_IDS_ALL=$(notdir $(wildcard $(CERTS_FOLDER)/*))
 CERTS_BUILD_ALL=$(addprefix $(CERTS_BUILD_FOLDER)/,$(CERTS_IDS_ALL))
 CERTS_ARCHIVES_ALL=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(CERTS_IDS_ALL)) )
 ERRORS_ALL=$(wildcard $(ERRORS_FOLDER)/*/*.yml)
-ERRORS_WITH_LIBS_ALL=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERRORS_FOLDER)/*/*.yml))
+ERRORS_WITH_LIBS_ALL_MAPPING=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERRORS_FOLDER)/*/*.yml))
 
-all: $(YML2CERT_FOLDER)/yml2cert $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
+all: $(YML2CERT_FOLDER)/yml2cert $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL_MAPPING)
 
 $(YML2CERT_FOLDER)/yml2cert: $(YML2CERT_FOLDER)/*.go
 	@cd $(YML2CERT_FOLDER) && go build -o yml2cert *.go
@@ -41,7 +41,7 @@ $(CERTS_ARCHIVES_FOLDER)/%.zip: $(CERTS_BUILD_FOLDER)/% $$(wildcard $(CERTS_BUIL
 	@printf "[ OK ]\n"
 
 # Generate mapping files
-$(MAPPING_FOLDER)/%.yml: _data/mapping.txt $(MAPPING_DATA_FILE)
+$(MAPPING_FOLDER)/%.yml: $(MAPPING_DATA_FILE)
 	$(eval ERROR=$(basename $(notdir $@)))
 	$(eval LIBRARY=$(subst .yml,,$(patsubst %/,%,$(subst $(MAPPING_FOLDER)/,,$(dir $@)))))
 	@printf "Generating mapping for %-62s" "$(LIBRARY)/$(basename $(ERROR))"

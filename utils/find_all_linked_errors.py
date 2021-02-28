@@ -1,7 +1,7 @@
 import sys
 import re
 from typing import List, TextIO, Set
-from os import makedirs
+from os import makedirs, remove, path
 
 # usage: ./find_all_linked_errors.sh <library> <errors> <mapping file> <mapping folder>
 #       - library: library, from which the errors is
@@ -158,11 +158,16 @@ output_file = mapping_folder + "/" + library + "/" + error + ".yml"
 
 makedirs(mapping_folder + "/" + library, exist_ok=True)
 
+# remove file if exists
+
+if path.exists(output_file):
+    remove(output_file)
+
+file = None
+
 # equal
 
 errors_equal = sorted(list(find_all_equal_errors(library, error, mapping_data)))
-
-file = None
 
 if errors_equal:
     if not file:
