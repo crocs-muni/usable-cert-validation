@@ -33,10 +33,10 @@ Running certificate tests requires [shyaml](https://github.com/0k/shyaml) for pa
 
 The project is developed at the [Centre for Research on Cryptography and Security](https://www.fi.muni.cz/research/crocs/) of [Masaryk University](http://www.muni.cz/) in Brno, Czech Republic. The main contributors are:
 
-* **Martin Ukrop**(https://crocs.fi.muni.cz/people/mukrop), 2019–today, project lead, graphic design
+* [**Martin Ukrop**](https://crocs.fi.muni.cz/people/mukrop), 2019–today, project lead, graphic design
 * **Pavol Žáčik**, 2019–today, example certificates, error mapping
-* **Matěj Grabovský**, 2019–today, feedback, TLS clients, bugfixs
-* **Michaela balážová**, 2019–today, improved error messages
 * **Eric Valčík**, 2020–today, bug fixes and pull requests to other libraries
+* **Matěj Grabovský**, 2019–2020, feedback, TLS clients, bugfixs
+* **Michaela balážová**, 2019–2020, improved error messages
 
 The authors are grateful for the financial support by and [Red Hat Czech](https://research.redhat.com/) and [Kiwi.com](https://www.kiwi.com/).
