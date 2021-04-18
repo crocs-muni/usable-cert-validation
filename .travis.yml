@@ -12,6 +12,7 @@ addons:
     - libmbedtls-dev
     - libboost-program-options-dev
     - openjdk-11-jdk
+    - botan
     - python3-pip
 
 before_install: 
