@@ -1,9 +1,0 @@
-error-code: GNUTLS_CERT_REVOKED
-slug: gnutls-cert-revoked
-tags: [ time ]
-docs: |
-  Certificate is revoked by its authority. In X.509 this will be set only if CRLs are checked.
-verify-command: |
-  certtool --verify --load-ca-certificate ca.crt --infile endpoint.crt
-verify-cert: X509_V_ERR_CERT_REVOKED
-weight: 105

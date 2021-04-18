@@ -1,6 +1,0 @@
-error-code: SIGNATURE_ALGO_UNKNOWN
-slug: signature-algo-unknown
-tags: [ algorithm ]
-docs: |
-  Certificate signed with unknown/unavailable algorithm
-weight: 602

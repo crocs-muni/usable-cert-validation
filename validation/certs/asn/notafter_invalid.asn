@@ -1,0 +1,329 @@
+X509 DEFINITIONS ::= BEGIN
+
+    Certificate  ::=  SEQUENCE  {
+        tbsCertificate       TBSCertificate,
+        signatureAlgorithm   AlgorithmIdentifier,
+        signatureValue       BIT STRING
+    }
+    
+    TBSCertificate  ::=  SEQUENCE  {
+        version              [0] EXPLICIT Version,
+        serialNumber         CertificateSerialNumber,
+        signature            AlgorithmIdentifier,
+        issuer               Name,
+        validity             Validity,
+        subject              Name,
+        subjectPublicKeyInfo SubjectPublicKeyInfo,
+        issuerUniqueID       [1] IMPLICIT UniqueIdentifier OPTIONAL,
+        subjectUniqueID      [2] IMPLICIT UniqueIdentifier OPTIONAL,
+        extensions           [3] EXPLICIT Extensions OPTIONAL
+    }
+    
+    Version  ::=  INTEGER
+    
+    CertificateSerialNumber  ::=  INTEGER
+    
+    Validity ::= SEQUENCE  {
+        notBefore      Time,
+        notAfter       [UNIVERSAL 24] PrintableString
+    }
+    
+    Time ::= CHOICE {
+        utcTime        UTCTime,
+        generalTime    GeneralizedTime 
+    }
+    
+    UniqueIdentifier  ::=  BIT STRING
+    
+    SubjectPublicKeyInfo  ::=  SEQUENCE  {
+        algorithm            AlgorithmIdentifier,
+        subjectPublicKey     BIT STRING
+    }
+    
+    Extensions  ::=  SEQUENCE SIZE (1..MAX) OF Extension
+    
+    Extension  ::=  SEQUENCE  {
+        extnID      OBJECT IDENTIFIER,
+        critical    BOOLEAN,
+        extnValue   OCTET STRING
+    }
+   
+    AlgorithmIdentifier  ::=  SEQUENCE  {
+        algorithm               OBJECT IDENTIFIER,
+        parameters              NULL
+    }
+    
+    Name  ::=  CHOICE  {
+        rdnSequence     RDNSequence
+    } 
+    
+    RDNSequence ::= SEQUENCE OF RelativeDistinguishedName
+    
+    RelativeDistinguishedName ::= SET OF AttributeTypeAndValue
+    
+    AttributeTypeAndValue  ::=  SEQUENCE {
+        type     AttributeType,
+        value    AttributeValue 
+    }
+    
+    AttributeType ::= OBJECT IDENTIFIER
+    
+    AttributeValue ::= DirectoryString
+    
+    DirectoryString ::= CHOICE {
+         teletexString           TeletexString      (SIZE (1..MAX)),
+         printableString         PrintableString    (SIZE (1..MAX)),
+         universalString         UniversalString    (SIZE (1..MAX)),
+         utf8String              UTF8String         (SIZE (1..MAX)),
+         bmpString               BMPString          (SIZE (1..MAX)) 
+    }
+    
+    AuthorityKeyIdentifier ::= SEQUENCE {
+        keyIdentifier             [0] IMPLICIT KeyIdentifier           OPTIONAL,
+        authorityCertIssuer       [1] IMPLICIT GeneralNames            OPTIONAL,
+        authorityCertSerialNumber [2] IMPLICIT CertificateSerialNumber OPTIONAL  
+    }
+    
+    SubjectKeyIdentifier ::= KeyIdentifier
+
+    KeyIdentifier ::= OCTET STRING
+    
+    KeyUsage ::= BIT STRING {
+        digitalSignature        (0),
+        nonRepudiation          (1),
+        keyEncipherment         (2),
+        dataEncipherment        (3),
+        keyAgreement            (4),
+        keyCertSign             (5),
+        cRLSign                 (6),
+        encipherOnly            (7),
+        decipherOnly            (8) 
+    }
+    
+    CertificatePolicies ::= SEQUENCE SIZE (1..MAX) OF PolicyInformation
+       
+    PolicyInformation ::= SEQUENCE {
+        policyIdentifier    CertPolicyId,
+        policyQualifiers    SEQUENCE SIZE (1..MAX) OF 
+                                PolicyQualifierInfo OPTIONAL 
+    }
+    
+    CertPolicyId ::= OBJECT IDENTIFIER
+    
+    PolicyQualifierInfo ::= SEQUENCE {
+        policyQualifierId  PolicyQualifierId,
+        qualifier          Qualifier 
+    }
+    
+    PolicyQualifierId ::= OBJECT IDENTIFIER
+    
+    Qualifier ::= CHOICE {
+        cPSuri           CPSuri,
+        userNotice       UserNotice 
+    }
+    
+    CPSuri ::= IA5String
+    
+    UserNotice ::= SEQUENCE {
+        noticeRef        NoticeReference OPTIONAL,
+        explicitText     DisplayText OPTIONAL 
+    }
+    
+    NoticeReference ::= SEQUENCE {
+        organization     DisplayText,
+        noticeNumbers    SEQUENCE OF INTEGER 
+    }
+    
+    DisplayText ::= CHOICE {
+        ia5String        IA5String      (SIZE (1..200)),
+        visibleString    VisibleString  (SIZE (1..200)),
+        bmpString        BMPString      (SIZE (1..200)),
+        utf8String       UTF8String     (SIZE (1..200)) 
+    }
+    
+    PolicyMappings ::= SEQUENCE SIZE (1..MAX) OF SEQUENCE {
+        issuerDomainPolicy      CertPolicyId,
+        subjectDomainPolicy     CertPolicyId 
+    }
+    
+    SubjectAltName ::= GeneralNames
+    
+    GeneralNames ::= SEQUENCE SIZE (1..MAX) OF GeneralName
+    
+    GeneralName ::= CHOICE {
+        otherName                       [0] IMPLICIT    OtherName,
+        rfc822Name                      [1] IMPLICIT    IA5String,
+        dNSName                         [2] IMPLICIT    IA5String,
+        directoryName                   [4] IMPLICIT    Name,
+        ediPartyName                    [5] IMPLICIT    EDIPartyName,
+        uniformResourceIdentifier       [6] IMPLICIT    IA5String,
+        iPAddress                       [7] IMPLICIT    OCTET STRING,
+        registeredID                    [8] IMPLICIT    OBJECT IDENTIFIER 
+    }
+    
+    OtherName ::= SEQUENCE {
+        type-id    OBJECT IDENTIFIER,
+        value      [0] EXPLICIT OCTET STRING
+    }
+    
+    EDIPartyName ::= SEQUENCE {
+        nameAssigner            [0]     DirectoryString OPTIONAL,
+        partyName               [1]     DirectoryString 
+    }
+    
+    IssuerAltName ::= GeneralNames
+    
+    BasicConstraints ::= SEQUENCE {
+        cA                      BOOLEAN,
+        pathLenConstraint       INTEGER (0..MAX) OPTIONAL 
+    }
+    
+    NameConstraints ::= SEQUENCE {
+        permittedSubtrees       [0] IMPLICIT    GeneralSubtrees OPTIONAL,
+        excludedSubtrees        [1] IMPLICIT    GeneralSubtrees OPTIONAL 
+    }
+    
+    GeneralSubtrees ::= SEQUENCE SIZE (1..MAX) OF GeneralSubtree
+    
+    GeneralSubtree ::= SEQUENCE {
+        base                            GeneralName,
+        minimum         [0] IMPLICIT    BaseDistance DEFAULT 0,
+        maximum         [1] IMPLICIT    BaseDistance OPTIONAL 
+    }
+    
+    BaseDistance ::= INTEGER (0..MAX)
+    
+    PolicyConstraints ::= SEQUENCE {
+        requireExplicitPolicy           [0] IMPLICIT SkipCerts OPTIONAL,
+        inhibitPolicyMapping            [1] IMPLICIT SkipCerts OPTIONAL 
+    }
+    
+    SkipCerts ::= INTEGER (0..MAX)
+    
+    ExtKeyUsageSyntax ::= SEQUENCE SIZE (1..MAX) OF KeyPurposeId
+    
+    KeyPurposeId ::= OBJECT IDENTIFIER
+    
+    CRLDistributionPoints ::= SEQUENCE SIZE (1..MAX) OF DistributionPoint
+    
+    DistributionPoint ::= SEQUENCE {
+        distributionPoint       [0] IMPLICIT    DistributionPointName OPTIONAL,
+        reasons                 [1] IMPLICIT    ReasonFlags OPTIONAL,
+        cRLIssuer               [2] IMPLICIT    GeneralNames OPTIONAL 
+    }
+    
+    DistributionPointName ::= CHOICE {
+        fullName                [0]     GeneralNames,
+        nameRelativeToCRLIssuer [1]     RelativeDistinguishedName 
+    }
+    
+    ReasonFlags ::= BIT STRING {
+        unused                  (0),
+        keyCompromise           (1),
+        cACompromise            (2),
+        affiliationChanged      (3),
+        superseded              (4),
+        cessationOfOperation    (5),
+        certificateHold         (6),
+        privilegeWithdrawn      (7),
+        aACompromise            (8) 
+    }
+    
+    InhibitAnyPolicy ::= SkipCerts
+    
+    FreshestCRL ::= CRLDistributionPoints
+
+    AuthorityInfoAccessSyntax  ::= SEQUENCE SIZE (1..MAX) OF AccessDescription
+    
+    AccessDescription  ::=  SEQUENCE {
+        accessMethod          OBJECT IDENTIFIER,
+        accessLocation        GeneralName  
+    }
+    
+    SubjectInfoAccessSyntax  ::= SEQUENCE SIZE (1..MAX) OF AccessDescription
+    
+    CertificateList  ::=  SEQUENCE  {
+        tbsCertList          TBSCertList,
+        signatureAlgorithm   AlgorithmIdentifier,
+        signatureValue       BIT STRING  }
+    
+    TBSCertList  ::=  SEQUENCE  {
+        version                 Version OPTIONAL,
+        signature               AlgorithmIdentifier,
+        issuer                  Name,
+        thisUpdate              Time,
+        nextUpdate              Time OPTIONAL,
+        revokedCertificates     SEQUENCE OF 
+            SEQUENCE  {
+                userCertificate         CertificateSerialNumber,
+                revocationDate          Time,
+                crlEntryExtensions      Extensions OPTIONAL
+            } OPTIONAL,
+        crlExtensions           [0]  EXPLICIT Extensions OPTIONAL
+    }
+    
+    CRLNumber ::= INTEGER (0..MAX)
+    
+    BaseCRLNumber ::= CRLNumber
+    
+    IssuingDistributionPoint ::= SEQUENCE {
+        distributionPoint          [0] IMPLICIT DistributionPointName OPTIONAL,
+        onlyContainsUserCerts      [1] IMPLICIT BOOLEAN,
+        onlyContainsCACerts        [2] IMPLICIT BOOLEAN,
+        onlySomeReasons            [3] IMPLICIT ReasonFlags OPTIONAL,
+        indirectCRL                [4] IMPLICIT BOOLEAN,
+        onlyContainsAttributeCerts [5] IMPLICIT BOOLEAN 
+    }
+    
+    CRLReason ::= ENUMERATED {
+        unspecified             (0),
+        keyCompromise           (1),
+        cACompromise            (2),
+        affiliationChanged      (3),
+        superseded              (4),
+        cessationOfOperation    (5),
+        certificateHold         (6),
+        removeFromCRL           (8),
+        privilegeWithdrawn      (9),
+        aACompromise           (10) 
+    }
+    
+    InvalidityDate ::=  GeneralizedTime
+    
+    CertificateIssuer ::=  GeneralNames
+    
+    IPAddrBlocks ::= SEQUENCE OF IPAddressFamily
+    
+    IPAddressFamily     ::= SEQUENCE {
+        addressFamily        OCTET STRING (SIZE (2..3)),
+        ipAddressChoice      IPAddressChoice 
+    }
+    
+    IPAddressChoice     ::= CHOICE {
+        inherit              NULL,
+        addressesOrRanges    SEQUENCE OF IPAddressOrRange 
+    }
+    
+    IPAddressOrRange    ::= CHOICE {
+      addressPrefix        IPAddress,
+      addressRange         IPAddressRange 
+    }
+    
+    IPAddressRange      ::= SEQUENCE {
+        min                  IPAddress,
+        max                  IPAddress 
+    }
+    
+    IPAddress ::= BIT STRING
+    
+    ProxyCertInfo ::= SEQUENCE {
+        pCPathLenConstraint   INTEGER (0..MAX) OPTIONAL,
+        proxyPolicy           ProxyPolicy
+    }
+    
+    ProxyPolicy ::= SEQUENCE {
+        policyLanguage        OBJECT IDENTIFIER,
+        policy                OCTET STRING OPTIONAL
+    }
+
+END

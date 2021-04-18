@@ -1,0 +1,7 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options:
+      email: 'mail@muni.org'

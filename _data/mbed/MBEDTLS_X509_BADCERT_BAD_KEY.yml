@@ -1,9 +1,0 @@
-error-code: MBEDTLS_X509_BADCERT_BAD_KEY
-slug: mbedtls-x509-badcert-bad-key
-tags: [ algorithm ]
-docs: |
-  The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
-verify-command: |
-  mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-verify-cert: X509_V_ERR_CA_KEY_TOO_SMALL
-weight: 601

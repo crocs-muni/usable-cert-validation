@@ -1,6 +1,0 @@
-error-code: MBEDTLS_X509_BADCRL_NOT_TRUSTED
-slug: mbedtls-x509-badcrl-not-trusted
-tags: [ trust ]
-docs: |
-  The CRL is not correctly signed by the trusted CA.
-weight: 202

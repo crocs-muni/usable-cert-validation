@@ -1,6 +1,0 @@
-error-code: OCSP_SERVER_NOT_AVAILABLE
-slug: ocsp-server-not-available
-tags: [ trust ]
-docs: |
-  OCSP server not available
-weight: 213

@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_SUITE_B_INVALID_SIGNATURE_ALGORITHM
-slug: x509-v-err-suite-b-invalid-signature-algorithm
-tags: [ algorithm ]
-docs: |
-  Suite B: invalid signature algorithm.
-weight: 607

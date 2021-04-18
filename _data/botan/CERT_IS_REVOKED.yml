@@ -1,7 +1,0 @@
-error-code: CERT_IS_REVOKED
-slug: cert-is-revoked
-tags: [ time ]
-docs: |
-  Certificate is revoked
-verify-cert: X509_V_ERR_CERT_REVOKED
-weight: 108

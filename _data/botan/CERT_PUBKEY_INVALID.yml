@@ -1,6 +1,0 @@
-error-code: CERT_PUBKEY_INVALID
-slug: cert-pubkey-invalid
-tags: [ trust ]
-docs: |
-  Certificate public key invalid, no HTTP support compiled in
-weight: 203

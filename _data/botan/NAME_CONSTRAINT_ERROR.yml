@@ -1,9 +1,0 @@
-error-code: NAME_CONSTRAINT_ERROR
-slug: name-constraint-error
-tags: [ name ]
-docs: |
-  Certificate does not pass name constraint
-verify-command: |
-  botan cert_verify endpoint.crt ca.crt
-verify-cert: X509_V_ERR_PERMITTED_VIOLATION
-weight: 403

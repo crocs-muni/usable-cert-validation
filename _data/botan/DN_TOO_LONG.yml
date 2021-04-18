@@ -1,6 +1,0 @@
-error-code: DN_TOO_LONG
-slug: dn-too-long
-tags: [ name ]
-docs: |
-  Distinguished name too long
-weight: 404

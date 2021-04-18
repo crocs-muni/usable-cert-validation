@@ -1,6 +1,0 @@
-error-code: CHAIN_NAME_MISMATCH
-slug: chain-name-mismatch
-tags: [ name ]
-docs: |
-  Certificate issuer does not match subject of issuing cert
-weight: 402

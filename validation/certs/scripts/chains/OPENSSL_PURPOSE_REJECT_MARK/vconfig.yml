@@ -1,0 +1,8 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options:
+      purpose: SSL_SERVER
+      trust_anchor: marked_root.pem

@@ -1,0 +1,366 @@
+- code: CA_CERT_NOT_FOR_CERT_ISSUER
+  slug: ca-cert-not-for-cert-issuer
+  tags: [ extension ]
+  message: |
+    CA certificate not allowed to issue certs
+  weight: 302
+
+- code: CA_CERT_NOT_FOR_CRL_ISSUER
+  slug: ca-cert-not-for-crl-issuer
+  tags: [ usage ]
+  message: |
+    CA certificate not allowed to issue CRLs
+  weight: 504
+
+- code: CANNOT_ESTABLISH_TRUST
+  slug: cannot-establish-trust
+  tags: [ trust ]
+  message: |
+    Cannot establish trust
+  weight: 201
+
+- code: CERT_CHAIN_LOOP
+  slug: cert-chain-loop
+  tags: [ trust ]
+  message: |
+    Loop in certificate chain
+  weight: 205
+
+- code: CERT_CHAIN_TOO_LONG
+  slug: cert-chain-too-long
+  tags: [ trust ]
+  message: |
+    Certificate chain too long
+  weight: 206
+
+- code: CERT_HAS_EXPIRED
+  slug: cert-has-expired
+  tags: [ time ]
+  message: |
+    Certificate has expired
+  weight: 102
+
+- code: CERT_IS_REVOKED
+  slug: cert-is-revoked
+  tags: [ time ]
+  message: |
+    Certificate is revoked
+  weight: 108
+
+- code: CERT_ISSUER_NOT_FOUND
+  slug: cert-issuer-not-found
+  tags: [ trust ]
+  message: |
+    Certificate issuer not found
+  weight: 204
+
+- code: CERT_NAME_NOMATCH
+  slug: cert-name-nomatch
+  tags: [ name ]
+  message: |
+    Certificate does not match provided name
+  weight: 401
+
+- code: CERT_NOT_YET_VALID
+  slug: cert-not-yet-valid
+  tags: [ time ]
+  message: |
+    Certificate is not yet valid
+  weight: 101
+
+- code: CERT_PUBKEY_INVALID
+  slug: cert-pubkey-invalid
+  tags: [ trust ]
+  message: |
+    Certificate public key invalid, no HTTP support compiled in
+  weight: 203
+
+- code: CERT_SERIAL_NEGATIVE
+  slug: cert-serial-negative
+  tags: [ format ]
+  message: |
+    Certificate serial number is negative
+  weight: 703
+
+- code: CHAIN_LACKS_TRUST_ROOT
+  slug: chain-lacks-trust-root
+  tags: [ trust ]
+  message: |
+    Certificate chain does not end in a CA certificate
+  weight: 202
+
+- code: CHAIN_NAME_MISMATCH
+  slug: chain-name-mismatch
+  tags: [ name ]
+  message: |
+    Certificate issuer does not match subject of issuing cert
+  weight: 402
+
+- code: CRL_BAD_SIGNATURE
+  slug: crl-bad-signature
+  tags: [ format ]
+  message: |
+    CRL bad signature
+  weight: 702
+
+- code: CRL_HAS_EXPIRED
+  slug: crl-has-expired
+  tags: [ time ]
+  message: |
+    CRL has expired
+  weight: 104
+
+- code: CRL_NOT_YET_VALID
+  slug: crl-not-yet-valid
+  tags: [ time ]
+  message: |
+    CRL response is not yet valid
+  weight: 103
+
+- code: DN_TOO_LONG
+  slug: dn-too-long
+  tags: [ name ]
+  message: |
+    Distinguished name too long
+  weight: 404
+
+- code: DUPLICATE_CERT_EXTENSION
+  slug: duplicate-cert-extension
+  tags: [ extension ]
+  message: |
+    Duplicate certificate extension encountered
+  weight: 303
+
+- code: DUPLICATE_CERT_POLICY
+  slug: duplicate-cert-policy
+  tags: [ usage ]
+  message: |
+    Certificate contains duplicate policy
+  weight: 503
+
+- code: EXT_IN_V1_V2_CERT
+  slug: ext-in-v1-v2-cert
+  tags: [ extension ]
+  message: |
+    Encountered extension in certificate with version < 3
+  weight: 304
+
+- code: INVALID_USAGE
+  slug: invalid-usage
+  tags: [ usage ]
+  message: |
+    Certificate does not allow the requested usage
+  weight: 501
+
+- code: NAME_CONSTRAINT_ERROR
+  slug: name-constraint-error
+  tags: [ name ]
+  message: |
+    Certificate does not pass name constraint
+  weight: 403
+
+- code: NO_MATCHING_CRLDP
+  slug: no-matching-crldp
+  tags: [ uncategorized ]
+  message: |
+    No CRL with matching distribution point for certificate
+  weight: 801
+
+- code: NO_REVOCATION_DATA
+  slug: no-revocation-data
+  tags: [ trust ]
+  message: |
+    No revocation data
+  weight: 215
+
+- code: OCSP_BAD_STATUS
+  slug: ocsp-bad-status
+  tags: [ trust ]
+  message: |
+    OCSP bad status
+  weight: 209
+
+- code: OCSP_CERT_NOT_LISTED
+  slug: ocsp-cert-not-listed
+  tags: [ uncategorized ]
+  message: |
+    OCSP cert not listed
+  weight: 802
+
+- code: OCSP_HAS_EXPIRED
+  slug: ocsp-has-expired
+  tags: [ time ]
+  message: |
+    OCSP response has expired
+  weight: 106
+
+- code: OCSP_ISSUER_NOT_FOUND
+  slug: ocsp-issuer-not-found
+  tags: [ trust ]
+  message: |
+    Unable to find certificate issusing OCSP response
+  weight: 207
+
+- code: OCSP_IS_TOO_OLD
+  slug: ocsp-is-too-old
+  tags: [ time ]
+  message: |
+    OCSP response is too old
+  weight: 107
+
+- code: OCSP_NO_HTTP
+  slug: ocsp-no-http
+  tags: [ uncategorized ]
+  message: |
+    OCSP requests not available
+  weight: 803
+
+- code: OCSP_NO_REVOCATION_URL
+  slug: ocsp-no-revocation-url
+  tags: [ trust ]
+  message: |
+    OCSP URL not available
+  weight: 211
+
+- code: OCSP_NOT_YET_VALID
+  slug: ocsp-not-yet-valid
+  tags: [ time ]
+  message: |
+    OCSP is not yet valid
+  weight: 105
+
+- code: OCSP_RESPONSE_GOOD
+  slug: ocsp-response-good
+  tags: [ uncategorized ]
+  message: |
+    OCSP response accepted as affirming unrevoked status for certificate
+  weight: 805
+
+- code: OCSP_RESPONSE_INVALID
+  slug: ocsp-response-invalid
+  tags: [ trust ]
+  message: |
+    OCSP parsing valid
+  weight: 210
+
+- code: OCSP_RESPONSE_MISSING_KEYUSAGE
+  slug: ocsp-response-missing-keyusage
+  tags: [ usage ]
+  message: |
+    OCSP issuer's keyusage prohibits OCSP
+  weight: 505
+
+- code: OCSP_SERVER_NOT_AVAILABLE
+  slug: ocsp-server-not-available
+  tags: [ trust ]
+  message: |
+    OCSP server not available
+  weight: 213
+
+- code: OCSP_SIGNATURE_ERROR
+  slug: ocsp-signature-error
+  tags: [ trust ]
+  message: |
+    OCSP signature error
+  weight: 208
+
+- code: OCSP_SIGNATURE_OK
+  slug: ocsp-signature-ok
+  tags: [ uncategorized ]
+  message: |
+    Signature on OCSP response was found valid
+  weight: 804
+
+- code: POLICY_ERROR
+  slug: policy-error
+  tags: [ usage ]
+  message: |
+    Certificate policy error
+  weight: 502
+
+- code: SIGNATURE_ALGO_BAD_PARAMS
+  slug: signature-algo-bad-params
+  tags: [ algorithm ]
+  message: |
+    Certificate signature has invalid parameters
+  weight: 603
+
+- code: SIGNATURE_ALGO_UNKNOWN
+  slug: signature-algo-unknown
+  tags: [ algorithm ]
+  message: |
+    Certificate signed with unknown/unavailable algorithm
+  weight: 602
+
+- code: SIGNATURE_ERROR
+  slug: signature-error
+  tags: [ format ]
+  message: |
+    Signature error
+  weight: 701
+
+- code: SIGNATURE_METHOD_TOO_WEAK
+  slug: signature-method-too-weak
+  tags: [ algorithm ]
+  message: |
+    Signature method too weak
+  weight: 601
+
+- code: UNKNOWN_CRITICAL_EXTENSION
+  slug: unknown-critical-extension
+  tags: [ extension ]
+  message: |
+    Unknown critical extension encountered
+  weight: 301
+
+- code: UNTRUSTED_HASH
+  slug: untrusted-hash
+  tags: [ algorithm ]
+  message: |
+    Hash function used is considered too weak for security
+  weight: 604
+
+- code: VALID_CRL_CHECKED
+  slug: valid-crl-checked
+  tags: [ uncategorized ]
+  message: |
+    Valid CRL examined
+  weight: 806
+
+- code: VERIFIED
+  slug: verified
+  tags: [ uncategorized ]
+  message: |
+    Verified
+  weight: 807
+
+# The following are some other *exceptions* that can occur,
+# mostly with invalid format, these are not error codes!
+
+- code: DECODING_ERROR
+  slug: decoding-error
+  tags: [ format ]
+  message: |
+    Botan::Decoding_error
+  weight: 702
+
+- code: INVALID_ARGUMENT
+  slug: invalid-argument
+  tags: [ format ]
+  message: |
+    Botan::Invalid_Argument
+  weight: 703
+
+- code: TLS_EXCEPTION
+  slug: tls-exception
+  tags: [ uncategorized ]
+  message: |
+    Botan::TLS_Exception
+  weight: 808
+
+- code: ENCODING_ERROR
+  slug: encoding-error
+  tags: [ format ]
+  message: |
+    Botan::Encoding_Error
+  weight: 704

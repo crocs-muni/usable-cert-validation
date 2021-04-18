@@ -1,6 +1,0 @@
-error-code: OCSP_NO_HTTP
-slug: ocsp-no-http
-tags: [ uncategorized ]
-docs: |
-  OCSP requests not available
-weight: 803

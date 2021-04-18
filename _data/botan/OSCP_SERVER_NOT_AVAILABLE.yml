@@ -1,6 +1,0 @@
-error-code: OSCP_SERVER_NOT_AVAILABLE
-slug: oscp-server-not-available
-tags: [ trust ]
-unused: |
-  Deprecated due to a typo - will be removed in future major release
-weight: 214

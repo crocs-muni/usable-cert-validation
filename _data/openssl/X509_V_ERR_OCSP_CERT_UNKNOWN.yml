@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_OCSP_CERT_UNKNOWN
-slug: x509-v-err-ocsp-cert-unknown
-tags: [ trust ]
-docs: |
-  Returned by the verify callback to indicate that the certificate is not recognized by the OCSP responder.
-weight: 212

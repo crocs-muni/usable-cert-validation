@@ -1,6 +1,0 @@
-error-code: GNUTLS_CERT_INVALID
-slug: gnutls-cert-invalid
-tags: [ trust ]
-docs: |
-  The certificate is not signed by one of the known authorities or the signature is invalid (deprecated by the flags GNUTLS_CERT_SIGNATURE_FAILURE and GNUTLS_CERT_SIGNER_NOT_FOUND ).
-weight: 201

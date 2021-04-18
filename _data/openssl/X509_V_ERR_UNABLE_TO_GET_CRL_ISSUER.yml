@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER
-slug: x509-v-err-unable-to-get-crl-issuer
-tags: [ trust ]
-docs: |
-  Unable to get CRL issuer certificate.
-weight: 207

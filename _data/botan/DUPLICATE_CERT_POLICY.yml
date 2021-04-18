@@ -1,6 +1,0 @@
-error-code: DUPLICATE_CERT_POLICY
-slug: duplicate-cert-policy
-tags: [ usage ]
-docs: |
-  Certificate contains duplicate policy
-weight: 503

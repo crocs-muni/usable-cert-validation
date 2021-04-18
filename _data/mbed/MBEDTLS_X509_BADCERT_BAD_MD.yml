@@ -1,9 +1,0 @@
-error-code: MBEDTLS_X509_BADCERT_BAD_MD
-slug: mbedtls-x509-badcert-bad-md
-tags: [ algorithm ]
-docs: |
-  The certificate is signed with an unacceptable hash.
-verify-command: |
-  mbedtls/programs/x509/cert_app mode=file filename=endpoint.crt ca_file=ca.crt
-verify-cert: X509_V_ERR_CA_MD_TOO_WEAK
-weight: 605

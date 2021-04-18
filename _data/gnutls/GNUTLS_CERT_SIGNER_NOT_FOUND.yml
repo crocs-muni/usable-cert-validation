@@ -1,9 +1,0 @@
-error-code: GNUTLS_CERT_SIGNER_NOT_FOUND
-slug: gnutls-cert-signer-not-found
-tags: [ trust ]
-docs: |
-  The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list.
-verify-command: |
-  certtool --verify --infile endpoint.crt
-verify-cert: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
-weight: 202

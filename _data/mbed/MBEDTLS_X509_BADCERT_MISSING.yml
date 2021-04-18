@@ -1,6 +1,0 @@
-error-code: MBEDTLS_X509_BADCERT_MISSING
-slug: mbedtls-x509-badcert-missing
-tags: [ uncategorized ]
-docs: |
-  Certificate was missing.
-weight: 801

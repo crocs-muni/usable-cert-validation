@@ -1,9 +1,0 @@
-error-code: CERT_HAS_EXPIRED
-slug: cert-has-expired
-tags: [ time ]
-docs: |
-  Certificate has expired
-verify-command: |
-  botan cert_verify endpoint.crt ca.crt
-verify-cert: X509_V_ERR_CERT_HAS_EXPIRED
-weight: 102

@@ -1,0 +1,376 @@
+- code: MBEDTLS_X509_BADCERT_BAD_KEY
+  slug: mbedtls-x509-badcert-bad-key
+  tags: [ algorithm ]
+  docs: |
+    The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
+  weight: 601
+  message: |
+    The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
+
+- code: MBEDTLS_X509_BADCERT_BAD_MD
+  slug: mbedtls-x509-badcert-bad-md
+  tags: [ algorithm ]
+  docs: |
+    The certificate is signed with an unacceptable hash.
+  weight: 605
+  message: |
+    The certificate is signed with an unacceptable hash.
+
+- code: MBEDTLS_X509_BADCERT_BAD_PK
+  slug: mbedtls-x509-badcert-bad-pk
+  tags: [ algorithm ]
+  docs: |
+    The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+  weight: 603
+  message: |
+    The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+
+- code: MBEDTLS_X509_BADCERT_CN_MISMATCH
+  slug: mbedtls-x509-badcert-cn-mismatch
+  tags: [ name ]
+  docs: |
+    The certificate Common Name (CN) does not match with the expected CN.
+  weight: 401
+  message: |
+    The certificate Common Name (CN) does not match with the expected CN
+
+- code: MBEDTLS_X509_BADCERT_EXPIRED
+  slug: mbedtls-x509-badcert-expired
+  tags: [ time ]
+  docs: |
+    The certificate validity has expired.
+  weight: 102
+  message: |
+    The certificate validity has expired
+
+- code: MBEDTLS_X509_BADCERT_EXT_KEY_USAGE
+  slug: mbedtls-x509-badcert-ext-key-usage
+  tags: [ usage ]
+  docs: |
+    Usage does not match the extendedKeyUsage extension.
+  weight: 503
+  message: |
+    Usage does not match the extendedKeyUsage extension
+
+- code: MBEDTLS_X509_BADCERT_FUTURE
+  slug: mbedtls-x509-badcert-future
+  tags: [ time ]
+  docs: |
+    The certificate validity starts in the future.
+  weight: 101
+  message: |
+    The certificate validity starts in the future
+
+- code: MBEDTLS_X509_BADCERT_KEY_USAGE
+  slug: mbedtls-x509-badcert-key-usage
+  tags: [ usage ]
+  docs: |
+    Usage does not match the keyUsage extension.
+  weight: 502
+  message: |
+    Usage does not match the keyUsage extension
+
+- code: MBEDTLS_X509_BADCERT_MISSING
+  slug: mbedtls-x509-badcert-missing
+  tags: [ uncategorized ]
+  docs: |
+    Certificate was missing.
+  weight: 801
+  message: |
+    Certificate was missing
+
+- code: MBEDTLS_X509_BADCERT_NOT_TRUSTED
+  slug: mbedtls-x509-badcert-not-trusted
+  tags: [ trust ]
+  docs: |
+    The certificate is not correctly signed by the trusted CA.
+  weight: 201
+  message: |
+    The certificate is not correctly signed by the trusted CA
+
+- code: MBEDTLS_X509_BADCERT_NS_CERT_TYPE
+  slug: mbedtls-x509-badcert-ns-cert-type
+  tags: [ usage ]
+  docs: |
+    Usage does not match the nsCertType extension.
+  weight: 501
+  message: |
+    Usage does not match the nsCertType extension
+
+- code: MBEDTLS_X509_BADCERT_OTHER
+  slug: mbedtls-x509-badcert-other
+  tags: [ uncategorized ]
+  docs: |
+    Other reason (can be used by verify callback).
+  weight: 802
+  message: |
+    Other reason (can be used by verify callback)
+
+- code: MBEDTLS_X509_BADCERT_REVOKED
+  slug: mbedtls-x509-badcert-revoked
+  tags: [ time ]
+  docs: |
+    The certificate has been revoked (is on a CRL).
+  weight: 105
+  message: |
+    The certificate has been revoked (is on a CRL)
+
+- code: MBEDTLS_X509_BADCERT_SKIP_VERIFY
+  slug: mbedtls-x509-badcert-skip-verify
+  tags: [ uncategorized ]
+  docs: |
+    Certificate verification was skipped.
+  weight: 803
+  message: |
+    Certificate verification was skipped
+
+- code: MBEDTLS_X509_BADCRL_BAD_KEY
+  slug: mbedtls-x509-badcrl-bad-key
+  tags: [ algorithm ]
+  docs: |
+    The CRL is signed with an unacceptable key (eg bad curve, RSA too short).
+  weight: 602  
+  message: |
+    The CRL is signed with an unacceptable key (eg bad curve, RSA too short).
+
+- code: MBEDTLS_X509_BADCRL_BAD_MD
+  slug: mbedtls-x509-badcrl-bad-md
+  tags: [ algorithm ]
+  docs: |
+    The CRL is signed with an unacceptable hash.
+  weight: 606
+  message: |
+    The CRL is signed with an unacceptable hash.
+
+- code: MBEDTLS_X509_BADCRL_BAD_PK
+  slug: mbedtls-x509-badcrl-bad-pk
+  tags: [ algorithm ]
+  docs: |
+    The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+  weight: 604
+  message: |
+    The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+
+- code: MBEDTLS_X509_BADCRL_EXPIRED
+  slug: mbedtls-x509-badcrl-expired
+  tags: [ time ]
+  docs: |
+    The CRL is expired.
+  weight: 104
+  message: |
+    The CRL is expired
+
+- code: MBEDTLS_X509_BADCRL_FUTURE
+  slug: mbedtls-x509-badcrl-future
+  tags: [ time ]
+  docs: |
+    The CRL is from the future.
+  weight: 103
+  message: |
+    The CRL is from the future
+
+- code: MBEDTLS_X509_BADCRL_NOT_TRUSTED
+  slug: mbedtls-x509-badcrl-not-trusted
+  tags: [ trust ]
+  docs: |
+    The CRL is not correctly signed by the trusted CA.
+  weight: 202
+  message: |
+    The CRL is not correctly signed by the trusted CA
+
+- code: MBEDTLS_ERR_X509_CERT_UNKNOWN_FORMAT
+  slug: mbedtls-err-x509-cert-unknown-format
+  tags: [ format ]
+  docs: |
+    Format not recognized as DER or PEM. 
+  weight: 701
+  message: |
+    X509 - Format not recognized as DER or PEM
+
+- code: MBEDTLS_ERR_X509_SIG_MISMATCH
+  slug: mbedtls-err-x509-sig-mismatch
+  tags: [ format ]
+  docs: |
+    Signature algorithms do not match.
+  weight: 702
+  message: |
+    X509 - Signature algorithms do not match.
+
+- code: MBEDTLS_ERR_X509_UNKNOWN_OID
+  slug: mbedtls-err-x509-unknown-oid
+  tags: [ format ]
+  docs: |
+    Requested OID is unknown.
+  weight: 703
+  message: |
+    X509 - Requested OID is unknown
+
+- code: MBEDTLS_ERR_X509_UNKNOWN_SIG_ALG
+  slug: mbedtls-err-x509-unknown-sig-alg
+  tags: [ algorithm ]
+  docs: |
+    Signature algorithm (oid) is unsupported.
+  weight: 607
+  message: |
+    X509 - Signature algorithm (oid) is unsupported
+
+- code: MBEDTLS_ERR_X509_INVALID_VERSION
+  slug: mbedtls-err-x509-invalid-version
+  tags: [ format ]
+  docs: |
+    The CRT/CRL/CSR version element is invalid.
+  weight: 704
+  message: |
+    X509 - The CRT/CRL/CSR version element is invalid
+
+- code: MBEDTLS_ERR_X509_INVALID_SIGNATURE
+  slug: mbedtls-err-x509-invalid-signature
+  tags: [ format ]
+  docs: |
+    The signature tag or value invalid.
+  weight: 705
+  message: |
+    X509 - The signature tag or value invalid
+
+- code: MBEDTLS_ERR_X509_INVALID_SERIAL
+  slug: mbedtls-err-x509-invalid-serial
+  tags: [ format ]
+  docs: |
+    The serial tag or value is invalid.
+  weight: 706
+  message: |
+    X509 - The serial tag or value is invalid
+
+- code: MBEDTLS_ERR_X509_INVALID_NAME
+  slug: mbedtls-err-x509-invalid-name
+  tags: [ format ]
+  docs: |
+    The name tag or value is invalid.
+  weight: 707
+  message: |
+    X509 - The name tag or value is invalid
+
+- code: MBEDTLS_ERR_X509_INVALID_FORMAT
+  slug: mbedtls-err-x509-invalid-format
+  tags: [ format ]
+  docs: |
+    The CRT/CRL/CSR format is invalid, e.g. different type expected.
+  weight: 708
+  message: |
+    X509 - The CRT/CRL/CSR format is invalid, e.g. different type expected
+
+- code: MBEDTLS_ERR_X509_INVALID_EXTENSIONS
+  slug: mbedtls-err-x509-invalid-extensions
+  tags: [ format ]
+  docs: |
+    The extension tag or value is invalid.
+  weight: 709
+  message: |
+    X509 - The extension tag or value is invalid
+
+- code: MBEDTLS_ERR_X509_INVALID_DATE
+  slug: mbedtls-err-x509-invalid-date
+  tags: [ format ]
+  docs: |
+    The date tag or value is invalid.
+  weight: 710
+  message: |
+    X509 - The date tag or value is invalid
+
+- code: MBEDTLS_ERR_X509_INVALID_ALG
+  slug: mbedtls-err-x509-invalid-alg
+  tags: [ format ]
+  docs: |
+    The algorithm tag or value is invalid.
+  weight: 711
+  message: |
+    X509 - The algorithm tag or value is invalid
+
+- code: MBEDTLS_ERR_X509_FEATURE_UNAVAILABLE
+  slug: mbedtls-err-x509-feature-unavailable
+  tags: [ algorithm ]
+  docs: |
+    Unavailable feature, e.g. RSA hashing/encryption combination.
+  weight: 712
+  message: |
+    X509 - Unavailable feature, e.g. RSA hashing/encryption combination
+
+- code: MBEDTLS_ERR_X509_FATAL_ERROR
+  slug: mbedtls-err-x509-fatal-error
+  tags: [ uncategorized ]
+  docs: |
+    A fatal error occured, eg the chain is too long or the vrfy callback failed.
+  weight: 804
+  message: |
+    X509 - A fatal error occurred, eg the chain is too long or the vrfy callback failed
+
+- code: MBEDTLS_ERR_X509_CERT_UNKNOWN_FORMAT
+  slug: mbedtls-err-x509-cert-unknown-format
+  tags: [ format ]
+  docs: |
+    Format not recognized as DER or PEM.
+  weight: 713
+  message: |
+    X509 - Format not recognized as DER or PEM
+
+- code: MBEDTLS_ERR_X509_ALLOC_FAILED
+  slug: mbedtls-err-x509-alloc-failed
+  tags: [ uncategorized ]
+  docs: |
+    Allocation of memory failed.
+  weight: 805
+  message: |
+    X509 - Allocation of memory failed
+
+- code: MBEDTLS_ERR_X509_BAD_INPUT_DATA
+  slug: mbedtls-err-x509-bad-input-date
+  tags: [ format ]
+  docs: |
+    Input invalid.
+  weight: 714
+  message: |
+    X509 - Input invalid
+
+- code: MBEDTLS_ERR_X509_BUFFER_TOO_SMALL
+  slug: mbedtls-err-x509-buffer-too-small
+  tags: [ uncategorized ]
+  docs: |
+    Destination buffer is too small.
+  weight: 806
+  message: |
+    X509 - Destination buffer is too small
+
+- code: MBEDTLS_ERR_X509_CERT_VERIFY_FAILED
+  slug: mbedtls-err-x509-cert-verify-failed
+  tags: [ uncategorized ]
+  docs: |
+    Certificate verification failed, e.g. CRL, CA or signature check failed.
+  weight: 807
+  message: |
+    X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
+
+- code: MBEDTLS_ERR_X509_FILE_IO_ERROR
+  slug: mbedtls-err-x509-file-io-error
+  tags: [ uncategorized ]
+  docs: |
+    Read/write of file failed.
+  weight: 808
+  message: |
+    X509 - Read/write of file failed
+
+- code: MBEDTLS_OK
+  slug: mbedtls-ok
+  tags: [ uncategorized ]
+  weight: 809
+  message: |
+    ok
+
+
+
+
+
+
+
+
+
+

@@ -29,6 +29,8 @@
     <span class="fas fa-fw fa-project-diagram color-white"></span>
   {% when 'button-email' %}
     <span class="fas fa-fw fa-envelope color-white"></span>
+  {% when 'message' %}
+    <span class="fas fa-exclamation-triangle {{ include.float }}" ></span>
   {% else %}
     <span class="fas fa-fw fa-question {{ include.float }} color-red" title="Icon error"></span>
 {% endcase %}

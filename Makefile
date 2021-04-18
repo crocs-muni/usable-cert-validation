@@ -1,64 +1,30 @@
-# Environment settiongs
-CERTS_FOLDER=assets/certs
-CERTS_BUILD_FOLDER=assets/certs-build
-CERTS_BUILD_DEBUG_FOLDER=assets/certs-build/_debug
-CERTS_ARCHIVES_FOLDER=assets/certs-archives
+# Environment settings
 MAPPING_FOLDER=_data/mapping
+ERRORS_FOLDER=_data/errors
+VALIDATION_FOLDER=validation
+
 VERBOSITY=">/dev/null 2>&1"
-ERRORS_FOLDER=_data
-YML2CERT_FOLDER=utils/yml2cert
 
-# Computed variables
-CERTS_IDS_ALL=$(notdir $(wildcard $(CERTS_FOLDER)/*))
-CERTS_BUILD_ALL=$(addprefix $(CERTS_BUILD_FOLDER)/,$(CERTS_IDS_ALL))
-CERTS_ARCHIVES_ALL=$(addsuffix .zip, $(addprefix $(CERTS_ARCHIVES_FOLDER)/, $(CERTS_IDS_ALL)) )
-ERRORS_ALL=$(wildcard $(ERRORS_FOLDER)/*/*.yml)
-ERRORS_WITH_LIBS_ALL=$(subst $(ERRORS_FOLDER),$(MAPPING_FOLDER),$(wildcard $(ERRORS_FOLDER)/*/*.yml))
+all: validation
 
-all: $(YML2CERT_FOLDER)/yml2cert $(CERTS_BUILD_ALL) $(CERTS_ARCHIVES_ALL) $(ERRORS_WITH_LIBS_ALL)
-
-$(YML2CERT_FOLDER)/yml2cert: $(YML2CERT_FOLDER)/*.go
-	@cd $(YML2CERT_FOLDER) && go build -o yml2cert *.go
-
-# Generate certificates
-$(CERTS_BUILD_FOLDER)/%: $(CERTS_FOLDER)/%/Makefile $(wildcard ($(CERTS_FOLDER)/%/*.cfg))
-	@printf "Generating certs for %-64s" $(*F)
-	@mkdir -p $@
-	@$(MAKE) --silent --directory=$(CERTS_FOLDER)/$(@F) BUILD_DIR=$(CURDIR)/$@ VERBOSITY=$(VERBOSITY) YML2CERT=$(CURDIR)/$(YML2CERT_FOLDER)/yml2cert generate-cert
-	@printf "[ OK ]\n"
-#	@printf "Testing OpenSSL validation for %-50s" $(*F)
-#	@utils/test-cert-validation.sh $(CERTS_FOLDER)/$(@F) $(CURDIR)/$@ && [ $$? -eq 0 ] || \
-	( rm -rf $(CERTS_BUILD_DEBUG_FOLDER) && mv $@ $(CERTS_BUILD_DEBUG_FOLDER)/ && printf "## See the failing certificate chain in $(CERTS_BUILD_DEBUG_FOLDER).\n" && exit 1 )
-#	@printf "[ OK ]\n"
-
-# Generate certificate archives
-.SECONDEXPANSION:
-$(CERTS_ARCHIVES_FOLDER)/%.zip: $(CERTS_BUILD_FOLDER)/% $$(wildcard $(CERTS_BUILD_FOLDER)/%/*)
-	@printf "Generating zip for %-66s" $(*F)
-	@mkdir -p $(CERTS_ARCHIVES_FOLDER)
-	@cd $(CERTS_BUILD_FOLDER) && zip --filesync --quiet ../../$@ $(*F)/*.crt $(*F)/*.crl
-	@printf "[ OK ]\n"
-
-# Generate mapping files
-$(MAPPING_FOLDER)/%.yml: _data/mapping.txt
-	$(eval ERROR=$(basename $(notdir $@)))
-	$(eval LIBRARY=$(subst .yml,,$(patsubst %/,%,$(subst $(MAPPING_FOLDER)/,,$(dir $@)))))
-	@printf "Generating mapping for %-62s" "$(LIBRARY)/$(basename $(ERROR))"
-	@python3 utils/find_all_linked_errors.py $(LIBRARY) $(ERROR)
-	@printf "[ OK ]\n"
+# Generate all certs and do the mapping
+validation:
+	@make --directory=$(VALIDATION_FOLDER) \
+		  MAPPING_DIR=$(CURDIR)/$(MAPPING_FOLDER) \
+		  ERRORS_DIR=$(CURDIR)/$(ERRORS_FOLDER)
 
 # Test web consistency
-test: all $(ERRORS_ALL)
+test: all
 	@echo "Building the website using Jekyll ..."
 	@bundle exec jekyll build
 	@echo "Running tests on the generated sites using html-proofer ..."
 	-@bundle exec ruby utils/web-test.rb
 
 # Test generated certificates for assigned errors
-$(ERRORS_FOLDER)/*/*.yml:
-	@printf "Testing certificates for %-70s" $(@D)/$(@F)
-	@if RES=`grep verify-expected $@ | wc -l` && [ $$RES -eq 0 ]; then printf "[ -- ]\n"; \
-		else utils/test-cert-validation.sh $(CERTS_BUILD_FOLDER) $@ && printf "[ OK ]\n"; fi
+#$(ERRORS_FOLDER)/*/*.yml:
+#	@printf "Testing certificates for %-70s" $(@D)/$(@F)
+#	@if RES=`grep verify-expected $@ | wc -l` && [ $$RES -eq 0 ]; then printf "[ -- ]\n"; \
+#		else utils/test-cert-validation.sh $(CERTS_BUILD_FOLDER) $@ && printf "[ OK ]\n"; fi
 
 # Web targets
 local: all
@@ -66,12 +32,8 @@ local: all
 
 # Utility targets
 clean:
-	rm -rf $(CERTS_FOLDER)/*/_certs
-	rm -rf $(CERTS_BUILD_FOLDER)
-	rm -rf $(CERTS_BUILD_DEBUG_FOLDER)
-	rm -rf $(CERTS_ARCHIVES_FOLDER)
-	rm -rf $(MAPPING_FOLDER)
 	rm -rf _site
-	rm -rf $(YML2CERT_FOLDER)/yml2cert
+	rm -rf $(MAPPING_FOLDER)
+	make --directory=$(VALIDATION_FOLDER) clean
 
-.PHONY: all clean test local $(ERRORS_ALL)
+.PHONY: all clean test local validation

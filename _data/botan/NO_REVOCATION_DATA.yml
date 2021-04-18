@@ -1,6 +1,0 @@
-error-code: NO_REVOCATION_DATA
-slug: no-revocation-data
-tags: [ trust ]
-docs: |
-  No revocation data
-weight: 215

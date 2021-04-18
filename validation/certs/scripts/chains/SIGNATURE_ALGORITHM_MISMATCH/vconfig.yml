@@ -1,0 +1,14 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options: {}
+  gnutls:
+    options: {}
+  mbedtls:
+    options: {}
+  botan:
+    options: {}
+  openjdk:
+    options: {}
