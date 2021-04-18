@@ -31,6 +31,8 @@
   docs: |
     The certificate is not signed by one of the known authorities or the signature is invalid (deprecated by the flags GNUTLS_CERT_SIGNATURE_FAILURE and GNUTLS_CERT_SIGNER_NOT_FOUND ).
   weight: 201
+  message: |
+    The certificate is not signed by one of the known authorities or the signature is invalid.
   unused: |
     The documentation states that this error code is not used anymore.
 
