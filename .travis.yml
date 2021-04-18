@@ -10,6 +10,7 @@ addons:
     - libssl-dev
     - libbotan-2-dev
     - libmbedtls-dev
+    - libboost-program-options-dev
     - openjdk-11-jdk
     - python3-pip
 
