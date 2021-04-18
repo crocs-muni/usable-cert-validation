@@ -27,9 +27,10 @@ The website is build using [Jekyll](https://jekyllrb.com/). To develop locally, 
 
 Building the certificate chains requires [setuptools](https://pypi.org/project/setuptools/), [asn1tools](https://github.com/eerimoq/asn1tools) and [pycryptodomex](https://pypi.org/project/pycryptodomex/).
 
-Running certificate validation requires [shyaml](https://github.com/0k/shyaml), [yq](https://github.com/mikefarah/yq), [jq](https://stedolan.github.io/jq/) and [pyYAML](https://github.com/yaml/pyyaml) for parsing and manipulating YAML files.
+Running certificate validation requires [shyaml](https://github.com/0k/shyaml), [yq](https://github.com/mikefarah/yq), [jq](https://stedolan.github.io/jq/) and [pyYAML](https://github.com/yaml/pyyaml) for parsing and manipulating YAML files. 
 
 To build TLS clients, the development versions of the following libraries are required: [OpenSSL](https://www.openssl.org/), [GnuTLS](https://www.gnutls.org/), [Botan](https://botan.randombit.net/), [mBedTLS](https://tls.mbed.org/) and [OpenJDK](https://openjdk.java.net/).
+The Botan client also requires [Boost Program options](https://www.boost.org/doc/libs/1_76_0/doc/html/program_options.html).
 
 ## Authors
 
