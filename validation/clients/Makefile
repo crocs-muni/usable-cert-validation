@@ -2,8 +2,8 @@ ALL_CLIENT_DIRS=$(wildcard */.)
 
 all: $(ALL_CLIENT_DIRS)
 
-$(ALL_CLIENT_DIRS):
-	@make --no-print-directory --directory=$@
+*/.:
+	make --no-print-directory --directory=$@
 
 clean:
 	$(foreach CLIENT_DIR, \
