@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION
-slug: x509-v-err-unhandled-critical-crl-extension
-tags: [ extension ]
-docs: |
-  Unhandled critical CRL extension.
-weight: 304

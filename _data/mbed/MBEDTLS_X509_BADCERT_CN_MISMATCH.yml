@@ -1,7 +1,0 @@
-error-code: MBEDTLS_X509_BADCERT_CN_MISMATCH
-slug: mbedtls-x509-badcert-cn-mismatch
-tags: [ name ]
-docs: |
-  The certificate Common Name (CN) does not match with the expected CN
-verify-cert: X509_V_ERR_HOSTNAME_MISMATCH
-weight: 401

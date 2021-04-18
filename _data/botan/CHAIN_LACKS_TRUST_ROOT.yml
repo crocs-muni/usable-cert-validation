@@ -1,6 +1,0 @@
-error-code: CHAIN_LACKS_TRUST_ROOT
-slug: chain-lacks-trust-root
-tags: [ trust ]
-docs: |
-  Certificate chain does not end in a CA certificate
-weight: 202

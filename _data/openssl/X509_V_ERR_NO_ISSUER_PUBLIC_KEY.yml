@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_NO_ISSUER_PUBLIC_KEY
-slug: x509-v-err-no-issuer-public-key
-tags: [ format ]
-docs: |
-  Issuer certificate doesn't have a public key.
-weight: 710

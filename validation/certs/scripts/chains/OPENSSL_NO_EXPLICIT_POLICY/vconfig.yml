@@ -1,0 +1,7 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options:
+      flags: '--explicit_policy'

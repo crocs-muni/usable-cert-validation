@@ -1,6 +1,0 @@
-error-code: OSCP_NO_REVOCATION_URL
-slug: oscp-no-revocation-url
-tags: [ trust ]
-unused: |
-  Deprecated due to a typo - will be removed in future major release
-weight: 212

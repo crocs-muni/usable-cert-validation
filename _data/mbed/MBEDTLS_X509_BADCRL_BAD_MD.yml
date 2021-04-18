@@ -1,6 +1,0 @@
-error-code: MBEDTLS_X509_BADCRL_BAD_MD
-slug: mbedtls-x509-badcrl-bad-md
-tags: [ algorithm ] # or trust?
-docs: |
-  The CRL is signed with an unacceptable hash.
-weight: 606

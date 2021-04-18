@@ -16,7 +16,11 @@ before_install:
 
 install:
   - sudo pip3 install shyaml
-  - eval "$(gimme stable)" # Install Go using Gimme (https://github.com/travis-ci/gimme)
+  - sudo pip3 install asn1tools
+  - sudo pip3 install jq
+  - sudo pip3 install yq
+  - sudo pip3 install pyYAML
+  - sudo pip3 install pycryptodomex
   - bundle install
 
 script: 
@@ -30,9 +34,9 @@ cache:
   bundler: true               # Enable caching of bundler gem packages
   directories:
   - $TRAVIS_BUILD_DIR/.cache  # Enable caching link checks
-  - $TRAVIS_BUILD_DIR/_certs  # Enable caching of generated certificates
-  - $TRAVIS_BUILD_DIR/_errors # Enable caching of generated error metadata
-  - $TRAVIS_BUILD_DIR/assets/certs # Enable caching of generated certificates
+  - $TRAVIS_BUILD_DIR/validation/clients/*/build # Enable caching of built TLS clients
+  - $TRAVIS_BUILD_DIR/validation/certs/build # Enable caching of generated certificates
+  - $TRAVIS_BUILD_DIR/validation/certs/results/vresults # Enable caching of chain validation results
 
 deploy:
   provider: pages

@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE
-slug: x509-v-err-unable-to-decrypt-cert-signature
-tags: [ format ]
-docs: |
-  The certificate signature could not be decrypted. This means that the actual signature value could not be determined rather than it not matching the expected value, this is only meaningful for RSA keys.
-weight: 707

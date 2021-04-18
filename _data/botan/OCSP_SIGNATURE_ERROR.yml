@@ -1,6 +1,0 @@
-error-code: OCSP_SIGNATURE_ERROR
-slug: ocsp-signature-error
-tags: [ trust ]
-docs: |
-  OCSP signature error
-weight: 208

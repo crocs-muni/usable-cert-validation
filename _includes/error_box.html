@@ -1,23 +1,35 @@
 <div class="error-box linked-anchor" id="{{ include.page.slug }}-link">
 <div class="card-header clearfix" data-toggle="collapse" href="#{{ include.page.slug }}" role="button" aria-expanded="true" aria-controls="#{{ include.page.slug }}">
     <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
-    <span class="openssl-code" title="{{ include.page.error-code }}">{{ include.page.error-code | replace: "_", "_&shy;" }}</span>
-    {% if include.page.verify-command and include.page.verify-cert %}
+    <span class="openssl-code" title="{{ include.page.code }}">{{ include.page.code | replace: "_", "_&shy;" }}</span>
+    
+    {% assign mapping = site.data.mapping[page.library][include.page.code] %}
+
+    {% unless mapping.chains.size == 0 %}
         {% include icon.html icon="certificate" float="float-right" %}
-    {% endif %}
+    {% endunless %}
+
     {% if include.page.unused %}
         {% include icon.html icon="unused" float="float-right" %}
     {% endif %}
-    {% if site.data.mapping[page.library][include.page.error-code] %}
-        {% include icon.html icon="error-link" float="float-right" %}
-    {% endif %}
+    
+    {% assign mapping-present = false %}
+    {% for lib in site.data.libraries %}
+        {% if lib.name != page.library and mapping.cooccurrence[lib.name] != Nil and mapping.cooccurrence[lib.name].size != 0 %}
+            {% include icon.html icon="error-link" float="float-right" %}
+            {% assign mapping-present = true %}
+            {% break %}
+        {% endif%}
+    {% endfor %}    
+    
     {% if include.page.new-docs %}
         {% include icon.html icon="our-docs" float="float-right" %}
     {% endif %}
+
 </div>
 <div class="collapse show" id="{{ include.page.slug }}">
     <div class="card card-body">
-        {% if include.page.error-code %}
+        {% if include.page.code %}
             {% assign library=site.data.libraries | where: "name", page.library | first %}
 
             <!-- new docs -->
@@ -28,37 +40,55 @@
 
             {% if include.page.docs %}
                 <h3>{% include icon.html icon="docs-book" %}Original documentation:</h3>
-                <p>{{ include.page.docs }}<span class="text-muted">(<a class="color-reset" href="{{ library.source }}">source</a>)</span></p>
+                <p>{{ include.page.docs }}<span class="text-muted">(<a class="color-reset" href="{{ library.docs-source }}">source</a>)</span></p>
             {% else %}
                 <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
             {% endif %}
+
+            {% if include.page.message %}
+                <h3>{% include icon.html icon="message" %}Original error message:</h3>
+                <p>{{ include.page.message }}<span class="text-muted">(<a class="color-reset" href="{{ library.message-source }}">source</a>)</span></p>
+            {% endif %}
         {% endif %}
+
         {% if include.page.unused %}
             <p><i><b>{% include icon.html icon="unused" %}Unused: </b>{{ include.page.unused }}</i></p>
         {% endif %}
 
-        {% if include.page.verify-cert and include.page.verify-command %}
-            <h3>{% include icon.html icon="certificate" %}Example certificate</h3>
-            <p>Download the <a href="/assets/certs-archives/{{ include.page.verify-cert }}.zip">{% include icon.html icon="zip" %}certificate archive</a> and validate the contents using a command indicated below. If you are interested in generating such certificate yourself, see the generating script for this case on <a href="{{ site.repo-url }}/tree/master/assets/certs/{{ include.page.verify-cert }}">{% include icon.html icon="github" %}the project GitHub</a>.</p>
-            {% if include.page.verify-command %}
+        
+        {% unless mapping.chains.size == 0 %}
+            <h3>{% include icon.html icon="certificate" %}Example certificates</h3>
+            
+            <p>Download certificates causing this error using the links below. If you are interested in generating such certificate yourself, see the generating script for each case on the project Github.
+            <ul class="list-unstyled mb-0">
+            {% for chain in mapping.chains %}
+                <li> 
+                    {% include icon.html icon="zip" %}<a href="/validation/certs/archive/{{ chain }}.zip">{{ chain }} </a>
+                    -
+                    {% include icon.html icon="github" %}
+                    <a href="{{ site.repo-url }}/tree/master/validation/certs/scripts/chains/{{ chain }}/generate.py">script</a>
+                </li>
+            {% endfor %}
+            </ul>
+            
+            <!--{% if include.page.verify-command %}
                 {% assign library=site.data.libraries | where: "name", page.library | first %}
                 <p>Validate with: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></p>
-            {% endif %}
-        {% endif %}
+            {% endif %}!-->
+        {% endunless %}
         
-        {% if site.data.mapping[page.library][include.page.error-code] %}
-            <h3>{% include icon.html icon="error-link" %}Corresponding errors:</h3>
+        {% if mapping-present == true %}
+            <h3>{% include icon.html icon="error-link" %}Co-occurring errors:</h3>
             <ul class="list-unstyled mb-0">
-            {% assign groups = "equal,superset,subset" | split:"," %}
-            {% for group in groups %}
-                {% for library in site.data.libraries %}
-                    {% for error in site.data.mapping[page.library][include.page.error-code][group][library.name] %}
+            {% for lib in site.data.libraries %}
+                {% unless lib.name == page.library or mapping.cooccurrence[lib.name].size == 0 %}
+                    {{ lib.title }}:
+                    {% for error in mapping.cooccurrence[lib.name] %}
                         <li>
-                            {% include icon.html icon=group %}
-                            {{ library.title }}/<a href="/{% if library.name != "openssl" %}{{ library.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
+                            <a href="/{% if lib.name != "openssl" %}{{ lib.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
                         </li>
                     {% endfor %}
-                {% endfor %}
+                {% endunless%}
             {% endfor %}
             </ul>
         {% endif %}

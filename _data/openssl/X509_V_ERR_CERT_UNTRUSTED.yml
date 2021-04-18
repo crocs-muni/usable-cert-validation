@@ -1,5 +1,0 @@
-error-code: X509_V_ERR_CERT_UNTRUSTED
-slug: x509-v-err-cert-untrusted
-tags: [ unused ]
-docs: |
-  The root CA is not marked as trusted for the specified purpose.

@@ -1,0 +1,7 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options:
+      max_depth: 0

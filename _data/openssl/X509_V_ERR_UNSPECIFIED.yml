@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_UNSPECIFIED
-slug: x509-v-err-unspecified
-tags: [ uncategorized ]
-docs: |
-  Unspecified error; should not happen.
-weight: 818

@@ -1,0 +1,19 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options:
+      trust_anchor: intermediate.pem
+  gnutls:
+    options:
+      trust_anchor: intermediate.pem
+  mbedtls:
+    options:
+      trust_anchor: intermediate.pem
+  botan:
+    options:
+      trust_anchor: intermediate.pem
+  openjdk:
+    options:
+      trust_anchor: intermediate.pem

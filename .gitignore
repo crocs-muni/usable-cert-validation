@@ -1,11 +1,21 @@
-# Automatically generated certificates and website files
-assets/certs-build
-assets/certs/*/_certs
 _debug
-assets/certs-archives
 
-# Go compiled filed
-utils/yml2cert/yml2cert
+# Built TLS clients
+validation/clients/*/build/
+
+# Built certificates and validation files 
+validation/certs/archive/
+validation/certs/build/
+validation/certs/results/.port
+validation/certs/results/vresults/
+validation/certs/results/vresults.yml
+
+# Python cached files
+validation/certs/__pycache__/
+validation/certs/utils/utils.egg-info/
+validation/certs/utils/__pycache__/
+validation/certs/scripts/__pycache__/
+validation/certs/scripts/chains/*/__pycache__/
 
 # Automatically generated linking files
 _data/mapping

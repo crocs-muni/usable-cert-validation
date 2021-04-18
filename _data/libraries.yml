@@ -1,15 +1,24 @@
 - name: openssl
   title: OpenSSL
-  source: https://www.openssl.org/docs/man1.1.1/man1/openssl-verify.html
+  docs-source: https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html
+  message-source: https://github.com/openssl/openssl/blob/master/crypto/x509/x509_txt.c
 
 - name: gnutls
   title: GnuTLS
-  source: https://www.gnutls.org/manual/gnutls.html#index-verifying-certificate-paths
+  docs-source: https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html
+  message-source: https://github.com/gnutls/gnutls/blob/master/lib/cert-cred.c
 
 - name: botan
   title: Botan
-  source: https://botan.randombit.net/doxygen/cert__status_8cpp_source.html
+  docs-source: https://botan.randombit.net
+  message-source: https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp
 
-- name: mbed
+- name: mbedtls
   title: mbedTLS
-  source: https://github.com/ARMmbed/mbedtls/blob/master/library/x509_crt.c#L1666
+  docs-source: https://tls.mbed.org/api/group__x509__module.html
+  message-source: https://github.com/ARMmbed/mbedtls/blob/development/library/error.c
+
+- name: openjdk
+  title: OpenJDK
+  docs-source: https://openjdk.java.net/
+  message-source: https://openjdk.java.net/

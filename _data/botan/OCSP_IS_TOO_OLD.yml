@@ -1,6 +1,0 @@
-error-code: OCSP_IS_TOO_OLD
-slug: ocsp-is-too-old
-tags: [ time ] # or trust? also, why does this error sound similar to OCSP_HAS_EXPIRED
-docs: |
-  OCSP response is too old
-weight: 107

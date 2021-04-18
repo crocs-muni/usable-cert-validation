@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_OCSP_VERIFY_FAILED
-slug: x509-v-err-ocsp-verify-failed
-tags: [ trust ]
-docs: |
-  Returned by the verify callback to indicate OCSP verification failed.
-weight: 216

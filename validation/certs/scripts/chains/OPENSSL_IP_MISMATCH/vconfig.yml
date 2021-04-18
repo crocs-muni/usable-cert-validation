@@ -1,0 +1,7 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options:
+      ip: '127.0.0.0'

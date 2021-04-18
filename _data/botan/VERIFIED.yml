@@ -1,9 +1,0 @@
-error-code: VERIFIED
-slug: verified
-tags: [ uncategorized ]
-docs: |
-  Verified
-verify-command: |
-  botan cert_verify endpoint.crt ca.crt
-verify-cert: X509_V_OK
-weight: 807

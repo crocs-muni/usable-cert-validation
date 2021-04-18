@@ -1,0 +1,133 @@
+- code: PKIX_PATH_VALIDATION_FAILED
+  slug: pkix-path-validation-failed
+  tags: [ uncategorized ]
+  weight: 801
+  message: |
+    javax.net.ssl.SSLHandshakeException: PKIX path validation failed
+
+- code: PATH_LEN_CONSTRAINT_VIOLATED
+  slug: path-len-constraint-violated
+  tags: [ extension ]
+  weight: 301
+  message: |
+    java.security.cert.CertPathValidatorException: basic constraints check failed: pathLenConstraint violated - this cert must be the last cert in the certification path
+
+- code: UNABLE_TO_FIND_VALID_CERTIFICATION_PATH
+  slug: unable-to-find-valid-certification-path
+  tags: [ trust ]
+  weight: 201
+  message: |
+    sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+
+- code: FAILED_TO_PARSE_SERVER_CERTIFICATES
+  slug: failed-to-parse-server-certificates
+  tags: [ format ]
+  weight: 701
+  message: |
+    javax.net.ssl.SSLHandshakeException: Failed to parse server certificates
+
+- code: EXT_KEY_USAGE_NO_TLS_SERVER
+  slug: ext-key-usage-no-tls-server
+  tags: [ usage ]
+  weight: 501
+  message: |
+    javax.net.ssl.SSLHandshakeException: Extended key usage does not permit use for TLS server authentication
+
+- code: UNRECOGNIZED_CRITICAL_EXTENSION
+  slug: unrecognized-critical-extension
+  tags: [ extension ]
+  weight: 302
+  message: |
+    java.security.cert.CertPathValidatorException: unrecognized critical extension(s)
+
+- code: INCORRECT_KEY_USAGE_BITS
+  slug: incorrect-key-usage-bits
+  tags: [ format ]
+  weight: 702
+  message: |
+    java.security.cert.CertPathValidatorException: incorrect KeyUsage extension bits
+
+- code: FAILED_KEYSIZE_LIMITS
+  slug: failed-keysize-limits
+  tags: [ algorithm ]
+  weight: 601
+  message: |
+    java.security.cert.CertPathValidatorException: Algorithm constraints check failed on keysize limits.
+
+- code: VALIDITY_CHECK_FAILED
+  slug: validity-check-failed
+  tags: [ time ]
+  weight: 101
+  message: |
+    java.security.cert.CertPathValidatorException: validity check failed
+
+- code: NO_NAME_MATCHING
+  slug: no-name-matching
+  tags: [ name ]
+  weight: 401
+  message: |
+    javax.net.ssl.SSLHandshakeException: No name matching
+
+- code: SIGNATURE_CHECK_FAILED
+  slug: signature-check-failed
+  tags: [ format ]
+  weight: 703
+  message: |
+    java.security.cert.CertPathValidatorException: signature check failed
+
+- code: NOT_A_CA_CERTIFICATE
+  slug: not-a-ca-certificate
+  tags: [ extension ]
+  weight: 303
+  message: |
+    java.security.cert.CertPathValidatorException: basic constraints check failed: this is not a CA certificate
+
+- code: FAILED_SIGNATURE_ALGORITHM
+  slug: failed-signature-algorithm
+  tags: [ algorithm ]
+  weight: 602
+  message: |
+    java.security.cert.CertPathValidatorException: Algorithm constraints check failed on signature algorithm
+
+- code: MAXIMUM_NAME_CONSTRAINTS
+  slug: maximum-name-constraints
+  tags: [ format ]
+  weight: 704
+  message: |
+    java.io.IOException: Maximum BaseDistance in name constraints not supported
+
+- code: MINIMUM_NAME_CONSTRAINTS
+  slug: minimum-name-constraints
+  tags: [ format ]
+  weight: 705
+  message: |
+    java.io.IOException: Non-zero minimum BaseDistance in name constraints not supported
+
+- code: NAME_CONSTRAINTS_CHECK_FAILED
+  slug: name-constraints-check-failed
+  tags: [ name ]
+  weight: 402
+  message: |
+    java.security.cert.CertPathValidatorException: name constraints check failed
+
+- code: UNSUPPORTED_HANDSHAKE_MESSAGE
+  slug: unsupported-handshake-message
+  tags: [ format ]
+  weight: 705
+  message: |
+    javax.net.ssl.SSLProtocolException: Unsupported handshake message
+
+- code: CA_KEY_USAGE_FAILED
+  slug: ca-key-usage-failed
+  tags: [ usage ]
+  weight: 502
+  message: |
+    java.security.cert.CertPathValidatorException: CA key usage check failed
+
+- code: UNSUPPORTED_SIGNATURE_ALGORITHM
+  slug: unsupported-signature-algorithm
+  tags: [ algoritm ]
+  weight: 603
+  message: |
+    javax.net.ssl.SSLException: Unsupported signature algorithm
+

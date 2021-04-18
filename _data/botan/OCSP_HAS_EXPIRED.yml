@@ -1,6 +1,0 @@
-error-code: OCSP_HAS_EXPIRED
-slug: ocsp-has-expired
-tags: [ time ] #or trust?
-docs: |
-  OCSP response has expired
-weight: 106

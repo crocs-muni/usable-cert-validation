@@ -1,8 +1,0 @@
-error-code: X509_V_ERR_PROXY_SUBJECT_INVALID
-slug: x509-v-err-proxy-subject-invalid
-tags: [ uncategorized ]
-docs: |
-  Proxy certificate subject is invalid. It MUST be the same as the issuer with a single CN component added.
-unused: |
-  This code is not even defined in the code. It was in OpenSSL 1.1.1 docs, but in current master docs isn't.
-weight: 819

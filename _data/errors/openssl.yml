@@ -1,0 +1,922 @@
+- code: X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH
+  slug: x509-v-err-akid-issuer-serial-mismatch
+  tags: [ trust ]
+  docs: |
+    Not used as of OpenSSL 1.1.0 as a result of the deprecation of the -issuer_checks option.
+  unused: |
+    The documentation states that the error code is not used.
+  weight: 214
+  message: |
+    authority and subject key identifier mismatch
+
+- code: X509_V_ERR_AKID_SKID_MISMATCH
+  slug: x509-v-err-akid-skid-mismatch
+  tags: [ trust ]
+  docs: |
+    Not used as of OpenSSL 1.1.0 as a result of the deprecation of the -issuer_checks option.
+  unused: |
+    The documentation states that the error code is not used.
+  weight: 213
+  message: |
+    authority and subject key identifier mismatch
+
+- code: X509_V_ERR_APPLICATION_VERIFICATION
+  slug: x509-v-err-application-verification
+  tags: [ uncategorized ]
+  docs: |
+    Application verification failure. Unused.
+  weight: 808
+  message: |
+    application verification failure
+
+- code: X509_V_ERR_CA_KEY_TOO_SMALL
+  slug: x509-v-err-ca-key-too-small
+  tags: [ algorithm ]
+  docs: |
+    CA certificate key too weak.
+  weight: 602
+  message: |
+    CA certificate key too weak
+
+- code: X509_V_ERR_CA_MD_TOO_WEAK
+  slug: x509-v-err-ca-md-too-weak
+  tags: [ algorithm ]
+  docs: |
+    CA signature digest algorithm too weak.
+  weight: 603
+  message: |
+    CA signature digest algorithm too weak
+
+- code: X509_V_ERR_CERT_CHAIN_TOO_LONG
+  slug: x509-v-err-cert-chain-too-long
+  tags: [ trust ]
+  docs: |
+    The certificate chain length is greater than the supplied maximum depth. Unused.
+  weight: 205
+  message: |
+    certificate chain too long
+
+- code: X509_V_ERR_CERT_HAS_EXPIRED
+  slug: x509-v-err-cert-has-expired
+  tags: [ time ]
+  docs: |
+    The certificate has expired: that is the notAfter date is before the current time.
+  weight: 102
+  message: |
+    certificate has expired
+  new-docs: |
+    The certificate has expired (its validity period passed).
+    
+    #### Explanation
+    
+    Every certificate is issued for a specific time period (determined by `notBefore` and `notAfter` fields in the certificate). The current time seems to be past the `notAfter` value. Therefore, the certificate is no longer valid.
+    
+    #### Security perspective
+    
+    The certificate is not valid anymore. That means the issuing Certificate Authority (CA) does guarantee the information in it is still correct. Moreover, expired certificates are removed from Certificate Revocation Lists (CRLs). That means the certificate might have been revoked in the past (e.g., because of a leaked private key), but we cannot check anymore. Thus, the server presenting this certificate may not be who it claims.
+    
+    #### Next steps
+    
+    First, ensure that the date, time and time zone are set correctly on your device to eliminate the possibility of local misconfiguration. If the time settings are correct, you should get a new valid certificate from the CA.
+
+- code: X509_V_ERR_CERT_NOT_YET_VALID
+  slug: x509-v-err-cert-not-yet-valid
+  tags: [ time ]
+  docs: |
+    The certificate is not yet valid: the notBefore date is after the current time.
+  weight: 101
+  message: |
+    certificate is not yet valid
+
+- code: X509_V_ERR_CERT_REJECTED
+  slug: x509-v-err-cert-rejected
+  tags: [ usage ]
+  docs: |
+    The root CA is marked to reject the specified purpose.
+  weight: 502
+  message: |
+    certificate rejected
+
+- code: X509_V_ERR_CERT_REVOKED
+  slug: x509-v-err-cert-revoked
+  tags: [ time ]
+  docs: |
+    The certificate has been revoked.
+  weight: 105
+  message: |
+    certificate revoked
+
+- code: X509_V_ERR_CERT_SIGNATURE_FAILURE
+  slug: x509-v-err-cert-signature-failure
+  tags: [ format ]
+  docs: |
+    The signature of the certificate is invalid.
+  weight: 701
+  message: |
+    certificate signature failure
+
+- code: X509_V_ERR_CERT_UNTRUSTED
+  slug: x509-v-err-cert-untrusted
+  tags: [ trust ]
+  docs: |
+    The root CA is not marked as trusted for the specified purpose.
+  weight: 217
+  unused: |
+    The code is defined but never returned.
+  message: |
+    certificate not trusted
+
+- code: X509_V_ERR_CRL_HAS_EXPIRED
+  slug: x509-v-err-crl-has-expired
+  tags: [ time ]
+  docs: |
+    The CRL has expired.
+  weight: 104
+  message: |
+    CRL has expired
+
+- code: X509_V_ERR_CRL_NOT_YET_VALID
+  slug: x509-v-err-crl-not-yet-valid
+  tags: [ time ]
+  docs: |
+    The CRL is not yet valid.
+  weight: 103
+  message: |
+    CRL is not yet valid
+
+- code: X509_V_ERR_CRL_PATH_VALIDATION_ERROR
+  slug: x509-v-err-crl-path-validation-error
+  tags: [ trust ]
+  docs: |
+    CRL path validation error.
+  weight: 208
+  message: |
+    CRL path validation error
+
+- code: X509_V_ERR_CRL_SIGNATURE_FAILURE
+  slug: x509-v-err-crl-signature-failure
+  tags: [ format ]
+  docs: |
+    The signature of the certificate is invalid.
+  weight: 702
+  message: |
+    CRL signature failure
+
+- code: X509_V_ERR_DANE_NO_MATCH
+  slug: x509-v-err-dane-no-match
+  tags: [ uncategorized ]
+  docs: |
+    DANE TLSA authentication is enabled, but no TLSA records matched the certificate chain. This error is only possible in s_client(1).
+  weight: 809
+  message: |
+    no matching DANE TLSA records
+
+- code: X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT
+  slug: x509-v-err-depth-zero-self-signed-cert
+  tags: [ trust ]
+  docs: |
+    The passed certificate is self-signed and the same certificate cannot be found in the list of trusted certificates.
+  weight: 203
+  message: |
+    self signed certificate
+  new-docs: |
+    The provided certificate is self-signed and it is not present in the list of trusted certificates.
+    
+    #### Explanation
+    
+    The provided certificate is self-signed (the `issuer` and `subject` fields are the same). Self-signed certificates usually serve as the root of trust in certificate chains belonging to the Certificate Authorities (CA). However, this certificate is at "zero depth," i.e., it does not form a certificate chain. Neither is it present in the list of explicitly trusted CAs in your system.
+    
+    #### Security perspective
+    
+    Anyone can issue a self-signed certificate. Thus, the information contained in the certificate is not reliable. Therefore, the server presenting this certificate may not be who it claims.
+    
+    #### Next steps
+    
+    Try to find out if the self-signed certificate was expected at this place. Try to get a proper CA-signed certificated as self-signed certificates are not recommended even for testing purposes. If you are _absolutely certain_ this is the certificate issued by a trustworthy party, you can mark it as trusted by your system.
+    The provided certificate is self-signed and it cannot be found in the list of trusted certificates.
+
+- code: X509_V_ERR_DIFFERENT_CRL_SCOPE
+  slug: x509-v-err-different-crl-scope
+  tags: [ trust ]
+  docs: |
+    Different CRL scope.
+  weight: 209
+  message: |
+    different CRL scope
+
+- code: X509_V_ERR_EE_KEY_TOO_SMALL
+  slug: x509-v-err-ee-key-too-small
+  tags: [ algorithm ]
+  docs: |
+    EE certificate key too weak.
+  weight: 601
+  message: |
+    EE certificate key too weak
+
+- code: X509_V_ERR_EMAIL_MISMATCH
+  slug: x509-v-err-email-mismatch
+  tags: [ name ]
+  docs: |
+    Email address mismatch.
+  weight: 402
+  message: |
+    Email address mismatch
+
+- code: X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD
+  slug: x509-v-err-error-in-cert-not-after-field
+  tags: [ format ]
+  docs: |
+    The certificate notAfter field contains an invalid time.
+  weight: 704
+  message: |
+    format error in certificate's notAfter field
+
+- code: X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD
+  slug: x509-v-err-error-in-cert-not-before-field
+  tags: [ format ]
+  docs: |
+    The certificate notBefore field contains an invalid time.
+  weight: 703
+  message: |
+    format error in certificate's notBefore field
+
+- code: X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD
+  slug: x509-v-err-error-in-crl-last-update-field
+  tags: [ format ]
+  docs: |
+    The CRL lastUpdate field contains an invalid time.
+  weight: 705
+  message: |
+    format error in CRL's lastUpdate field
+
+- code: X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD
+  slug: x509-v-err-error-in-crl-next-update-field
+  tags: [ format ]
+  docs: |
+    The CRL nextUpdate field contains an invalid time.
+  weight: 706
+  message: |
+    format error in CRL's nextUpdate field
+
+- code: X509_V_ERR_EXCLUDED_VIOLATION
+  slug: x509-v-err-excluded-violation
+  tags: [ name ]
+  docs: |
+    Excluded subtree violation.
+  weight: 405
+  message: |
+    excluded subtree violation
+
+- code: X509_V_ERR_HOSTNAME_MISMATCH
+  slug: x509-v-err-hostname-mismatch
+  tags: [ name ]
+  docs: |
+    Hostname mismatch.
+  weight: 401
+  message: |
+    Hostname mismatch
+  new-docs: |
+    The requested hostname does not match the subject name in the certificate.
+    
+    #### Explanation
+    
+    Information about the certificate's subject (an entity associated with the certificate's public key) is held in the `subjectAltName` extension or the `subject` field. However, the hostname of the server you are connecting to does not match the subject information in the certificate.
+    
+    #### Security perspective
+    
+    You cannot verify the identity of the server to which you are connecting – you should not proceed. The server is either providing a wrong certificate (by being misconfigured) or is deliberately pretending to be a different entity to fool you. Sending or receiving data from unknown servers may put your systems at risk.
+    
+    #### Next steps
+    
+    Compare the server hostname with the `subjectAltName` extension and the `subject` field of the certificate. Common misconfigurations include not including server aliases in the certificate (e.g., `www.example.com` for the server `example.com`).
+
+- code: X509_V_ERR_INVALID_CALL
+  slug: x509-v-err-invalid-call
+  tags: [ uncategorized ]
+  docs: |
+    Invalid certificate verification context.
+  weight: 805
+  message: |
+    invalid certificate verification context
+
+- code: X509_V_ERR_INVALID_CA
+  slug: x509-v-err-invalid-ca
+  tags: [ extension ]
+  docs: |
+    A CA certificate is invalid. Either it is not a CA or its extensions are not consistent with the supplied purpose.
+  weight: 301
+  message: |
+    invalid CA certificate
+
+- code: X509_V_ERR_INVALID_EXTENSION
+  slug: x509-v-err-invalid-extension
+  tags: [ extension ]
+  docs: |
+    Invalid or inconsistent certificate extension.
+  weight: 305
+  message: |
+    invalid or inconsistent certificate extension
+
+- code: X509_V_ERR_INVALID_NON_CA
+  slug: x509-v-err-invalid-non-ca
+  tags: [ uncategorized ]
+  docs: |
+    Invalid non-CA certificate has CA markings.
+  weight: 802
+  message: |
+    invalid non-CA certificate (has CA markings)
+
+- code: X509_V_ERR_INVALID_POLICY_EXTENSION
+  slug: x509-v-err-invalid-policy-extension
+  tags: [ usage ]
+  docs: |
+    Invalid or inconsistent certificate policy extension.
+  weight: 503
+  message: |
+    invalid or inconsistent certificate policy extension
+
+- code: X509_V_ERR_INVALID_PURPOSE
+  slug: x509-v-err-invalid-purpose
+  tags: [ usage ]
+  docs: |
+    The supplied certificate cannot be used for the specified purpose.
+  weight: 501
+  message: |
+    unsupported certificate purpose
+  new-docs: |
+    The certificate's key is being used for a different purpose than allowed.
+    
+    #### Explanation
+    
+    Certificates can be used for various purposes. It might be desirable to use a certificate only for specific purposes. This is achieved by the `keyUsage` extension, which defines nine possible usages of the certificate (e.g., `digitalSignature` or `dataEncipherment`). End entity certificates can also specify the extended key uses (in the `extKeyUsage` extension).
+    
+    #### Security perspective
+    
+    Using the certificate for the purpose forbidden in the certificate may pose a risk to your data or systems. (For example, the key's security may not be sufficient for the forbidden use).
+    
+    #### Next steps
+    
+    Check both the `keyUsage` and `extKeyUsage` to see if the listed purposes include the one for which you are attempting to use the certificate. 
+
+- code: X509_V_ERR_IP_ADDRESS_MISMATCH
+  slug: x509-v-err-ip-address-mismatch
+  tags: [ name ]
+  docs: |
+    IP address mismatch.
+  weight: 403
+  message: |
+    IP address mismatch
+
+- code: X509_V_ERR_KEYUSAGE_NO_CERTSIGN
+  slug: x509-v-err-keyusage-no-certsign
+  tags: [ usage ]
+  docs: |
+    Not used as of OpenSSL 1.1.0 as a result of the deprecation of the -issuer_checks option.
+  unused: |
+    The documentation states that the error code is not used.
+  weight: 508
+  message: |
+    key usage does not include certificate signing
+
+- code: X509_V_ERR_KEYUSAGE_NO_CRL_SIGN
+  slug: x509-v-err-keyusage-no-crl-sign
+  tags: [ usage ]
+  docs: |
+    Key usage does not include CRL signing.
+  weight: 505
+  message: |
+    key usage does not include CRL signing
+
+- code: X509_V_ERR_KEYUSAGE_NO_DIGITAL_SIGNATURE
+  slug: x509-v-err-keyusage-no-digital-signature
+  tags: [ usage ]
+  docs: |
+    Key usage does not include digital signature.
+  weight: 506
+  message: |
+    key usage does not include digital signature
+
+- code: X509_V_ERR_NO_EXPLICIT_POLICY
+  slug: x509-v-err-no-explicit-policy
+  tags: [ usage ]
+  docs: |
+    No explicit policy.
+  weight: 504
+  message: |
+    no explicit policy
+
+- code: X509_V_ERR_NO_ISSUER_PUBLIC_KEY
+  slug: x509-v-err-no-issuer-public-key
+  tags: [ format ]
+  docs: |
+    Issuer certificate doesn't have a public key.
+  weight: 710
+  message: |
+    issuer certificate doesn't have a public key
+
+- code: X509_V_ERR_NO_VALID_SCTS
+  slug: x509-v-err-no-valid-scts
+  tags: [ uncategorized ]
+  docs: |
+    Certificate Transparency required, but no valid SCTs found.
+  weight: 810
+  message: |
+    Certificate Transparency required, but no valid SCTs found
+
+- code: X509_V_ERR_OCSP_CERT_UNKNOWN
+  slug: x509-v-err-ocsp-cert-unknown
+  tags: [ trust ]
+  docs: |
+    Returned by the verify callback to indicate that the certificate is not recognized by the OCSP responder.
+  weight: 212
+  message: |
+    OCSP unknown cert
+
+- code: X509_V_ERR_OCSP_VERIFY_FAILED
+  slug: x509-v-err-ocsp-verify-failed
+  tags: [ trust ]
+  docs: |
+    Returned by the verify callback to indicate OCSP verification failed.
+  weight: 216
+  message: |
+    OCSP verification failed
+
+- code: X509_V_ERR_OCSP_VERIFY_NEEDED
+  slug: x509-v-err-ocsp-verify-needed
+  tags: [ uncategorized ]
+  docs: |
+    Returned by the verify callback to indicate an OCSP verification is needed.
+  weight: 811
+  message: |
+    OCSP verification needed
+
+- code: X509_V_ERR_OUT_OF_MEM
+  slug: x509-v-err-out-of-mem
+  tags: [ uncategorized ]
+  docs: |
+    An error occurred trying to allocate memory. This should never happen.
+  weight: 807
+  message: |
+    out of memory
+
+- code: X509_V_ERR_PATH_LENGTH_EXCEEDED
+  slug: x509-v-err-path-length-exceeded
+  tags: [ extension ]
+  docs: |
+    The basicConstraints pathlength parameter has been exceeded.
+  weight: 302
+  message: |
+    path length constraint exceeded
+  new-docs: |
+    The allowed length of the certification path was exceeded.
+    
+    #### Explanation
+    
+    Certification Authorities (CAs) can mandate the maximal length of the trusted certificate chains below their certificate. This is done using the `pathLenConstraint` field in the `basicConstraints` extension. If the certificate chain created during validation is longer than this limit, the validation fails due to the violated path length constraint. This limit includes only intermediate certificates – the first (CA) and the last (endpoint) certificates are excluded.
+    
+    #### Security perspective
+    
+    An exceeded certificate path length signifies that one of the sub-authorities issued a certificate it was not allowed. Therefore, the CA or one of the sub-authorities may not be trustworthy.
+    
+    #### Next steps
+    
+    Inspect the certificate chain to find the `pathLenConstraint` in the `basicConstraints` extension that was violated. Inform the (sub-)authority issuing this certificate about the violation lower in the certificate chain.
+
+- code: X509_V_ERR_PATH_LOOP
+  slug: x509-v-err-path-loop
+  tags: [ trust ]
+  docs: |
+    Path loop.
+  unused: |
+    Is actively used in the code once in function check_issued in file x509_vfy.c, but cannot be returned outside of that function.
+  weight: 211
+  message: |
+    path loop
+
+- code: X509_V_ERR_PERMITTED_VIOLATION
+  slug: x509-v-err-permitted-violation
+  tags: [ name ]
+  docs: |
+    Permitted subtree violation.
+  weight: 404
+  message: |
+    permitted subtree violation
+
+- code: X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED
+  slug: x509-v-err-proxy-certificates-not-allowed
+  tags: [ uncategorized ]
+  docs: |
+    Proxy certificates not allowed, please use -allow_proxy_certs.
+  weight: 801
+  message: |
+    proxy certificates not allowed, please set the appropriate flag
+
+- code: X509_V_ERR_PROXY_PATH_LENGTH_EXCEEDED
+  slug: x509-v-err-proxy-path-length-exceeded
+  tags: [ uncategorized ]
+  docs: |
+    Proxy path length constraint exceeded.
+  weight: 803
+  message: |
+    proxy path length constraint exceeded
+
+- code: X509_V_ERR_PROXY_SUBJECT_NAME_VIOLATION
+  slug: x509-v-err-proxy-subject-name-violation
+  tags: [ uncategorized ]
+  docs: |
+    Proxy certificate name violation.
+  weight: 804
+  message: |
+    proxy subject name violation
+
+- code: X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN
+  slug: x509-v-err-self-signed-cert-in-chain
+  tags: [ trust ]
+  docs: |
+    The certificate chain could be built up using the untrusted certificates but the root could not be found locally.
+  weight: 204
+  message: |
+    self signed certificate in certificate chain
+
+- code: X509_V_ERR_SIGNATURE_ALGORITHM_MISMATCH
+  slug: x509-v-err-signature-algorithm-mismatch
+  tags: [ format ]
+  docs: |
+    Subject signature algorithm and issuer public key algorithm mismatch
+  weight: 711
+  message: |
+    subject signature algorithm and issuer public key algorithm mismatch
+
+- code: X509_V_ERR_STORE_LOOKUP
+  slug: x509-v-err-store-lookup
+  tags: [ uncategorized ]
+  docs: |
+    Issuer certificate lookup error.
+  weight: 806
+  message: |
+    issuer certificate lookup error
+
+- code: X509_V_ERR_SUBJECT_ISSUER_MISMATCH
+  slug: x509-v-err-subject-issuer-mismatch
+  tags: [ trust ]
+  docs: |
+    Not used as of OpenSSL 1.1.0 as a result of the deprecation of the -issuer_checks option.
+  unused: |
+    The documentation states that the error code is not used.
+  weight: 215
+  message: |
+    subject issuer mismatch
+
+- code: X509_V_ERR_SUBTREE_MINMAX
+  slug: x509-v-err-subtree-minmax
+  tags: [ name ]
+  docs: |
+    Name constraints minimum and maximum not supported.
+  weight: 406
+  message: |
+    name constraints minimum and maximum not supported
+
+- code: X509_V_ERR_SUITE_B_CANNOT_SIGN_P_384_WITH_P_256
+  slug: x509-v-err-suite-b-cannot-sign-p-384-with-p-256
+  tags: [ algorithm ]
+  docs: |
+    Suite B: cannot sign P-384 with P-256.
+  weight: 609
+  message: |
+    Suite B: cannot sign P-384 with P-256
+
+- code: X509_V_ERR_SUITE_B_INVALID_ALGORITHM
+  slug: x509-v-err-suite-b-invalid-algorithm
+  tags: [ algorithm ]
+  docs: |
+    Suite B: invalid public key algorithm.
+  weight: 605
+  message: |
+    Suite B: invalid public key algorithm
+
+- code: X509_V_ERR_SUITE_B_INVALID_CURVE
+  slug: x509-v-err-suite-b-invalid-curve
+  tags: [ algorithm ]
+  docs: |
+    Suite B: invalid ECC curve.
+  weight: 606
+  message: |
+    Suite B: invalid ECC curve
+
+- code: X509_V_ERR_SUITE_B_INVALID_SIGNATURE_ALGORITHM
+  slug: x509-v-err-suite-b-invalid-signature-algorithm
+  tags: [ algorithm ]
+  docs: |
+    Suite B: invalid signature algorithm.
+  weight: 607
+  message: |
+    Suite B: invalid signature algorithm
+
+- code: X509_V_ERR_SUITE_B_INVALID_VERSION
+  slug: x509-v-err-suite-b-invalid-version
+  tags: [ algorithm ]
+  docs: |
+    Suite B: certificate version invalid.
+  weight: 604
+  message: |
+    Suite B: certificate version invalid
+
+- code: X509_V_ERR_SUITE_B_LOS_NOT_ALLOWED
+  slug: x509-v-err-suite-b-los-not-allowed
+  tags: [ algorithm ]
+  docs: |
+    Suite B: curve not allowed for this LOS.
+  weight: 608
+  message: |
+    Suite B: curve not allowed for this LOS
+
+- code: X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY
+  slug: x509-v-err-unable-to-decode-issuer-public-key
+  tags: [ format ]
+  docs: |
+    The public key in the certificate SubjectPublicKeyInfo could not be read.
+  weight: 709
+  message: |
+    unable to decode issuer public key
+
+- code: X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE
+  slug: x509-v-err-unable-to-decrypt-cert-signature
+  tags: [ format ]
+  docs: |
+    The certificate signature could not be decrypted. This means that the actual signature value could not be determined rather than it not matching the expected value, this is only meaningful for RSA keys.
+  weight: 707
+  message: |
+    unable to decrypt certificate's signature
+
+- code: X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE
+  slug: x509-v-err-unable-to-decrypt-crl-signature
+  tags: [ format ]
+  docs: |
+    The CRL signature could not be decrypted: this means that the actual signature value could not be determined rather than it not matching the expected value. Unused.
+  unused: |
+    As of now only defined in the code but not used. Also marked as unused in the docs.
+  weight: 708
+  message: |
+    unable to decrypt CRL's signature
+
+- code: X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER
+  slug: x509-v-err-unable-to-get-crl-issuer
+  tags: [ trust ]
+  docs: |
+    Unable to get CRL issuer certificate.
+  weight: 207
+  message: |
+    unable to get CRL issuer certificate
+
+- code: X509_V_ERR_UNABLE_TO_GET_CRL
+  slug: x509-v-err-unable-to-get-crl
+  tags: [ trust ]
+  docs: |
+    The CRL of a certificate could not be found.
+  weight: 206
+  message: |
+    unable to get certificate CRL
+
+- code: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY
+  slug: x509-v-err-unable-to-get-issuer-cert-locally
+  tags: [ trust ]
+  docs: |
+    The issuer certificate could not be found: this occurs if the issuer certificate of an untrusted certificate cannot be found.
+  weight: 202
+  message: |
+    unable to get local issuer certificate
+
+- code: X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT
+  slug: x509-v-err-unable-to-get-issuer-cert
+  tags: [ trust ]
+  docs: |
+    The issuer certificate of a looked up certificate could not be found. This normally means the list of trusted certificates is not complete.
+  weight: 201
+  message: |
+    unable to get issuer certificate
+
+- code: X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE
+  slug: x509-v-err-unable-to-verify-leaf-signature
+  tags: [ trust ]
+  docs: |
+    No signatures could be verified because the chain contains only one certificate and it is not self signed.
+  weight: 210
+  message: |
+    unable to verify the first certificate
+
+- code: X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION
+  slug: x509-v-err-unhandled-critical-crl-extension
+  tags: [ extension ]
+  docs: |
+    Unhandled critical CRL extension.
+  weight: 304
+  message: |
+    unhandled critical CRL extension
+
+- code: X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION
+  slug: x509-v-err-unhandled-critical-extension
+  tags: [ extension ]
+  docs: |
+    Unhandled critical extension.
+  weight: 303
+  message: |
+    unhandled critical extension
+  new-docs: |
+    A critical extension was not recognized or could not be processed.
+    
+    #### Explanation
+    
+    Certificate extensions can be used for extending certificates with additional information. Each extension is either marked as critical or non-critical (in the `critical` field in the extension). If an extension is marked as critical, it must be processed. If the processing system cannot recognize or process a critical extension, it must reject the certificate.
+    
+    #### Security perspective
+    
+    Marking an extension as critical is a way for the certificate issuer to denote it is _absolutely essential_ to process and understand it. If it is not processed, we may lack the necessary information and misuse the certificate. We may, for example, miss the intended purpose or key usage constraint. Inappropriateong usage circumvents the guarantees of the certificate authority, possibly putting our systems at risk.
+    
+    #### Next steps
+    Inspect the certificate extensions marked with `critical: true` to find the offender. Make sure that only the necessary extensions are marked as critical. Marking non-standard extensions as critical may cause problems in the general context.
+
+- code: X509_V_ERR_UNNESTED_RESOURCE
+  slug: x509-v-err-unnested-resource
+  tags: [ name ]
+  docs: |
+    RFC 3779 resource not subset of parent's resources.
+  weight: 411
+  message: |
+    RFC 3779 resource not subset of parent's resources
+
+- code: X509_V_ERR_UNSPECIFIED
+  slug: x509-v-err-unspecified
+  tags: [ uncategorized ]
+  docs: |
+    Unspecified error; should not happen.
+  weight: 818
+  message: |
+    unspecified certificate verification error
+
+- code: X509_V_ERR_UNSUPPORTED_CONSTRAINT_SYNTAX
+  slug: x509-v-err-unsupported-constraint-syntax
+  tags: [ name ]
+  docs: |
+    Unsupported or invalid name constraint syntax.
+  unused: |
+    As of now only defined in the code but not used.
+  weight: 408
+  message: |
+    unsupported or invalid name constraint syntax
+
+- code: X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE
+  slug: x509-v-err-unsupported-constraint-type
+  tags: [ name ]
+  docs: |
+    Unsupported name constraint type.
+  weight: 407
+  message: |
+    unsupported name constraint type
+
+- code: X509_V_ERR_UNSUPPORTED_EXTENSION_FEATURE
+  slug: x509-v-err-unsupported-extension-feature
+  tags: [ extension ]
+  docs: |
+    Unsupported extension feature.
+  unused: |
+    As of now only defined in the code but not used.
+  weight: 206
+  message: |
+    unsupported extension feature
+
+- code: X509_V_ERR_UNSUPPORTED_NAME_SYNTAX
+  slug: x509-v-err-unsupported-name-syntax
+  tags: [ name ]
+  docs: |
+    Unsupported or invalid name syntax.
+  weight: 409
+  message: |
+    unsupported or invalid name syntax
+
+- code: X509_V_OK
+  slug: x509-v-ok
+  tags: [ uncategorized ]
+  docs: |
+    The operation was successful.
+  weight: 819
+  message: |
+    ok
+
+- code: X509_V_ERR_SIGNATURE_ALGORITHM_INCONSISTENCY
+  slug: x509-v-err-signature-algorithm-inconsistency
+  tags: [ algorithm ]
+  weight: 610
+  message: |
+    cert info siganature and signature algorithm mismatch
+
+- code: X509_V_ERR_PATHLEN_INVALID_FOR_NON_CA
+  slug: x509-v-err-pathlen-invalid-for-non-ca
+  tags: [ format ]
+  weight: 712
+  message: |
+    Path length invalid for non-CA cert
+
+- code: X509_V_ERR_PATHLEN_WITHOUT_KU_KEY_CERT_SIGN
+  slug: x509-v-err-pathlen-without-ku-key-cert-sign
+  tags: [ format ]
+  weight: 713
+  message: |
+    Path length given without key usage keyCertSign
+
+- code: X509_V_ERR_KU_KEY_CERT_SIGN_INVALID_FOR_NON_CA
+  slug: x509-v-err-ku-key-cert-sign-invalid-for-non-ca
+  tags: [ format ]
+  weight: 714
+  message: |
+    Key usage keyCertSign invalid for non-CA cert
+
+- code: X509_V_ERR_ISSUER_NAME_EMPTY
+  slug: x509-v-err-issuer-name-empty
+  tags: [ format ]
+  weight: 715
+  message: |
+    Issuer name empty
+
+- code: X509_V_ERR_SUBJECT_NAME_EMPTY
+  slug: x509-v-err-subject-name-empty
+  tags: [ format ]
+  weight: 716
+  message: |
+    Subject name empty
+
+- code: X509_V_ERR_MISSING_AUTHORITY_KEY_IDENTIFIER
+  slug: x509-v-err-missing-authority-key-identifier
+  tags: [ format ]
+  weight: 717
+  message: |
+    Missing Authority Key Identifier
+
+- code: X509_V_ERR_MISSING_SUBJECT_KEY_IDENTIFIER
+  slug: x509-v-err-missing-subject-key-identifier
+  tags: [ format ]
+  weight: 718
+  message: |
+    Missing Subject Key Identifier
+
+- code: X509_V_ERR_EMPTY_SUBJECT_ALT_NAME
+  slug: x509-v-err-empty-subject-alt-name
+  tags: [ format ]
+  weight: 719
+  message: |
+    Empty Subject Alternative Name extension
+
+- code: X509_V_ERR_EMPTY_SUBJECT_SAN_NOT_CRITICAL
+  slug: x509-v-err-empty-subject-san-not-critical
+  tags: [ format ]
+  weight: 720
+  message: |
+    Subject empty and Subject Alt Name extension not critical
+
+- code: X509_V_ERR_CA_BCONS_NOT_CRITICAL
+  slug: x509-v-err-ca-bcons-not-critical
+  tags: [ format ]
+  weight: 721
+  message: |
+    Basic Constraints of CA cert not marked critical
+
+- code: X509_V_ERR_AUTHORITY_KEY_IDENTIFIER_CRITICAL
+  slug: x509-v-err-authority-key-identifier-critical
+  tags: [ format ]
+  weight: 722
+  message: |
+    Authority Key Identifier marked critical
+
+- code: X509_V_ERR_SUBJECT_KEY_IDENTIFIER_CRITICAL
+  slug: x509-v-err-subject-key-identifier-critical
+  tags: [ format ]
+  weight: 723
+  message: |
+    Subject Key Identifier marked critical
+
+- code: X509_V_ERR_CA_CERT_MISSING_KEY_USAGE
+  slug: x509-v-err-ca-cert-missing-key-usage
+  tags: [ format ]
+  weight: 724
+  message: |
+    CA cert does not include key usage extension
+
+- code: X509_V_ERR_EXTENSIONS_REQUIRE_VERSION_3
+  slug: x509-v-err-extensions-require-version-3
+  tags: [ format ]
+  weight: 725
+  message: |
+    Using cert extension requires at least X509v3
+
+- code: X509_V_ERR_EC_KEY_EXPLICIT_PARAMS
+  slug: x509-v-err-ec-key-explicit-params
+  tags: [ format ]
+  weight: 726
+  message: |
+    Certificate public key has explicit ECC parameters
+
+- code: X509_V_ERR_UNSUPPORTED_SIGNATURE_ALGORITHM
+  slug: x509-v-err-unsupported-signature-algorithm
+  tags: [ algorithm ]
+  weight: 611
+  message: |
+    Cannot find certificate signature algorithm

@@ -1,9 +1,0 @@
-error-code: GNUTLS_CERT_SIGNER_NOT_CA
-slug: gnutls-cert-signer-not-ca
-tags: [ extension ]
-docs: |
-  The certificate’s signer was not a CA. This may happen if this was a version 1 certificate, which is common with some CAs, or a version 3 certificate without the basic constrains extension.
-verify-command: |
-  certtool --verify --load-ca-certificate ca.crt --infile chain.crt
-verify-cert: X509_V_ERR_INVALID_CA
-weight: 302

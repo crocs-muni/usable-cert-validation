@@ -1,6 +1,0 @@
-error-code: X509_V_ERR_STORE_LOOKUP
-slug: x509-v-err-store-lookup
-tags: [ uncategorized ]
-docs: |
-  Issuer certificate lookup error.
-weight: 806

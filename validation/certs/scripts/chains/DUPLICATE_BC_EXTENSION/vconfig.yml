@@ -1,0 +1,15 @@
+servers:
+  main:
+    which: "python"
+
+verify:
+  openssl:
+    options: {}
+  gnutls:
+    options: {}
+  mbedtls:
+    options: {}
+  botan:
+    options: {}
+  openjdk:
+    options: {}

@@ -1,8 +1,0 @@
-error-code: X509_V_ERR_PATH_LOOP
-slug: x509-v-err-path-loop
-tags: [ trust ]
-docs: |
-  Path loop.
-unused: |
-  Is actively used in the code once in function check_issued in file x509_vfy.c, but cannot be returned outside of that function.
-weight: 211

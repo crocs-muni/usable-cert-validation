@@ -1,6 +1,0 @@
-error-code: CERT_SERIAL_NEGATIVE
-slug: cert-serial-negative
-tags: [ format ]
-docs: |
-  Certificate serial number is negative
-weight: 703

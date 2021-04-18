@@ -1,0 +1,227 @@
+- code: GNUTLS_CERT_EXPIRED
+  slug: gnutls-cert-expired
+  tags: [ time ]
+  docs: |
+    The certificate has expired.
+  weight: 102
+  message: |
+    The certificate chain uses expired certificate.
+
+- code: GNUTLS_CERT_INSECURE_ALGORITHM
+  slug: gnutls-cert-insecure-algorithm
+  tags: [ algorithm ]
+  docs: |
+    The certificate was signed using an insecure algorithm such as MD2 or MD5. These algorithms have been broken and should not be trusted.
+  weight: 601
+  message: |
+    The certificate chain uses insecure algorithm.
+
+- code: GNUTLS_CERT_INVALID_OCSP_STATUS
+  slug: gnutls-cert-invalid-ocsp-status
+  tags: [ trust ]
+  docs: |
+    The received OCSP status response is invalid.
+  weight: 204
+  message: |
+    The received OCSP status response is invalid.
+
+- code: GNUTLS_CERT_INVALID
+  slug: gnutls-cert-invalid
+  tags: [ trust ]
+  docs: |
+    The certificate is not signed by one of the known authorities or the signature is invalid (deprecated by the flags GNUTLS_CERT_SIGNATURE_FAILURE and GNUTLS_CERT_SIGNER_NOT_FOUND ).
+  weight: 201
+  unused: |
+    The documentation states that this error code is not used anymore.
+
+- code: GNUTLS_CERT_MISMATCH
+  slug: gnutls-cert-mismatch
+  tags: [ trust ]
+  docs: |
+    The certificate presented isn’t the expected one (TOFU)
+  weight: 205
+  message: |
+    The certificate doesn't match the local copy (TOFU).
+
+- code: GNUTLS_CERT_MISSING_OCSP_STATUS
+  slug: gnutls-cert-missing-ocsp-status
+  tags: [ trust ]
+  docs: |
+    The certificate requires the server to send the certifiate status, but no status was received.
+  weight: 203
+  message: |
+    The certificate requires the server to include an OCSP status in its response, but the OCSP status is missing.
+
+- code: GNUTLS_CERT_NOT_ACTIVATED
+  slug: gnutls-cert-not-activated
+  tags: [ time ]
+  docs: |
+    The certificate is not yet activated.
+  weight: 101
+  message: |
+    The certificate chain uses not yet valid certificate.
+
+- code: GNUTLS_CERT_PURPOSE_MISMATCH
+  slug: gnutls-cert-purpose-mismatch
+  tags: [ usage ]
+  docs: |
+    The certificate or an intermediate does not match the intended purpose (extended key usage).
+  weight: 501
+  message: |
+    The certificate chain does not match the intended purpose.
+
+- code: GNUTLS_CERT_REVOCATION_DATA_ISSUED_IN_FUTURE
+  slug: gnutls-cert-revocation-data-issued-in-future
+  tags: [ time ]
+  docs: |
+    The revocation data have a future issue date.
+  weight: 103
+  message: |
+    The revocation or OCSP data are issued with a future date.
+
+- code: GNUTLS_CERT_REVOCATION_DATA_SUPERSEDED
+  slug: gnutls-cert-revocation-data-superseded
+  tags: [ time ]
+  docs: |
+    The revocation data are old and have been superseded.
+  weight: 104
+  message: |
+    The revocation or OCSP data are old and have been superseded.
+
+- code: GNUTLS_CERT_REVOKED
+  slug: gnutls-cert-revoked
+  tags: [ time ]
+  docs: |
+    Certificate is revoked by its authority. In X.509 this will be set only if CRLs are checked.
+  weight: 105
+  message: |
+    The certificate chain is revoked.
+
+- code: GNUTLS_CERT_SIGNATURE_FAILURE
+  slug: gnutls-cert-signature-failure
+  tags: [ format ]
+  docs: |
+    The signature verification failed.
+  weight: 701
+  message: |
+    The signature in the certificate is invalid.
+
+- code: GNUTLS_CERT_SIGNER_CONSTRAINTS_FAILURE
+  slug: gnutls-cert-signer-constraints-failure
+  tags: [ name ]
+  docs: |
+    The certificate’s signer constraints were violated.
+  weight: 402
+  message: |
+    The certificate chain violates the signer's constraints.
+
+- code: GNUTLS_CERT_SIGNER_NOT_CA
+  slug: gnutls-cert-signer-not-ca
+  tags: [ extension ]
+  docs: |
+    The certificate’s signer was not a CA. This may happen if this was a version 1 certificate, which is common with some CAs, or a version 3 certificate without the basic constrains extension.
+  weight: 302
+  message: |
+    The certificate issuer is not a CA.
+
+- code: GNUTLS_CERT_SIGNER_NOT_FOUND
+  slug: gnutls-cert-signer-not-found
+  tags: [ trust ]
+  docs: |
+    The certificate’s issuer is not known. This is the case if the issuer is not included in the trusted certificate list.
+  weight: 202
+  message: |
+    The certificate issuer is unknown.
+
+- code: GNUTLS_CERT_UNEXPECTED_OWNER
+  slug: gnutls-cert-unexpected-owner
+  tags: [ name ]
+  docs: |
+    The owner is not the expected one.
+  weight: 401
+  message: |
+    The name in the certificate does not match the expected.
+
+- code: GNUTLS_CERT_UNKNOWN_CRIT_EXTENSIONS
+  slug: gnutls-cert-unknown-crit-extensions
+  tags: [ extension ]
+  docs: |
+    The certificate has extensions marked as critical which are not supported.
+  weight: 301
+  message: |
+    The certificate contains an unknown critical extension.
+
+- code: GNUTLS_E_CERTIFICATE_ERROR
+  slug: gnutls-e--certificate-error
+  tags: [ format ]
+  weight: 702
+  message: |
+    Error in the certificate.
+
+- code: GNUTLS_E_KEY_USAGE_VIOLATION
+  slug: gnutls-e-key-usage-violation
+  tags: [ usage ]
+  weight: 502
+  message: |
+    Key usage violation in certificate has been detected.
+
+- code: GNUTLS_E_UNSUPPORTED_CERTIFICATE_TYPE
+  slug: gnutls-e-unsupported-certificate-type
+  tags: [ format ]
+  weight: 703
+  message: |
+    The certificate type is not supported.
+
+- code: GNUTLS_E_X509_UNKNOWN_SAN
+  slug: gnutls-e-unknown-san
+  tags: [ format ]
+  weight: 704
+  message: |
+    Unknown Subject Alternative name in X.509 certificate.
+
+- code: GNUTLS_E_ASN1_DER_ERROR
+  slug: gnutls-e-asn1-der-error
+  tags: [ format ]
+  weight: 704
+  message: |
+    ASN1 parser: Error in DER parsing.
+
+- code: GNUTLS_E_X509_UNSUPPORTED_ATTRIBUTE
+  slug: gnutls-e-unsupported-attribute
+  tags: [ format ]
+  weight: 705
+  message: |
+    The certificate has unsupported attributes.
+
+- code: GNUTLS_E_X509_UNSUPPORTED_OID
+  slug: gnutls-e-unsupported-oid
+  tags: [ format ]
+  weight: 706
+  message: |
+    The OID is not supported.
+
+- code: GNUTLS_E_OCSP_MISMATCH_WITH_CERTS
+  slug: gnutls-e-ocsp-mismatch-with-certs
+  tags: [ trust ]
+  weight: 206
+  message: |
+    The OCSP response provided doesn’t match the available certificates
+
+- code: GNUTLS_E_X509_DUPLICATE_EXTENSION
+  slug: gnutls-e-x509-duplicate-extension
+  tags: [ format ]
+  weight: 707
+  message: |
+    Duplicate extension in X.509 certificate.
+
+- code: GNUTLS_E_SUCCESS
+  slug: gnutls-e-success
+  tags: [ uncategorized ]
+  weight: 801
+  message: |
+    The certificate is trusted.
+
+
+
+
+

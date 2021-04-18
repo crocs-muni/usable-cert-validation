@@ -1,0 +1,16 @@
+servers:
+  main:
+    which: python
+
+verify:
+  openssl:
+    options:
+      flags: "--strict"
+  gnutls:
+    options: {}
+  mbedtls:
+    options: {}
+  botan:
+    options: {}
+  openjdk:
+    options: {}

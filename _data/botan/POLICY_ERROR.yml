@@ -1,6 +1,0 @@
-error-code: POLICY_ERROR
-slug: policy-error
-tags: [ usage ]
-docs: |
-  Certificate policy error
-weight: 502
