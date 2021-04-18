@@ -1,4 +1,4 @@
-dist: bionic    # Ubuntu 18.04 LTS
+dist: focal    # Ubuntu 18.04 LTS
 language: ruby
 gemfile: Gemfile
 
@@ -6,7 +6,11 @@ addons:
   apt:
     update: true
     packages:
-    - gnutls-bin
+    - libgnutls-dev
+    - libssl-dev
+    - libbotan-2-dev
+    - libmbedtls-dev
+    - openjdk-11-jdk
     - python3-pip
 
 before_install: 
