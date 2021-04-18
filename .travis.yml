@@ -6,7 +6,7 @@ addons:
   apt:
     update: true
     packages:
-    - libgnutls-dev
+    - libgnutls28-dev
     - libssl-dev
     - libbotan-2-dev
     - libmbedtls-dev
