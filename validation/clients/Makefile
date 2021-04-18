@@ -1,13 +1,13 @@
-ALL_CLIENT_DIRS=$(wildcard */.)
+ALL_CLIENT_MAKES=$(wildcard */Makefile)
 
-all: $(ALL_CLIENT_DIRS)
+all: $(ALL_CLIENT_MAKES)
 
-*/.:
-	make --no-print-directory --directory=$@
+*/Makefile:
+	make --no-print-directory --directory=$(@D)
 
 clean:
-	$(foreach CLIENT_DIR, \
-			  $(ALL_CLIENT_DIRS), \
-			  make --directory=$(CLIENT_DIR) clean;)
+	$(foreach CLIENT_MAKE, \
+			  $(ALL_CLIENT_MAKES), \
+			  make --directory=$(dir $(CLIENT_MAKE)) clean;)
 
-.PHONY: all $(ALL_CLIENT_DIRS) clean
+.PHONY: all $(ALL_CLIENT_MAKES) clean
