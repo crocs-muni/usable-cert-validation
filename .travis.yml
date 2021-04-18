@@ -15,6 +15,7 @@ before_install:
   - rm -rf ./git-tools
 
 install:
+  - sudo pip3 install setuptools
   - sudo pip3 install shyaml
   - sudo pip3 install asn1tools
   - sudo pip3 install jq
