@@ -7,13 +7,10 @@ addons:
     update: true
     packages:
     - libgnutls28-dev
-    - libssl-dev
     - libbotan-2-dev
     - libmbedtls-dev
     - libboost-program-options-dev
-    - openjdk-11-jdk
     - botan
-    - python3-pip
 
 before_install: 
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
@@ -31,7 +28,6 @@ install:
   - bundle install
 
 script:
-  - sudo ldconfig
   - make test
 
 env:
@@ -42,9 +38,8 @@ cache:
   bundler: true               # Enable caching of bundler gem packages
   directories:
   - $TRAVIS_BUILD_DIR/.cache  # Enable caching link checks
-  - $TRAVIS_BUILD_DIR/validation/clients/*/build/ # Enable caching of built TLS clients
-  - $TRAVIS_BUILD_DIR/validation/certs/build/ # Enable caching of generated certificates
-  - $TRAVIS_BUILD_DIR/validation/certs/results/vresults/ # Enable caching of chain validation results
+  - $TRAVIS_BUILD_DIR/validation/certs/build # Enable caching of generated certificates
+  - $TRAVIS_BUILD_DIR/validation/certs/results/vresults # Enable caching of chain validation results
 
 deploy:
   provider: pages
