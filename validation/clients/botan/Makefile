@@ -6,7 +6,7 @@ all: build/client
 
 build/client: client.cpp
 	mkdir -p build
-	$(CXX) $(CFLAGS) $(LDLIBS) -o build/client client.cpp
+	$(CXX) $(CFLAGS) -o build/client client.cpp $(LDLIBS)
 
 clean:
 	rm -rf build
