@@ -28,7 +28,8 @@ install:
   - sudo pip3 install pycryptodomex
   - bundle install
 
-script: 
+script:
+  - ldconfig
   - make test
 
 env:
