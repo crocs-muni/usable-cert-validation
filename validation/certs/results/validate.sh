@@ -64,7 +64,6 @@ main() {
 
             # run the client and save its error message
             ERROR_MESSAGE="$("${CLIENT_NAME}"_validate 2>&1)"
-            echo ${ERROR_MESSAGE}
 
             # Save the error message into the results with key being the client name
             OUT=$(echo ${OUT} | jq --arg m "${ERROR_MESSAGE}" \
@@ -91,13 +90,13 @@ run_servers() {
         python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
                                         --key_file "${KEY_FILE}" \
                                         --host "${HOST}" \
-                                        --port "${MAIN_PORT}" &
-                                        #> /dev/null 2>&1 &
+                                        --port "${MAIN_PORT}" \
+                                        > /dev/null 2>&1 &
     else 
         botan tls_server "${CHAIN_FILE}" \
                          "${KEY_FILE}" \
-                         --port="${MAIN_PORT}" &
-                         #> /dev/null 2>&1 &
+                         --port="${MAIN_PORT}" \
+                         > /dev/null 2>&1 &
     fi
     PID=$!
 }

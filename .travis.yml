@@ -42,9 +42,9 @@ cache:
   bundler: true               # Enable caching of bundler gem packages
   directories:
   - $TRAVIS_BUILD_DIR/.cache  # Enable caching link checks
-  - $TRAVIS_BUILD_DIR/validation/clients/*/build # Enable caching of built TLS clients
-  - $TRAVIS_BUILD_DIR/validation/certs/build # Enable caching of generated certificates
-  - $TRAVIS_BUILD_DIR/validation/certs/results/vresults # Enable caching of chain validation results
+  - $TRAVIS_BUILD_DIR/validation/clients/*/build/ # Enable caching of built TLS clients
+  - $TRAVIS_BUILD_DIR/validation/certs/build/ # Enable caching of generated certificates
+  - $TRAVIS_BUILD_DIR/validation/certs/results/vresults/ # Enable caching of chain validation results
 
 deploy:
   provider: pages

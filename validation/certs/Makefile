@@ -58,36 +58,40 @@ all: $(ROOT_KEY_FILE) $(CHAINS_BUILD_ALL) $(VRESULTS_FILES_ALL) $(ARCHIVES_ALL)
 
 # First we build the root key target, this creates the root cert as well
 $(ROOT_KEY_FILE): $(SCRIPTS_DIR)/$(ROOT).py $(wildcard $(ASN_DIR)/*.asn) $(wildcard $(UTILS_DIR)/*.py)
-	@echo "Generating root certificate"
+	@printf "Generating certificate %-50s" $(ROOT)
 	@python3 -m $(SCRIPTS_DIR).$(ROOT) \
 	            --root_cert_file=$(CURDIR)/$(ROOT_CERT_FILE) \
 	            --root_key_file=$(CURDIR)/$(ROOT_KEY_FILE) \
 	            --asn_dir=$(CURDIR)/$(ASN_DIR)/
+	@printf "[ OK ]\n"
 
 # Then we build all the individual certificate chains
 $(BUILD_DIR)/%/$(CHAIN_FILENAME): $(ROOT_KEY_FILE) $(CHAINS_DIR)/%/$(GENERATE).py
-	@echo "Generating chain: $(notdir $(@D))"
+	@printf "Generating chain: %-50s" $(notdir $(@D))
 	@python3 -m $(SCRIPTS_DIR).$(CHAINS).$(notdir $(@D)).$(GENERATE) \
 	            --build_dir=$(CURDIR)/$(@D)/ \
 	            --asn_dir=$(CURDIR)/$(ASN_DIR)/ \
 	            --root_key_file=$(CURDIR)/$(ROOT_KEY_FILE)
+	@printf "[ OK ]\n"
 
 # After building the chain, we run the validation script on it
 $(VRESULTS_DIR)/%.yml: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 	@mkdir -p $(VRESULTS_DIR)
-	@echo "Validating chain: $(basename $(@F))"
-	$(VSCRIPT) $(CURDIR) \
-               $(CURDIR)/$(CLIENTS_DIR) \
-               $(CURDIR)/$(SERVERS_DIR) \
-               $(basename $(@F)) \
-               $(CURDIR)/$(VRESULTS_DIR) \
-               $(CURDIR)/$(PORT_CTR_FILE)
+	@printf "Validating chain: %-50s" $(basename $(@F))
+	@$(VSCRIPT) $(CURDIR) \
+               	$(CURDIR)/$(CLIENTS_DIR) \
+               	$(CURDIR)/$(SERVERS_DIR) \
+               	$(basename $(@F)) \
+               	$(CURDIR)/$(VRESULTS_DIR) \
+               	$(CURDIR)/$(PORT_CTR_FILE)
+	@printf "[ OK ]\n"
 
 # Build also the certificate zip archives
 $(ARCHIVE_DIR)/%.zip: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 	@mkdir -p $(ARCHIVE_DIR)
-	@echo "Creating a zip archive: $(basename $(@F))"
+	@echo "Creating a zip archive: $-50s" $(basename $(@F))
 	@cd $(BUILD_DIR) && zip --filesync --quiet ../$@ $(*F)/*.pem $(ROOT)/$(ROOT).pem
+	@printf "[ OK ]\n"
 
 clean:
 	rm -rf $(BUILD_DIR)
