@@ -29,7 +29,7 @@ install:
   - bundle install
 
 script:
-  - ldconfig
+  - sudo ldconfig
   - make test
 
 env:
