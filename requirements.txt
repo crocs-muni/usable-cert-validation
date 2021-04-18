@@ -1,0 +1,6 @@
+asn1tools >= 0.155.3
+pycryptodomex >= 3.10.1
+PyYAML >= 5.3.1
+shyaml >= 0.6.2
+jq >= 1.1.2
+yq >= 2.12.0
