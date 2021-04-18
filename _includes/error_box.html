@@ -47,7 +47,7 @@
 
             {% if include.page.message %}
                 <h3>{% include icon.html icon="message" %}Original error message:</h3>
-                <p>{{ include.page.message }}<span class="text-muted">(<a class="color-reset" href="{{ library.message-source }}">source</a>)</span></p>
+                <p>{{ include.page.message | replace: "<", "&lt;" }}<span class="text-muted">(<a class="color-reset" href="{{ library.message-source }}">source</a>)</span></p>
             {% endif %}
         {% endif %}
 
