@@ -76,12 +76,12 @@ $(BUILD_DIR)/%/$(CHAIN_FILENAME): $(ROOT_KEY_FILE) $(CHAINS_DIR)/%/$(GENERATE).p
 $(VRESULTS_DIR)/%.yml: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 	@mkdir -p $(VRESULTS_DIR)
 	@echo "Validating chain: $(basename $(@F))"
-	@$(VSCRIPT) $(CURDIR) \
-                $(CURDIR)/$(CLIENTS_DIR) \
-                $(CURDIR)/$(SERVERS_DIR) \
-                $(basename $(@F)) \
-                $(CURDIR)/$(VRESULTS_DIR) \
-                $(CURDIR)/$(PORT_CTR_FILE)
+	$(VSCRIPT) $(CURDIR) \
+               $(CURDIR)/$(CLIENTS_DIR) \
+               $(CURDIR)/$(SERVERS_DIR) \
+               $(basename $(@F)) \
+               $(CURDIR)/$(VRESULTS_DIR) \
+               $(CURDIR)/$(PORT_CTR_FILE)
 
 # Build also the certificate zip archives
 $(ARCHIVE_DIR)/%.zip: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
