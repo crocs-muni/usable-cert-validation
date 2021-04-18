@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-Wall -Wextra -g -std=gnu++17 -I /usr/local/include/botan-2 
+CXXFLAGS=-Wall -Wextra -g -std=gnu++17 -I /usr/include/botan-2
 LDLIBS=-lbotan-2 -lboost_program_options
 
 all: build/client
