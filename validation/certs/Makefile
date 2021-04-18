@@ -58,7 +58,7 @@ all: $(ROOT_KEY_FILE) $(CHAINS_BUILD_ALL) $(VRESULTS_FILES_ALL) $(ARCHIVES_ALL)
 
 # First we build the root key target, this creates the root cert as well
 $(ROOT_KEY_FILE): $(SCRIPTS_DIR)/$(ROOT).py $(wildcard $(ASN_DIR)/*.asn) $(wildcard $(UTILS_DIR)/*.py)
-	@printf "Generating certificate %-50s" $(ROOT)
+	@printf "Generating %-50s" $(ROOT)
 	@python3 -m $(SCRIPTS_DIR).$(ROOT) \
 	            --root_cert_file=$(CURDIR)/$(ROOT_CERT_FILE) \
 	            --root_key_file=$(CURDIR)/$(ROOT_KEY_FILE) \
