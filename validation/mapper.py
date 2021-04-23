@@ -59,15 +59,15 @@ def main():
     # Based on common chains, match errors within libraries
     for (library_name, mapping_data) in mapping_all.items():
         for (error, error_mapping) in mapping_data.items():
-            error_mapping['cooccurrence'] = {}
+            error_mapping['correspondence'] = {}
 
             for chain in error_mapping['chains']:
                 for (other_name, other_data) in mapping_all.items():
                     if other_name == library_name:
                         continue
-                    if other_name not in error_mapping['cooccurrence']:
-                        error_mapping['cooccurrence'][other_name] = []
-                    equal = error_mapping['cooccurrence'][other_name]
+                    if other_name not in error_mapping['correspondence']:
+                        error_mapping['correspondence'][other_name] = []
+                    equal = error_mapping['correspondence'][other_name]
 
                     for (other_error, other_mapping) in other_data.items():
                         if other_error in equal:

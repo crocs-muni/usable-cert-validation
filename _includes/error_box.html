@@ -15,7 +15,7 @@
     
     {% assign mapping-present = false %}
     {% for lib in site.data.libraries %}
-        {% if lib.name != page.library and mapping.cooccurrence[lib.name] != Nil and mapping.cooccurrence[lib.name].size != 0 %}
+        {% if lib.name != page.library and mapping.correspondence[lib.name] != Nil and mapping.correspondence[lib.name].size != 0 %}
             {% include icon.html icon="error-link" float="float-right" %}
             {% assign mapping-present = true %}
             {% break %}
@@ -78,12 +78,12 @@
         {% endunless %}
         
         {% if mapping-present == true %}
-            <h3>{% include icon.html icon="error-link" %}Co-occurring errors:</h3>
+            <h3>{% include icon.html icon="error-link" %}Corresponding errors in other libraries:</h3>
             <ul class="list-unstyled mb-0">
             {% for lib in site.data.libraries %}
-                {% unless lib.name == page.library or mapping.cooccurrence[lib.name].size == 0 %}
+                {% unless lib.name == page.library or mapping.correspondence[lib.name].size == 0 %}
                     {{ lib.title }}:
-                    {% for error in mapping.cooccurrence[lib.name] %}
+                    {% for error in mapping.correspondence[lib.name] %}
                         <li>
                             <a href="/{% if lib.name != "openssl" %}{{ lib.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
                         </li>
