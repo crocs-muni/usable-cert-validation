@@ -20,7 +20,7 @@ $(CERTS_DIR): $(CLIENTS_DIR)
 	@make --no-print-directory --directory=$@
 
 # process results and do the mapping
-mapping: $(CERTS_DIR) $(CLIENTS_DIR)
+mapping: $(CERTS_DIR) $(CLIENTS_DIR) $(MAPPING_SCRIPT)
 	@echo "Comparing the errors..."
 	@python3 $(MAPPING_SCRIPT) \
 	         --results_file=$(VRESULTS_FILE) \
