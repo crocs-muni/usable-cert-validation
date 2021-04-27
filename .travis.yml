@@ -18,14 +18,7 @@ before_install:
   - rm -rf ./git-tools
 
 install:
-  - sudo pip3 install setuptools
-  - sudo pip3 install shyaml
-  - sudo pip3 install asn1tools
-  - sudo pip3 install jq
-  - sudo pip3 install yq
-  - sudo pip3 install pyYAML
-  - sudo pip3 install pycryptodomex
-  - bundle install
+  - make install
 
 script:
   - make test

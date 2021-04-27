@@ -6,7 +6,7 @@ A research initiative to make TLS certificate validation usable.
 
 ## What problems do we want to solve?
 
-The system of working with TLS certificates (our focus: especially validating them):
+The system of working with (validating) TLS certificates:
 
 * It is complicated, even a bit chaotic.
 * There are multiple different tools to do the same thing.
@@ -23,14 +23,26 @@ In the future, we plan the possibility of reorganization based on the other libr
   
 ## Local build
 
+To build TLS clients, the development versions of the following libraries are required:
+
+* [OpenSSL](https://www.openssl.org/)
+* [GnuTLS](https://www.gnutls.org/)
+* [Botan](https://botan.randombit.net/), preferentially version 2 (also requires [Boost Program options](https://www.boost.org/doc/libs/1_76_0/doc/html/program_options.html))
+* [mBedTLS](https://tls.mbed.org/)
+* [OpenJDK](https://openjdk.java.net/)
+
+On Ubuntu 20.04 LTS or Fedora 33 you can install them using the appropriate of the following commands:
+
+```bash
+# Ubuntu 20.04
+apt install libopenssl-dev libgnutls28-dev botan libbotan-2-dev libmbedtls-dev libboost-program-options-dev openjdk-16-jdk
+# Fedora 33
+dnf install openssl-devel gnutls-devel botan2-devel mbedtls-devel java-latest-openjdk-devel boost-devel
+```
+
+The necessary Python packages are locally installed by running `make install`. Building the certificate chains requires the following Python packages: [setuptools](https://pypi.org/project/setuptools/), [asn1tools](https://github.com/eerimoq/asn1tools) and [pycryptodomex](https://pypi.org/project/pycryptodomex/). Running certificate validation further requires [shyaml](https://github.com/0k/shyaml), [yq](https://github.com/mikefarah/yq), [jq](https://stedolan.github.io/jq/) and [pyYAML](https://github.com/yaml/pyyaml) for parsing and manipulating YAML files.
+
 The website is build using [Jekyll](https://jekyllrb.com/). To develop locally, install Jekyll (e.g. according to [this guide](https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll). Then run `make local` and see the website served at `localhost:4000`.
-
-Building the certificate chains requires [setuptools](https://pypi.org/project/setuptools/), [asn1tools](https://github.com/eerimoq/asn1tools) and [pycryptodomex](https://pypi.org/project/pycryptodomex/).
-
-Running certificate validation requires [shyaml](https://github.com/0k/shyaml), [yq](https://github.com/mikefarah/yq), [jq](https://stedolan.github.io/jq/) and [pyYAML](https://github.com/yaml/pyyaml) for parsing and manipulating YAML files. 
-
-To build TLS clients, the development versions of the following libraries are required: [OpenSSL](https://www.openssl.org/), [GnuTLS](https://www.gnutls.org/), [Botan](https://botan.randombit.net/), [mBedTLS](https://tls.mbed.org/) and [OpenJDK](https://openjdk.java.net/).
-The Botan client also requires [Boost Program options](https://www.boost.org/doc/libs/1_76_0/doc/html/program_options.html).
 
 ## Authors
 
@@ -39,7 +51,7 @@ The project is developed at the [Centre for Research on Cryptography and Securit
 * [**Martin Ukrop**](https://crocs.fi.muni.cz/people/mukrop), 2019–today, project lead, graphic design
 * **Pavol Žáčik**, 2019–today, example certificates, error mapping
 * **Eric Valčík**, 2020–today, bug fixes and pull requests to other libraries
-* **Matěj Grabovský**, 2019–2020, feedback, TLS clients, bugfixs
+* **Matěj Grabovský**, 2019–2020, feedback, TLS clients, bug fixes
 * **Michaela balážová**, 2019–2020, improved error messages
 
 The authors are grateful for the financial support by and [Red Hat Czech](https://research.redhat.com/) and [Kiwi.com](https://www.kiwi.com/).
