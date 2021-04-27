@@ -7,6 +7,10 @@ VERBOSITY=">/dev/null 2>&1"
 
 all: validation
 
+install:
+	pip3 install --user -r requirements.txt
+	bundle install
+
 # Generate all certs and do the mapping
 validation:
 	@make --directory=$(VALIDATION_FOLDER) \
@@ -36,4 +40,4 @@ clean:
 	rm -rf $(MAPPING_FOLDER)
 	make --directory=$(VALIDATION_FOLDER) clean
 
-.PHONY: all clean test local validation
+.PHONY: all install clean test local validation
