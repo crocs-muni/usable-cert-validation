@@ -12,6 +12,9 @@ addons:
     - libboost-program-options-dev
     - botan
 
+jdk:
+  - openjdk16
+
 before_install: 
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
   - ./git-tools/git-restore-mtime
