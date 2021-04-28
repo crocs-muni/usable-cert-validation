@@ -14,7 +14,7 @@
   message-source: https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp
 
 - name: mbedtls
-  title: mbedTLS
+  title: Mbed TLS
   docs-source: https://tls.mbed.org/api/group__x509__module.html
   message-source: https://github.com/ARMmbed/mbedtls/blob/development/library/error.c
 
