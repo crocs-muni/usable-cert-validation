@@ -63,7 +63,7 @@
             <ul class="list-unstyled mb-0">
             {% for chain in mapping.chains %}
                 <li> 
-                    {% include icon.html icon="zip" %}<a href="/validation/certs/archive/{{ chain }}.zip">{{ chain }} </a>
+                    {% include icon.html icon="zip" %}<a href="/assets/archives/{{ chain }}.zip">{{ chain }} </a>
                     -
                     {% include icon.html icon="github" %}
                     <a href="{{ site.repo-url }}/tree/master/validation/certs/scripts/chains/{{ chain }}/generate.py">script</a>

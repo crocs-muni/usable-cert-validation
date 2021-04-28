@@ -4,11 +4,11 @@ _debug
 validation/clients/*/build/
 
 # Built certificates and validation files 
-validation/certs/archive/
 validation/certs/build/
 validation/certs/results/.port
 validation/certs/results/vresults/
 validation/certs/results/vresults.yml
+assets/archives/
 
 # Python files
 validation/certs/__pycache__/
