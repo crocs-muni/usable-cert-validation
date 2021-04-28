@@ -14,7 +14,7 @@ UTILS_DIR=utils
 # Directory with all things needed for validation
 VDIR=results
 # Zip archive directory
-ARCHIVE_DIR=archive
+ARCHIVE_DIR=../../assets/archives
 # Intended chain name for each cert chain
 CHAIN_FILENAME=chain.pem
 # Intended root name
