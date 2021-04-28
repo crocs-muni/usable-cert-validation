@@ -58,19 +58,13 @@
         
         {% unless mapping.chains.size == 0 %}
             <h3>{% include icon.html icon="certificate" %}Example certificates</h3>
-            
-            <p>Download certificates causing this error using the links below. If you are interested in generating such certificate yourself, see the generating script for each case on the project Github.
-            <ul class="list-unstyled mb-0">
+            <p>Below you can download one or more example malformed certificates causing {{ include.page.code | replace: "_", "_&shy;" }} in {{ site.data.libraries | where: "name", page.library | map: "title" }}. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
             {% for chain in mapping.chains %}
-                <li> 
-                    {% include icon.html icon="zip" %}<a href="/assets/archives/{{ chain }}.zip">{{ chain }} </a>
-                    -
-                    {% include icon.html icon="github" %}
-                    <a href="{{ site.repo-url }}/tree/master/validation/certs/scripts/chains/{{ chain }}/generate.py">script</a>
-                </li>
+                <li>Case&nbsp;{% include icon.html icon="zip" %}<a href="/assets/archives/{{ chain }}.zip">{{ chain }} </a>
+                    (see the&nbsp;{% include icon.html icon="github" %}<a href="{{ site.repo-url }}/tree/master/validation/certs/scripts/chains/{{ chain }}/generate.py">generation script</a>)</li>
             {% endfor %}
             </ul>
-            
             <!--{% if include.page.verify-command %}
                 {% assign library=site.data.libraries | where: "name", page.library | first %}
                 <p>Validate with: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></p>
@@ -78,16 +72,18 @@
         {% endunless %}
         
         {% if mapping-present == true %}
-            <h3>{% include icon.html icon="error-link" %}Corresponding errors in other libraries:</h3>
-            <ul class="list-unstyled mb-0">
+            <h3>{% include icon.html icon="error-link" %}Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing {{ include.page.code | replace: "_", "_&shy;" }} in {{ site.data.libraries | where: "name", page.library | map: "title" }}? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
             {% for lib in site.data.libraries %}
                 {% unless lib.name == page.library or mapping.correspondence[lib.name].size == 0 %}
+                    <li>
                     {{ lib.title }}:
-                    {% for error in mapping.correspondence[lib.name] %}
-                        <li>
-                            <a href="/{% if lib.name != "openssl" %}{{ lib.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip }}</a>
-                        </li>
-                    {% endfor %}
+                        {% for error in mapping.correspondence[lib.name] %}
+                            <a href="/{% if lib.name != "openssl" %}{{ lib.name }}{% endif %}#{{ error | slugify }}-link">{{ error | lstrip | replace: "_", "_&shy;" }}</a>
+                            {%- if forloop.last == false %}, {% endif %}
+                        {% endfor %}
+                    </li>
                 {% endunless%}
             {% endfor %}
             </ul>
