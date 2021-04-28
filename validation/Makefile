@@ -7,7 +7,6 @@ VRESULTS_FILE=$(CERTS_DIR)/results/vresults.yml
 MAPPING_SCRIPT=mapper.py
 
 all: $(CLIENTS_DIR) $(CERTS_DIR) mapping
-	cat $(VRESULTS_FILE)
 
 # build the TLS clients
 $(CLIENTS_DIR):
