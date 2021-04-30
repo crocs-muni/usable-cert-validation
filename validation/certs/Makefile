@@ -23,6 +23,8 @@ ROOT=root
 CHAINS=chains
 # Filename of all generating scripts
 GENERATE=generate
+# Variable to specify wheter to print debug info
+DEBUG=""
 
 # Directory with scripts for all chains
 CHAINS_DIR=$(SCRIPTS_DIR)/$(CHAINS)
@@ -58,7 +60,7 @@ all: $(ROOT_KEY_FILE) $(CHAINS_BUILD_ALL) $(VRESULTS_FILES_ALL) $(ARCHIVES_ALL)
 
 # First we build the root key target, this creates the root cert as well
 $(ROOT_KEY_FILE): $(SCRIPTS_DIR)/$(ROOT).py $(wildcard $(ASN_DIR)/*.asn) $(wildcard $(UTILS_DIR)/*.py)
-	@printf "Generating %-50s" $(ROOT)
+	@printf "Generating certificate: %-44s" $(ROOT)
 	@python3 -m $(SCRIPTS_DIR).$(ROOT) \
 	            --root_cert_file=$(CURDIR)/$(ROOT_CERT_FILE) \
 	            --root_key_file=$(CURDIR)/$(ROOT_KEY_FILE) \
@@ -78,12 +80,12 @@ $(BUILD_DIR)/%/$(CHAIN_FILENAME): $(ROOT_KEY_FILE) $(CHAINS_DIR)/%/$(GENERATE).p
 $(VRESULTS_DIR)/%.yml: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 	@mkdir -p $(VRESULTS_DIR)
 	@printf "Validating chain: %-50s" $(basename $(@F))
-	@$(VSCRIPT) $(CURDIR) \
-               	$(CURDIR)/$(CLIENTS_DIR) \
-               	$(CURDIR)/$(SERVERS_DIR) \
-               	$(basename $(@F)) \
-               	$(CURDIR)/$(VRESULTS_DIR) \
-               	$(CURDIR)/$(PORT_CTR_FILE)
+	@$(VSCRIPT) --certs_dir $(CURDIR) \
+				--clients_dir $(CURDIR)/$(CLIENTS_DIR) \
+				--servers_dir $(CURDIR)/$(SERVERS_DIR) \
+				--chain_name $(basename $(@F)) \
+				--out_dir $(CURDIR)/$(VRESULTS_DIR) \
+				--port_ctr_file $(CURDIR)/$(PORT_CTR_FILE) $(DEBUG)
 	@printf "[ OK ]\n"
 
 # Build also the certificate zip archives

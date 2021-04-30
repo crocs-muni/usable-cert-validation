@@ -17,6 +17,13 @@ validation:
 		  MAPPING_DIR=$(CURDIR)/$(MAPPING_FOLDER) \
 		  ERRORS_DIR=$(CURDIR)/$(ERRORS_FOLDER)
 
+# Run the validation with debug on
+debug:
+	@make --directory=$(VALIDATION_FOLDER) \
+		  MAPPING_DIR=$(CURDIR)/$(MAPPING_FOLDER) \
+		  ERRORS_DIR=$(CURDIR)/$(ERRORS_FOLDER) \
+		  DEBUG="--debug"
+
 # Test web consistency
 test: all
 	@echo "Building the website using Jekyll ..."

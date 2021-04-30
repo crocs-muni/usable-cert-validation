@@ -1,17 +1,48 @@
 #!/bin/bash
 
 # directory with all certs
-CERTS_DIR=$1
+CERTS_DIR=""
 # directory with TLS clients
-CLIENTS_DIR=$2
+CLIENTS_DIR=""
 # directory with all servers (main, CRL, OCSP)
-SERVERS_DIR=$3
+SERVERS_DIR=""
 # chain name
-CHAIN_NAME=$4
+CHAIN_NAME=""
 # validation output dir
-OUT_DIR=$5
+OUT_DIR=""
 # port to run main server on
-PORT_CTR_FILE=$6
+PORT_CTR_FILE=""
+
+# Parse command line arguments
+
+# Replace long arguments
+for arg; do
+    case "$arg" in
+        --certs_dir)         args+=( -c ) ;;
+        --clients_dir)       args+=( -v ) ;;
+        --servers_dir)       args+=( -s ) ;;
+        --chain_name)        args+=( -n ) ;;
+        --out_dir)           args+=( -o ) ;;
+        --port_ctr_file)     args+=( -p ) ;;
+        --debug)             args+=( -d ) ;;
+        *)                   args+=( "$arg" ) ;;
+    esac
+done
+
+set -- "${args[@]}"
+
+while getopts "c:v:s:n:o:p:d" OPTION; do
+    : "$OPTION" "$OPTARG"
+    case $OPTION in
+    c)  CERTS_DIR="$OPTARG";;
+    v)  CLIENTS_DIR="$OPTARG";;
+    s)  SERVERS_DIR="$OPTARG";;
+    n)  CHAIN_NAME="$OPTARG";;
+    o)  OUT_DIR="$OPTARG";;
+    p)  PORT_CTR_FILE="$OPTARG";;
+    d)  DEBUG="true";;
+    esac
+done
 
 # file to output the results into
 OUT_FILE="${OUT_DIR}/${CHAIN_NAME}".yml
@@ -62,8 +93,14 @@ main() {
         		TRUST_ANCHOR="${CHAIN_BUILD_DIR}/${TRUST_ANCHOR}"
         	fi
 
-            # run the client and save its error message
+            # Run the client and save its error message
             ERROR_MESSAGE="$("${CLIENT_NAME}"_validate 2>&1)"
+
+            # Print debug info if such option is set
+            if [ "$DEBUG" == "true" ]
+            then
+              printf "\nDEBUG_INFO: %s error message: %s\n\n" "${CLIENT_NAME}" "${ERROR_MESSAGE}"
+            fi
 
             # Save the error message into the results with key being the client name
             OUT=$(echo ${OUT} | jq --arg m "${ERROR_MESSAGE}" \
@@ -87,16 +124,35 @@ run_servers() {
 
     if [ "${WHICH_MAIN}" == "python" ]
     then
-        python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
-                                        --key_file "${KEY_FILE}" \
-                                        --host "${HOST}" \
-                                        --port "${MAIN_PORT}" \
-                                        > /dev/null 2>&1 &
+        if [ "$DEBUG" == "true" ]
+        then
+          printf "\nDEBUG_INFO: Running python TLS server with %s\n" "${CHAIN_NAME}"
+          python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
+                                            --key_file "${KEY_FILE}" \
+                                            --host "${HOST}" \
+                                            --port "${MAIN_PORT}" &
+          printf "\n"
+        else
+          python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
+                                            --key_file "${KEY_FILE}" \
+                                            --host "${HOST}" \
+                                            --port "${MAIN_PORT}" \
+                                            > /dev/null 2>&1 &
+        fi
     else 
-        botan tls_server "${CHAIN_FILE}" \
-                         "${KEY_FILE}" \
-                         --port="${MAIN_PORT}" \
-                         > /dev/null 2>&1 &
+        if [ "$DEBUG" == "true" ]
+        then
+          printf "\nDEBUG_INFO: Running botan TLS server with %s\n" "${CHAIN_NAME}"
+          botan tls_server "${CHAIN_FILE}" \
+                           "${KEY_FILE}" \
+                           --port="${MAIN_PORT}" &
+          printf "\n"
+        else
+          botan tls_server "${CHAIN_FILE}" \
+                           "${KEY_FILE}" \
+                           --port="${MAIN_PORT}" \
+                           > /dev/null 2>&1 &
+        fi
     fi
     PID=$!
 }
