@@ -5,6 +5,7 @@ MAPPING_DIR=../_data/mapping
 ERRORS_DIR=../_data/errors
 VRESULTS_FILE=$(CERTS_DIR)/results/vresults.yml
 MAPPING_SCRIPT=mapper.py
+DEBUG=""
 
 all: $(CLIENTS_DIR) $(CERTS_DIR) mapping
 
@@ -17,7 +18,9 @@ $(CLIENTS_DIR):
 
 # build all cert chains
 $(CERTS_DIR): $(CLIENTS_DIR)
-	@make --no-print-directory --directory=$@
+	@make --no-print-directory \
+	      --directory=$@ \
+	      DEBUG=$(DEBUG)
 
 # process results and do the mapping
 mapping: $(CERTS_DIR) $(CLIENTS_DIR) $(MAPPING_SCRIPT)
