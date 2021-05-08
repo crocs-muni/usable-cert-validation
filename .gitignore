@@ -25,7 +25,6 @@ _data/mapping
 _site
 
 # Temporary files
-Gemfile.lock
 .cache
 *~
 
