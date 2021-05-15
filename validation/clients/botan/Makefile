@@ -1,12 +1,12 @@
 CXX=g++
-CXXFLAGS=-Wall -Wextra -g -std=gnu++17 -I /usr/include/botan-2
+CFLAGS=-Wall -Wextra -g -std=gnu++17
 LDLIBS=-lbotan-2 -lboost_program_options
 
 all: build/client
 
 build/client: client.cpp
 	mkdir -p build
-	$(CXX) $(CXXFLAGS) -o build/client client.cpp $(LDLIBS)
+	$(CXX) $(CFLAGS) $(LDLIBS) -o build/client client.cpp
 
 clean:
 	rm -rf build

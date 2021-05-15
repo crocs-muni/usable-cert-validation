@@ -207,14 +207,14 @@ X509 DEFINITIONS ::= BEGIN
     CRLDistributionPoints ::= SEQUENCE SIZE (1..MAX) OF DistributionPoint
     
     DistributionPoint ::= SEQUENCE {
-        distributionPoint       [0] IMPLICIT    DistributionPointName OPTIONAL,
+        distributionPoint       [0] EXPLICIT    DistributionPointName OPTIONAL,
         reasons                 [1] IMPLICIT    ReasonFlags OPTIONAL,
         cRLIssuer               [2] IMPLICIT    GeneralNames OPTIONAL 
     }
     
     DistributionPointName ::= CHOICE {
-        fullName                [0]     GeneralNames,
-        nameRelativeToCRLIssuer [1]     RelativeDistinguishedName 
+        fullName                [0] IMPLICIT     GeneralNames,
+        nameRelativeToCRLIssuer [1] IMPLICIT     RelativeDistinguishedName 
     }
     
     ReasonFlags ::= BIT STRING {

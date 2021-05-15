@@ -6,7 +6,7 @@ all: build/client
 
 build/client: client.c parse_opts.c
 	mkdir -p build
-	$(CC) $(CFLAGS) -o build/client client.c parse_opts.c $(LDLIBS)
+	$(CC) $(CFLAGS) $(LDLIBS) -o build/client client.c parse_opts.c
 
 clean:
 	rm -rf build
