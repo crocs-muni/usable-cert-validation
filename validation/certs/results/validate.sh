@@ -1,30 +1,61 @@
 #!/bin/bash
 
 # directory with all certs
-CERTS_DIR=$1
+CERTS_DIR=""
 # directory with TLS clients
-CLIENTS_DIR=$2
+CLIENTS_DIR=""
 # directory with all servers (main, CRL, OCSP)
-SERVERS_DIR=$3
+SERVERS_DIR=""
 # chain name
-CHAIN_NAME=$4
+CHAIN_NAME=""
 # validation output dir
-OUT_DIR=$5
+OUT_DIR=""
 # port to run main server on
-PORT_CTR_FILE=$6
+PORT_CTR_FILE=""
+
+# Parse command line arguments
+
+# Replace long arguments
+for arg; do
+    case "$arg" in
+        --certs_dir)         args+=( -c ) ;;
+        --clients_dir)       args+=( -v ) ;;
+        --servers_dir)       args+=( -s ) ;;
+        --chain_name)        args+=( -n ) ;;
+        --out_dir)           args+=( -o ) ;;
+        --port_ctr_file)     args+=( -p ) ;;
+        --debug)             args+=( -d ) ;;
+        *)                   args+=( "$arg" ) ;;
+    esac
+done
+
+set -- "${args[@]}"
+
+while getopts "c:v:s:n:o:p:d:" OPTION; do
+    : "$OPTION" "$OPTARG"
+    case $OPTION in
+    c)  CERTS_DIR="$OPTARG";;
+    v)  CLIENTS_DIR="$OPTARG";;
+    s)  SERVERS_DIR="$OPTARG";;
+    n)  CHAIN_NAME="$OPTARG";;
+    o)  OUT_DIR="$OPTARG";;
+    p)  PORT_CTR_FILE="$OPTARG";;
+    d)  DEBUG="true";;
+    esac
+done
 
 # file to output the results into
-OUT_FILE=${OUT_DIR}/${CHAIN_NAME}.yml
+OUT_FILE="${OUT_DIR}/${CHAIN_NAME}".yml
 # validation config file
-VCONFIG_FILE=${CERTS_DIR}/scripts/chains/${CHAIN_NAME}/vconfig.yml
+VCONFIG_FILE="${CERTS_DIR}/scripts/chains/${CHAIN_NAME}"/vconfig.yml
 # directory with built chain
-CHAIN_BUILD_DIR=${CERTS_DIR}/build/${CHAIN_NAME}
+CHAIN_BUILD_DIR="${CERTS_DIR}/build/${CHAIN_NAME}"
 # default root cert file
-ROOT_CERT_FILE=${CERTS_DIR}/build/root/root.pem
+ROOT_CERT_FILE="${CERTS_DIR}/build/root/root.pem"
 # default cert chain name
-CHAIN_FILE=${CHAIN_BUILD_DIR}/chain.pem
+CHAIN_FILE="${CHAIN_BUILD_DIR}/chain.pem"
 # default private key name
-KEY_FILE=${CHAIN_BUILD_DIR}/key.pem
+KEY_FILE="${CHAIN_BUILD_DIR}/key.pem"
 
 # run servers on localhost
 HOST=localhost
@@ -36,10 +67,11 @@ main() {
       echo "50000" > ${PORT_CTR_FILE}
     fi
 
-    MAIN_PORT=$(cat ${PORT_CTR_FILE})
+    MAIN_PORT=$(cat "${PORT_CTR_FILE}")
     increment_port
     
-    PID=0
+    MAIN_PID=-1
+    CRL_PID=-1
     run_servers
     sleep 0.3
 
@@ -48,22 +80,28 @@ main() {
     for CLIENT_DIR in ${CLIENTS_DIR}/*
     do
         # Name of the client (library)
-        CLIENT_NAME=$(basename ${CLIENT_DIR})
+        CLIENT_NAME=$(basename "${CLIENT_DIR}")
         # YAML client config for the chain
-        CLIENT_CONFIG=$(cat ${VCONFIG_FILE} | shyaml -y get-value verify.${CLIENT_NAME} null)
+        CLIENT_CONFIG=$(cat "${VCONFIG_FILE}" | shyaml -y get-value "verify.${CLIENT_NAME}" null)
 
         # Run this client only if it has a config
         if [ "${CLIENT_CONFIG}" != \'null\' ]
         then
         	# Look up the trust anchor (root CA) for this chain
-        	TRUST_ANCHOR=$(echo "${CLIENT_CONFIG}" | shyaml get-value options.trust_anchor ${ROOT_CERT_FILE})
+        	TRUST_ANCHOR=$(echo "${CLIENT_CONFIG}" | shyaml get-value options.trust_anchor "${ROOT_CERT_FILE}")
         	if [ "${TRUST_ANCHOR}" != "${ROOT_CERT_FILE}" ]
         	then
-        		TRUST_ANCHOR=${CHAIN_BUILD_DIR}/${TRUST_ANCHOR}
+        		TRUST_ANCHOR="${CHAIN_BUILD_DIR}/${TRUST_ANCHOR}"
         	fi
 
-            # run the client and save its error message
-            ERROR_MESSAGE="$(${CLIENT_NAME}_validate 2>&1)"
+            # Run the client and save its error message
+            ERROR_MESSAGE="$("${CLIENT_NAME}"_validate 2>&1)"
+
+            # Print debug info if such option is set
+            if [ "$DEBUG" == "true" ]
+            then
+              printf "\nDEBUG_INFO: %s error message: %s\n\n" "${CLIENT_NAME}" "${ERROR_MESSAGE}"
+            fi
 
             # Save the error message into the results with key being the client name
             OUT=$(echo ${OUT} | jq --arg m "${ERROR_MESSAGE}" \
@@ -74,7 +112,11 @@ main() {
     done
 
     # close the servers
-    kill ${PID}
+    kill "${MAIN_PID}"
+    if [ "${CRL_PID}" != "-1" ]
+    then
+        kill "${CRL_PID}"
+    fi
 
     # output the results into a YAML file
     echo ${OUT} | yq --yaml-output '.' - > ${OUT_FILE}
@@ -82,23 +124,54 @@ main() {
 
 
 run_servers() {
-    SERVER_CONFIG=$(cat ${VCONFIG_FILE} | shyaml -y get-value servers)
+    SERVER_CONFIG=$(cat "${VCONFIG_FILE}" | shyaml -y get-value servers)
     WHICH_MAIN=$(echo "${SERVER_CONFIG}" | shyaml get-value main.which "botan")
 
     if [ "${WHICH_MAIN}" == "python" ]
     then
-        python ${SERVERS_DIR}/server.py --chain_file ${CHAIN_FILE} \
-                                        --key_file ${KEY_FILE} \
-                                        --host ${HOST} \
-                                        --port ${MAIN_PORT} \
-                                        > /dev/null 2>&1 &
+        if [ "$DEBUG" == "true" ]
+        then
+          printf "\nDEBUG_INFO: Running python TLS server with %s\n" "${CHAIN_NAME}"
+          python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
+                                            --key_file "${KEY_FILE}" \
+                                            --host "${HOST}" \
+                                            --port "${MAIN_PORT}" &
+          printf "\n"
+        else
+          python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
+                                            --key_file "${KEY_FILE}" \
+                                            --host "${HOST}" \
+                                            --port "${MAIN_PORT}" \
+                                            > /dev/null 2>&1 &
+        fi
     else 
-        botan tls_server ${CHAIN_FILE} \
-                         ${KEY_FILE} \
-                         --port=${MAIN_PORT} \
-                         > /dev/null 2>&1 &
+        if [ "$DEBUG" == "true" ]
+        then
+          printf "\nDEBUG_INFO: Running botan TLS server with %s\n" "${CHAIN_NAME}"
+          botan tls_server "${CHAIN_FILE}" \
+                           "${KEY_FILE}" \
+                           --port="${MAIN_PORT}" &
+          printf "\n"
+        else
+          botan tls_server "${CHAIN_FILE}" \
+                           "${KEY_FILE}" \
+                           --port="${MAIN_PORT}" \
+                           > /dev/null 2>&1 &
+        fi
     fi
-    PID=$!
+    MAIN_PID=$!
+
+    CRL_PORT=$(cat "${PORT_CTR_FILE}")
+    increment_port
+    CRL=$(echo "${SERVER_CONFIG}" | shyaml get-value crl.which null)
+    if [ "${CRL}" != \'null\' ]
+    then
+        python -m http.server --bind "${HOST}" \
+                              --directory "${CHAIN_BUILD_DIR}" \
+                              "${CRL_PORT}" \
+                              > /dev/null 2>&1 &
+    CRL_PID=$!
+    fi
 }
 
 
@@ -119,45 +192,45 @@ openssl_validate() {
                                --policy "${POLICY}" \
                                --purpose "${PURPOSE}" \
                                --trust "${TRUST}" \
-                               ${FLAGS}
+                               "${FLAGS}"
 }
 
 
 gnutls_validate() {
-    ${CLIENT_DIR}/build/client --host ${HOST} \
-                               --port ${MAIN_PORT} \
-                               --trust_anchor ${TRUST_ANCHOR}
+    ${CLIENT_DIR}/build/client --host "${HOST}" \
+                               --port "${MAIN_PORT}" \
+                               --trust_anchor "${TRUST_ANCHOR}"
 }
 
 
 botan_validate() {  
-    ${CLIENT_DIR}/build/client --host ${HOST} \
-                               --port ${MAIN_PORT} \
-                               --trust_anchor ${TRUST_ANCHOR}
+    ${CLIENT_DIR}/build/client --host "${HOST}" \
+                               --port "${MAIN_PORT}" \
+                               --trust_anchor "${TRUST_ANCHOR}"
 }
 
 
 mbedtls_validate() {
-    ${CLIENT_DIR}/build/client --host ${HOST} \
-                               --port ${MAIN_PORT} \
-                               --trust_anchor ${TRUST_ANCHOR}
+    ${CLIENT_DIR}/build/client --host "${HOST}" \
+                               --port "${MAIN_PORT}" \
+                               --trust_anchor "${TRUST_ANCHOR}"
 }
 
 
 openjdk_validate() {
-    java -classpath ${CLIENT_DIR}/build/ Client --host ${HOST} \
-                                                --port ${MAIN_PORT} \
-                                                --trust_anchor ${TRUST_ANCHOR}
+    java -classpath ${CLIENT_DIR}/build/ Client --host "${HOST}" \
+                                                --port "${MAIN_PORT}" \
+                                                --trust_anchor "${TRUST_ANCHOR}"
 }
 
 increment_port() {
-    NEXT_PORT=$(cat ${PORT_CTR_FILE})
+    NEXT_PORT=$(cat "${PORT_CTR_FILE}")
     ((NEXT_PORT++))
-    if [ ${NEXT_PORT} -ge "60000" ]
+    if [ "${NEXT_PORT}" -ge "60000" ]
     then
         NEXT_PORT=50000
     fi
-    echo -n ${NEXT_PORT} > ${PORT_CTR_FILE}
+    echo -n "${NEXT_PORT}" > ${PORT_CTR_FILE}
 }
 
 
