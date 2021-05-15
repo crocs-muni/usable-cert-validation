@@ -4,9 +4,9 @@ LDLIBS=-lmbedcrypto -lmbedx509 -lmbedtls
 
 all: build/client
 
-build/client: client.c parse_opts.c
+build/client: client.c
 	mkdir -p build
-	$(CC) $(CFLAGS) $(LDLIBS) -o build/client client.c parse_opts.c
+	$(CC) $(CFLAGS) -o build/client client.c $(LDLIBS)
 
 clean:
 	rm -rf build
