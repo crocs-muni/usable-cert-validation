@@ -1,149 +1,170 @@
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 
-#include "mbedtls/net.h"
-#include "mbedtls/ssl.h"
-#include "mbedtls/entropy.h"
 #include "mbedtls/ctr_drbg.h"
 #include "mbedtls/debug.h"
+#include "mbedtls/entropy.h"
 #include "mbedtls/error.h"
+#include "mbedtls/net_sockets.h"
+#include "mbedtls/ssl.h"
 
-#include "parse_opts.h"
+#include "client.h"
 
-#define MBEDTLS_FAIL(x) do { \
-        char error_buffer[500] = ""; \
-        mbedtls_strerror(x, error_buffer, 500); \
-        fprintf(stderr, "mbed TLS error: %s\n", error_buffer); \
-        ret = EXIT_FAILURE; \
-        goto cleanup; \
-    } while (0)
-#define MBEDTLS_CHECK(x) if ((ret = (x)) != 0) { \
-        MBEDTLS_FAIL(ret); \
-    }
-#define CUSTOM_FAIL(error) do { \
-        ret = EXIT_FAILURE; \
-        fprintf(stderr, "Error: %s\n", error); \
-        goto cleanup; \
-    } while (0)
+int main(int argc, char **argv) {
+  /* Final return value */
+  int ret = EXIT_SUCCESS;
 
+  /* List of possible arguments to parse */
+  struct tls_options opts = {
+      .crl_file = {0},
+      .host = {0},
+      .port = {0},
+      .trust_anchor = {0},
+  };
 
-// TODO: ocsp, crl, options
-int main(int argc, char **argv)
-{
-	// final return value
-    int ret = EXIT_SUCCESS;
+  /* Socket (file descriptor) wrapper */
+  mbedtls_net_context server_fd;
 
-    // options to get from argv
-    struct tls_options opts = 
-    {
-        .crl_file = {0},
-        .host = {0},
-        .port = {0},
-        .trust_anchor = {0},
+  /* Entropy (randomness source) context */
+  mbedtls_entropy_context entropy;
+
+  /* Context for random number generation */
+  mbedtls_ctr_drbg_context drbg;
+
+  /* TLS context */
+  mbedtls_ssl_context ssl;
+
+  /* Configuration to use within TLS */
+  mbedtls_ssl_config conf;
+
+  /* Structure to load the trusted root cert into */
+  mbedtls_x509_crt cacert;
+
+  /* Structure to load the CRL into */
+  mbedtls_x509_crl crl;
+
+  /* Parse the command line options */
+  if (parse_opts(argc, argv, &opts) != PARSING_SUCCESS) {
+    CUSTOM_FAIL("Parsing command line arguments failed.");
+  }
+
+  /* Initialize all variables */
+  mbedtls_net_init(&server_fd);
+  mbedtls_entropy_init(&entropy);
+  mbedtls_ctr_drbg_init(&drbg);
+  mbedtls_ssl_init(&ssl);
+  mbedtls_ssl_config_init(&conf);
+  mbedtls_x509_crt_init(&cacert);
+  mbedtls_x509_crl_init(&crl);
+
+  /* Seed the random number generator */
+  MBEDTLS_CHECK(
+      mbedtls_ctr_drbg_seed(&drbg, mbedtls_entropy_func, &entropy, NULL, 0));
+
+  /* Initiate the underlying TCP/IP connection */
+  MBEDTLS_CHECK(mbedtls_net_connect(&server_fd, opts.host, opts.port,
+                                    MBEDTLS_NET_PROTO_TCP));
+
+  /* Set defaults for the TLS configuration */
+  MBEDTLS_CHECK(mbedtls_ssl_config_defaults(&conf, MBEDTLS_SSL_IS_CLIENT,
+                                            MBEDTLS_SSL_TRANSPORT_STREAM,
+                                            MBEDTLS_SSL_PRESET_DEFAULT));
+
+  /* Assign the random number generator to the TLS config */
+  mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &drbg);
+
+  /* Accept only TLS 1.2 or higher */
+  mbedtls_ssl_conf_min_version(&conf, MBEDTLS_SSL_MAJOR_VERSION_3,
+                               MBEDTLS_SSL_MINOR_VERSION_3);
+
+  /* Set server verify optional, normally we would use VERIFY_REQUIRED */
+  mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_OPTIONAL);
+
+  /* Load the trusted root, normally we would use "/etc/ssl/certs" */
+  MBEDTLS_CHECK(mbedtls_x509_crt_parse_file(&cacert, opts.trust_anchor));
+
+  /* If `crl_file` is present, load CRL too, and assign both to the config */
+  if (strlen(opts.crl_file) != 0) {
+    MBEDTLS_CHECK(mbedtls_x509_crl_parse_file(&crl, opts.crl_file));
+    mbedtls_ssl_conf_ca_chain(&conf, &cacert, &crl);
+  } else {
+    mbedtls_ssl_conf_ca_chain(&conf, &cacert, NULL);
+  }
+
+  /* Assign TLS config to the TLS context */
+  MBEDTLS_CHECK(mbedtls_ssl_setup(&ssl, &conf));
+
+  /* Set the SNI TLS extension (to enable "virtual hosting") */
+  MBEDTLS_CHECK(mbedtls_ssl_set_hostname(&ssl, opts.host));
+
+  /* Set the IO functions to use in the underlying connection */
+  mbedtls_ssl_set_bio(&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv,
+                      NULL);
+
+  /* Explicitly preform the handshake */
+  int r = mbedtls_ssl_handshake(&ssl);
+  if (r != 0) {
+    MBEDTLS_FAIL(r);
+  }
+
+  /* Manually check the result of certificate verification */
+  uint32_t res = mbedtls_ssl_get_verify_result(&ssl);
+
+  /* Print the result of certificate verification as string */
+  char message_buffer[2048];
+  mbedtls_x509_crt_verify_info(message_buffer, 2048, "", res);
+  fprintf(stderr, "%s", message_buffer);
+
+  /* Gracefully close the connection, don't check for errors anymore */
+  mbedtls_ssl_close_notify(&ssl);
+
+/* Clean up all used resources and structures and exit */
+cleanup:
+  mbedtls_ssl_free(&ssl);
+  mbedtls_x509_crt_free(&cacert);
+  mbedtls_x509_crl_free(&crl);
+  mbedtls_ssl_config_free(&conf);
+  mbedtls_net_free(&server_fd);
+  mbedtls_ctr_drbg_free(&drbg);
+  mbedtls_entropy_free(&entropy);
+  return ret;
+}
+
+int parse_opts(int argc, char **argv, struct tls_options *opts) {
+  int c;
+  while (1) {
+    static struct option long_options[] = {
+        {"crl_file", required_argument, NULL, 'c'},
+        {"host", required_argument, NULL, 'h'},
+        {"port", required_argument, NULL, 'p'},
+        {"trust_anchor", required_argument, NULL, 't'},
+        {NULL, 0, NULL, 0},
     };
 
-    // parse the command line options
-    if (parse_opts(argc, argv, &opts) != PARSING_SUCCESS) {
-        CUSTOM_FAIL("Parsing command line arguments failed.");
-    }
-	// socket wrapper
-	mbedtls_net_context server_fd;
-
-	// entropy context
-	mbedtls_entropy_context entropy;
-	
-	// RBG context
-	mbedtls_ctr_drbg_context drbg;
-
-	// TLS context
-	mbedtls_ssl_context ssl;
-
-	// TLS configuration to use by the TLS context
-	mbedtls_ssl_config conf;
-
-	// trust anchor
-	mbedtls_x509_crt cacert;
-
-	// CRL
-	mbedtls_x509_crl crl;
-
-	// initialize all context/config variables
-	mbedtls_net_init(&server_fd);
-	mbedtls_ssl_init(&ssl);
-	mbedtls_ssl_config_init(&conf);
-	mbedtls_x509_crt_init(&cacert);
-	mbedtls_ctr_drbg_init(&drbg);
-	mbedtls_entropy_init(&entropy);
-
-	// seed the DRBG
-	MBEDTLS_CHECK(mbedtls_ctr_drbg_seed(&drbg, mbedtls_entropy_func, &entropy, NULL, 0));
-
-	// initiate the underlying TCP connection
-	MBEDTLS_CHECK(mbedtls_net_connect(&server_fd, opts.host, opts.port, MBEDTLS_NET_PROTO_TCP));
-
-	// set TLS config defaults
-	MBEDTLS_CHECK(mbedtls_ssl_config_defaults(&conf, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT));
-
-	// assign the RNG to the SSL config
-	mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &drbg);
-
-	// accept only TLS 1.2 and higher
-	mbedtls_ssl_conf_min_version(&conf, MBEDTLS_SSL_MAJOR_VERSION_3, MBEDTLS_SSL_MINOR_VERSION_3);
-
-	// require server certificate verification
-	mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_OPTIONAL);
-
-	// load trusted CA cert, normally we would use /etc/ssl/certs
-	MBEDTLS_CHECK(mbedtls_x509_crt_parse_file(&cacert, opts.trust_anchor));
-
-	// load the CRL file if present
-	if (strlen(opts.crl_file) != 0) {
-		MBEDTLS_CHECK(mbedtls_x509_crl_parse_file(&crl, opts.crl_file));
-    	// assign the trust anchor to the config
-    	mbedtls_ssl_conf_ca_chain(&conf, &cacert, &crl);
-	} else {
-		mbedtls_ssl_conf_ca_chain(&conf, &cacert, NULL);
-	}
-
-
-    // assign the config to the ssl context
-    MBEDTLS_CHECK(mbedtls_ssl_setup(&ssl, &conf));
-
-    // set the SNI extension
-    MBEDTLS_CHECK(mbedtls_ssl_set_hostname(&ssl, opts.host));
-
-    // set the IO functions to use in the underlying connection
-    mbedtls_ssl_set_bio(&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL);
-
-    // explicitly perform the handshake, don't fail yet
-    int r = mbedtls_ssl_handshake(&ssl);
-    if (r != 0) {
-    	MBEDTLS_FAIL(r);
+    c = getopt_long(argc, argv, "", long_options, NULL);
+    if (c == -1) {
+      break;
     }
 
-    // check the result of certificate verification
-    uint32_t res = mbedtls_ssl_get_verify_result(&ssl);
-    //fprintf(stderr, "0x%x", res);
+    switch (c) {
+    case 'c':
+      strncpy(opts->crl_file, optarg, PATH_BUFFER_LENGTH);
+      break;
+    case 'h':
+      strncpy(opts->host, optarg, HOST_BUFFER_LENGTH);
+      break;
+    case 'p':
+      strncpy(opts->port, optarg, PORT_BUFFER_LENGTH);
+      break;
+    case 't':
+      strncpy(opts->trust_anchor, optarg, PATH_BUFFER_LENGTH);
+      break;
+    default:
+      return PARSING_ERROR;
+    }
+  }
 
-    char message_buffer[2048];
-    mbedtls_x509_crt_verify_info(message_buffer, 2048, "", res);
-    fprintf(stderr, "%s", message_buffer);
-    // TODO: make this a bit prettier
-
-    /* can fail now, TODO: only fail if not a verify error
-    MBEDTLS_CHECK(r);
-    */
-	// TODO: do something useful here
-
-cleanup:
-    mbedtls_ssl_free(&ssl);
-    mbedtls_x509_crt_free(&cacert);
-    mbedtls_ssl_config_free(&conf);
-    mbedtls_net_free(&server_fd);
-    mbedtls_ctr_drbg_free(&drbg);
-    mbedtls_entropy_free(&entropy);
-    
-	return ret;
+  return PARSING_SUCCESS;
 }
