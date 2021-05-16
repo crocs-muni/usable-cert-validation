@@ -26,6 +26,16 @@
                         {% endfor %}
                     </div>
                 </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Guides</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        {% for guide in site.data.guides %}
+                          <a class="dropdown-item" href=
+                          "/{{ guide.name }}">
+                          {{ guide.title }}</a>
+                        {% endfor %}
+                    </div>
+                </li>
                 <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
                     <a class="nav-link" href="{% if page.slug != 'faq' %}/faq{% else %}#faq{% endif %}">FAQ</a>
                 </li>

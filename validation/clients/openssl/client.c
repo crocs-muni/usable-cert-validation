@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
     CUSTOM_FAIL("Setting verification flags failed.");
   }
 
-  /* TODO: specify security parameters here (ciphers, ...) */
+  /* specify security parameters here (ciphers, ...) */
 
   /* Set the trust anchor for certificate validation */
   OPENSSL_CHECK(SSL_CTX_load_verify_locations(ctx, opts.trust_anchor, NULL));
