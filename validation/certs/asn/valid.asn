@@ -325,5 +325,6 @@ X509 DEFINITIONS ::= BEGIN
         policyLanguage        OBJECT IDENTIFIER,
         policy                OCTET STRING OPTIONAL
     }
-
+    
+    Features ::= SEQUENCE OF INTEGER
 END
