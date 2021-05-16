@@ -12,23 +12,6 @@
 #define PARSING_SUCCESS 0
 #define PARSING_ERROR 1
 
-/* Macros for dealing with GnuTLS errors*/
-#define GNUTLS_FAIL(x) do { \
-        gnutls_perror(x); \
-        ret = EXIT_FAILURE; \
-        goto cleanup; \
-    } while (0)
-#define GNUTLS_CHECK(x) if ((ret = (x)) < 0) { \
-        GNUTLS_FAIL(ret); \
-    }
-
-/* Macro for dealing with application errors */
-#define CUSTOM_FAIL(error) do { \
-        ret = EXIT_FAILURE; \
-        fprintf(stderr, "Application error: %s", error); \
-        goto cleanup; \
-    } while (0)
-
 /* Possible command line arguments */
 struct tls_options
 {
@@ -44,6 +27,10 @@ struct tls_options
 	char port[PORT_BUFFER_LENGTH];
 	/* Path to a trusted root certificate */
 	char trust_anchor[PATH_BUFFER_LENGTH];
+	/* Port of the CRLDP */
+	char crl_port[PORT_BUFFER_LENGTH];
+    /* Port of the OCSP responder */
+	char ocsp_port[PORT_BUFFER_LENGTH];
 };
 
 /* Function to parse the command line arguments */
@@ -55,7 +42,10 @@ int tcp_connect(const char *host, const char *port);
 /* Custom verify callback */
 int verify_callback(gnutls_session_t session);
 
-/* cURL write callback */
-static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
+/* cURL write callback for writing to file */
+static size_t write_file(void *ptr, size_t size, size_t nmemb, void *stream);
+
+/* cURL write callback for writing to gnutls_datum_t */
+static size_t write_data(void *data, size_t size, size_t nmemb, void *userp);
 
 #endif

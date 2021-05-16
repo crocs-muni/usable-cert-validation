@@ -3,6 +3,44 @@ import yaml
 import os
 
 
+def match_openssl(library_message, error_message):
+    return library_message == error_message
+
+
+def match_gnutls(library_message, error_message):
+    return error_message in library_message
+
+
+def match_mbedtls(library_message, error_message):
+    if library_message == '' and error_message == 'ok':
+        return True
+    return error_message in library_message
+
+
+def match_botan(library_message, error_message):
+    return error_message in library_message
+
+
+def match_openjdk(library_message, error_message):
+    if library_message == '' and error_message == 'ok':
+        return True
+    return error_message in library_message
+
+
+def match(library_name, library_message, error_message):
+    if library_name == 'openssl':
+        return match_openssl(library_message, error_message)
+    if library_name == 'gnutls':
+        return match_gnutls(library_message, error_message)
+    if library_name == 'mbedtls':
+        return match_mbedtls(library_message, error_message)
+    if library_name == 'botan':
+        return match_botan(library_message, error_message)
+    if library_name == 'openjdk':
+        return match_openjdk(library_message, error_message)
+    return False
+
+
 def main():
     # Parse the command line arguments
     parser = argparse.ArgumentParser()
@@ -46,12 +84,7 @@ def main():
 
                 library_message = results[library_name]
 
-                if len(library_message) < 5:
-                    match = (error_message == library_message)
-                else:
-                    match = (error_message in library_message)
-
-                if match:
+                if match(library_name, library_message, error_message):
                     mapping_data[error_name]['chains'].append(chain)
 
         mapping_all[library_name] = mapping_data

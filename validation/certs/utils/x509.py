@@ -36,7 +36,8 @@ oid_map = {
     'anyExtendedKeyUsage': '2.5.29.37.0',
     'id-ppl-inheritAll': '1.3.6.1.5.5.7.21.1',
     'id-ppl-independent': '1.3.6.1.5.5.7.21.2',
-    'id-ad-ocsp': '1.3.6.1.5.5.7.48.1'
+    'id-ad-ocsp': '1.3.6.1.5.5.7.48.1',
+    'ext-TLSFeatures': '1.3.6.1.5.5.7.1.24'
 }
 
 
@@ -379,6 +380,20 @@ def certificate_list(tbs_cert_list, signature, asn):
         'signatureValue': (signature, len(signature) * 8)
     }
     return asn.encode('CertificateList', crl)
+
+
+def tls_features(features, asn):
+    features_map = {
+        'status_request': 5,
+        'status_request_v2': 17
+    }
+    features_list = [features_map[feature] for feature in features]
+    features_der = asn.encode('Features', features_list)
+    return {
+        'extnID': oid_map['ext-TLSFeatures'],
+        'critical': False,
+        'extnValue': features_der
+    }
 
 
 def default_tbs(issuer_public_key,

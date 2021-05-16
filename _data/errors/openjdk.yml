@@ -131,3 +131,10 @@
   message: |
     javax.net.ssl.SSLException: Unsupported signature algorithm
 
+
+- code: NO_MESSAGE
+  slug: no-message
+  tags: [ uncategorized ]
+  weight: 809
+  message: |
+    ok
