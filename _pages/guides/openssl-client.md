@@ -5,12 +5,12 @@ slug:       openssl-client
 ---
 <div class="section"><div class="container" markdown="1">
 
-## **Initiating client-side TLS connection using OpenSSL**
+## **Client-side TLS connection using OpenSSL**
 Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS. 
 
-This guide describes precise steps to take in order to do that successfully using the [OpenSSL 1.1.1](https://www.openssl.org/) API in C. The guide covers all neccessary aspects of initiating a secure TLS connection, including certificate verification, hostname validation and certificate revocation checking. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
+This guide describes precise steps to take in order to do that successfully using the [OpenSSL 1.1.1](https://www.openssl.org/) API in C. The guide covers the basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
-<span style = "color: #9b0000" >(For now, the guide _does not_ cover advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
+<span style = "color: #9b0000" >(For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
 
 ### Establishing an underlying TCP/IP connection
 First, we need to establish an _insecure_ TCP/IP connection with the server. For the most simple connection, a standard set of _POSIX_ functions will suffice.
@@ -37,7 +37,7 @@ First, we need to establish an _insecure_ TCP/IP connection with the server. For
     struct addrinfo *result = NULL;
 
     /* We query a list of addresses for the given hostname. */
-    if (getaddrinfo(x509errors.org, 443, &hints, &result) != 0 || result == NULL) {
+    if (getaddrinfo("x509errors.org", "443", &hints, &result) != 0 || result == NULL) {
         exit(EXIT_FAILURE);
     }
 
@@ -125,7 +125,7 @@ Optionally, you may want to put additional constraints on certificate validation
     /* Retrieve the verification parameters for modification. */
     X509_VERIFY_PARAM *vpm = SSL_CTX_get0_param(ctx);
     if (vpm == NULL) {
-    exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     /* Retrieve certificate validation flags. */
@@ -137,12 +137,12 @@ Optionally, you may want to put additional constraints on certificate validation
 
     /* Put the modified validation flags back into the params structure. */
     if (X509_VERIFY_PARAM_set_flags(vpm, flags) != 1) {
-    exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
     /* Server certificate will have to contain IP 192.168.2.1 in its Subject Alternative Name. */
     if (X509_VERIFY_PARAM_set1_ip_asc(vpm, "192.168.2.1") != 1) {
-    exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);
     }
 
 ```
@@ -150,6 +150,7 @@ Optionally, you may want to put additional constraints on certificate validation
 [SSL_CTX_get0_param (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_get0_param.html),
 [X509_VERIFY_PARAM_set_flags (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html),
 [Subject Alternative Name Extension (RFC 5280)](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6)
+
 ### Initializing a TLS connection
 At this point, we can initialize a connection structure and link it with the open socket descriptor. After that, we only need to specify a couple of settings and we can connect to the server.
 ~~~c
@@ -192,7 +193,7 @@ At this point, we can initialize a connection structure and link it with the ope
 [SSL_connect (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_connect.html),
 [Server Name Indication (RFC 6066)](https://datatracker.ietf.org/doc/html/rfc6066#section-3),
 [TLS handshake (RFC 5246)](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4)
-[Subject Alternative Name Extension (RFC 5280)](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6)
+
 ### <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
 If certificate validation fails, _SSL\_connect()_ will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [page](https://x509errors.org/#openssl).
 ~~~c
@@ -213,6 +214,7 @@ If certificate validation fails, _SSL\_connect()_ will always fail with the same
 [Certificate validation errors (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html),
 [Certificate validation errors (X509errors)](https://x509errors.org/#openssl),
 [Certificate path validation (RFC 5280)](https://datatracker.ietf.org/doc/html/rfc5280#section-6)
+
 ### Sending and receiving data using the TLS connection
 When the connection is successfully established, we can share application data with the server. These two functions provide the basic interface. 
 ~~~c
@@ -236,32 +238,32 @@ When the connection is successfully established, we can share application data w
 ### Closing the TLS connection
 The client is usually the one to initiate that the connection is finished. When we want the connection closed, the following steps are performed.
 ~~~c
-  
-  /* To finish the connection properly, we send a "close notify" alert to the server. */
-  /* In most cases, we have to wait for the same message from the server, and perform the call again. */
-  int ret = SSL_shutdown(ssl);
-  if (ret < 0) {
-    exit(EXIT_FAILURE);
-  } else if (ret == 0) {
-    if (SSL_shutdown(ssl) != 1) {
+
+    /* To finish the connection properly, we send a "close notify" alert to the server. */
+    /* In most cases, we have to wait for the same message from the server, and perform the call again. */
+    int ret = SSL_shutdown(ssl);
+    if (ret < 0) {
         exit(EXIT_FAILURE);
+    } else if (ret == 0) {
+        if (SSL_shutdown(ssl) != 1) {
+            exit(EXIT_FAILURE);
+        }
     }
-  }
 
-  /* Free the TLS connection structure. */
-  if (ssl != NULL) {
-    SSL_free(ssl);
-  }
+    /* Free the TLS connection structure. */
+    if (ssl != NULL) {
+        SSL_free(ssl);
+    }
 
-  /* Free the TLS context structure. */
-  if (ctx != NULL) {
-    SSL_CTX_free(ctx);
-  }
+    /* Free the TLS context structure. */
+    if (ctx != NULL) {
+        SSL_CTX_free(ctx);
+    }
 
-  /* Close the underlying TCP socket. */
-  if (sockfd >= 0) {
-    close(sockfd);
-  }
+    /* Close the underlying TCP socket. */
+    if (sockfd >= 0) {
+        close(sockfd);
+    }
 
 ~~~
 **Relevant links**:

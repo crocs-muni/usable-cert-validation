@@ -5,7 +5,7 @@
 
 - name: gnutls
   title: GnuTLS
-  docs-source: https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html
+  docs-source: https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html#gnutls_005fcertificate_005fstatus_005ft
   message-source: https://github.com/gnutls/gnutls/blob/master/lib/cert-cred.c
 
 - name: botan
