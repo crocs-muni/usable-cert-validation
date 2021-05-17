@@ -3,3 +3,6 @@
 
 - name: gnutls-client
   title: GnuTLS client
+
+- name: mbedtls-client
+  title: Mbed TLS client 

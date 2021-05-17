@@ -8,9 +8,9 @@ slug:       openssl-client
 ## **Client-side TLS connection using OpenSSL**
 Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS. 
 
-This guide describes precise steps to take in order to do that successfully using the [OpenSSL 1.1.1](https://www.openssl.org/) API in C. The guide covers the basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
+This guide describes precise steps to take in order to do that successfully using the [OpenSSL 1.1.1](https://www.openssl.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
-<span style = "color: #9b0000" >(For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
+<span style = "color: #9b0000" >(Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
 
 ### Establishing an underlying TCP/IP connection
 First, we need to establish an _insecure_ TCP/IP connection with the server. For the most simple connection, a standard set of _POSIX_ functions will suffice.
@@ -235,8 +235,9 @@ When the connection is successfully established, we can share application data w
 **Relevant links**:
 [SSL_write (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_write.html),
 [SSL_read (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_read.html)
+
 ### Closing the TLS connection
-The client is usually the one to initiate that the connection is finished. When we want the connection closed, the following steps are performed.
+The client is usually the one to indicate that the connection is finished. When we want the connection closed, the following steps are performed.
 ~~~c
 
     /* To finish the connection properly, we send a "close notify" alert to the server. */
