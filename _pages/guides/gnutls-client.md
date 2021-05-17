@@ -8,9 +8,9 @@ slug:       gnutls-client
 ## **Client-side TLS connection using GnuTLS**
 Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS. 
 
-This guide describes precise steps to take in order to do that successfully using the [GnuTLS 3.7.1](https://www.gnutls.org/) API in C. The guide covers the basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
+This guide describes precise steps to take in order to do that successfully using the [GnuTLS 3.7.1](https://www.gnutls.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
-<span style = "color: #9b0000" >(For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
+<span style = "color: #9b0000" >(Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
 ### Establishing an underlying TCP/IP connection
 First, we need to establish an _insecure_ TCP/IP connection with the server. For the most simple connection, a standard set of _POSIX_ functions will suffice.
 ~~~c
@@ -226,7 +226,7 @@ If certificate validation fails, _gnutls_handshake()_ will always fail with the 
 
 ~~~
 **Relevant links**:
-[gnutls_session_get_verify_cert_status (GnuTLS docs)](gnutls_session_get_verify_cert_status),
+[gnutls_session_get_verify_cert_status (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fget_005fverify_005fcert_005fstatus),
 [gnutls_certificate_type_get2 (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005ftype_005fget2),
 [gnutls_certificate_verification_status_print (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fverification_005fstatus_005fprint),
 [Certificate validation errors (X509errors)](https://x509errors.org/gnutls#gnutls),
@@ -255,7 +255,7 @@ When the connection is successfully established, we can share application data w
 [gnutls_record_recv (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005frecord_005frecv-1)
 
 ### Closing the connection
-The client is usually the one to initiate that the connection is finished. When we want the connection closed, the following steps are performed.
+The client is usually the one to indicate that the connection is finished. When we want the connection closed, the following steps are performed.
 ~~~c
     
     /* Send the "close notify" message to the server, alerting it that we are closing the connection. */
