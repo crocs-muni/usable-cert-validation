@@ -184,6 +184,7 @@ At this point, we can initialize a TCP/IP connection and then build the TLS conn
 ### <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
 If certificate validation fails, _mbedtls\_ssl\_handshake()_ will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://tls.mbed.org/api/group__x509__module.html) or on our [page](https://x509errors.org/mbedtls#mbedtls).
 ```c
+
     /* Manually retrieve the result of certificate validation. */
     uint32_t res = mbedtls_ssl_get_verify_result(&ssl);
 
@@ -191,6 +192,7 @@ If certificate validation fails, _mbedtls\_ssl\_handshake()_ will always fail wi
     char message_buffer[2048];
     mbedtls_x509_crt_verify_info(message_buffer, 2048, "", res);
     fprintf(stderr, "%s", message_buffer);
+
 ```
 **Relevant links**:
 [mbedtls_ssl_get_verify_result (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a516064f1468d459159ef7cd6c496a026),
