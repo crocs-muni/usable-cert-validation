@@ -104,7 +104,7 @@ For the connection to be functional and secure, we must set multiple options bef
 [mbedtls_ssl_config_defaults (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa1335b65ba57e81accc91ef95454d5a6),
 [mbedtls_ssl_conf_min_version (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a0eade5c83cc08001672061c5925caaaa),
 [mbedtls_ssl_conf_authmode (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a5695285c9dbfefec295012b566290f37),
-[mbedtls_ssl_set_hostname (Mbed TLS docs)](mbedtls_ssl_set_hostname),
+[mbedtls_ssl_set_hostname (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa659024cf89e20d6d2248c0626db7ef2),
 [Server Name Indication (RFC 6066)](https://datatracker.ietf.org/doc/html/rfc6066#section-3),
 
 ### Specifying trusted root authority certificates
