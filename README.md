@@ -26,7 +26,7 @@ In the future, we plan the possibility of reorganization based on the other libr
 To build TLS clients, the development versions of the following libraries are required:
 
 * [OpenSSL](https://www.openssl.org/)
-* [GnuTLS](https://www.gnutls.org/)
+* [GnuTLS](https://www.gnutls.org/) (also requires [libcurl](https://curl.se/libcurl/))
 * [Botan](https://botan.randombit.net/), preferentially version 2 (also requires [Boost Program options](https://www.boost.org/doc/libs/1_76_0/doc/html/program_options.html))
 * [mBedTLS](https://tls.mbed.org/)
 * [OpenJDK](https://openjdk.java.net/)
@@ -35,9 +35,9 @@ On Ubuntu 20.04 LTS or Fedora 33 you can install them using the appropriate of t
 
 ```bash
 # Ubuntu 20.04
-apt install libopenssl-dev libgnutls28-dev botan libbotan-2-dev libmbedtls-dev libboost-program-options-dev openjdk-16-jdk
+apt install libssl-dev libgnutls28-dev botan libbotan-2-dev libmbedtls-dev libboost-program-options-dev openjdk-16-jdk libcurl4-openssl-dev
 # Fedora 33
-dnf install openssl-devel gnutls-devel botan2-devel mbedtls-devel java-latest-openjdk-devel boost-devel
+dnf install openssl-devel gnutls-devel botan2-devel mbedtls-devel java-latest-openjdk-devel boost-devel libcurl-devel
 ```
 
 The necessary Python packages are locally installed by running `make install`. Building the certificate chains requires the following Python packages: [setuptools](https://pypi.org/project/setuptools/), [asn1tools](https://github.com/eerimoq/asn1tools) and [pycryptodomex](https://pypi.org/project/pycryptodomex/). Running certificate validation further requires [shyaml](https://github.com/0k/shyaml), [yq](https://github.com/mikefarah/yq), [jq](https://stedolan.github.io/jq/) and [pyYAML](https://github.com/yaml/pyyaml) for parsing and manipulating YAML files.
