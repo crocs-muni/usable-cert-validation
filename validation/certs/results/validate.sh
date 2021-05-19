@@ -132,13 +132,13 @@ run_servers() {
         if [ "$DEBUG" == "true" ]
         then
           printf "\nDEBUG_INFO: Running python TLS server with %s\n" "${CHAIN_NAME}"
-          python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
+          python3 "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
                                             --key_file "${KEY_FILE}" \
                                             --host "${HOST}" \
                                             --port "${MAIN_PORT}" &
           printf "\n"
         else
-          python "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
+          python3 "${SERVERS_DIR}"/server.py --chain_file "${CHAIN_FILE}" \
                                             --key_file "${KEY_FILE}" \
                                             --host "${HOST}" \
                                             --port "${MAIN_PORT}" \
