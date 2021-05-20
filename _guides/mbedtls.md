@@ -7,13 +7,19 @@ slug:       mbedtls
 
 # {{ page.title }}
 
-Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS.
+{:.lead}
+This guide describes the implementation of a TLS client in [Mbed TLS](https://tls.mbed.org/).
 
-This guide describes precise steps to take in order to do that successfully using the [Mbed TLS 2.16.9](https://tls.mbed.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
+{:.lead}
+The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
-<span style = "color: #9b0000" >(Note: Mbed TLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement.)</span>
+* We work with the API in C of Mbed TLS, version 2.16.9.
+* We assume the server to communicate with is at _x509errors.org_ and accepts TLS connections on a standard port 443.
+* <span style = "color: #9b0000" >Note: Mbed TLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement.</span>
+* <span style = "color: #9b0000" >Note: This guide _does not_ cover advanced techniques that may follow after the connection is already established, e.g. session resumption.</span>
 
-<span style = "color: #9b0000" >(Note: This guide _does not_ cover advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Preparing necessary data structures
 
@@ -64,15 +70,19 @@ if (mbedtls_ssl_setup(&ssl, &conf) != 0) {
 }
 ```
 
-**Relevant links**:
-[mbedtls_net_init (Mbed TLS docs)](https://tls.mbed.org/api/net__sockets_8h.html#aed7458e19fc1b4794f3a23aa3df49543),
-[mbedtls_entropy_init (Mbed TLS docs)](https://tls.mbed.org/api/entropy_8h.html#aa901e027093c6fe65dee5760db78aced),
-[mbedtls_ctr_drbg_init (Mbed TLS docs)](https://tls.mbed.org/api/ctr__drbg_8h.html#a70dbec5e03601bf437ec488f2645743b),
-[mbedtls_ssl_init (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a8560dea66d7830a11874188727ec4c45),
-[mbedtls_ssl_config_init (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aba55bcda50a47e83803e31a8db7c9a86),
-[mbedtls_ctr_drbg_seed (Mbed TLS docs)](https://tls.mbed.org/api/ctr__drbg_8h.html#ad93d675f998550b4478c1fe6f4f34ebc),
-[mbedtls_ssl_conf_rng (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a469cd1c64bbba4be22347bf8874a017e),
-[mbedtls_ssl_setup (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#af79cb539a0ee6ac20cf9c574f4c3b343)
+### Relevant links
+
+* [<code>mbedtls_net_init</code>](https://tls.mbed.org/api/net__sockets_8h.html#aed7458e19fc1b4794f3a23aa3df49543) (Mbed TLS docs)
+* [<code>mbedtls_entropy_init</code>](https://tls.mbed.org/api/entropy_8h.html#aa901e027093c6fe65dee5760db78aced) (Mbed TLS docs)
+* [<code>mbedtls_ctr_drbg_init</code>](https://tls.mbed.org/api/ctr__drbg_8h.html#a70dbec5e03601bf437ec488f2645743b) (Mbed TLS docs)
+* [<code>mbedtls_ssl_init</code>](https://tls.mbed.org/api/ssl_8h.html#a8560dea66d7830a11874188727ec4c45) (Mbed TLS docs)
+* [<code>mbedtls_ssl_config_init</code>](https://tls.mbed.org/api/ssl_8h.html#aba55bcda50a47e83803e31a8db7c9a86) (Mbed TLS docs)
+* [<code>mbedtls_ctr_drbg_seed</code>](https://tls.mbed.org/api/ctr__drbg_8h.html#ad93d675f998550b4478c1fe6f4f34ebc) (Mbed TLS docs)
+* [<code>mbedtls_ssl_conf_rng</code>](https://tls.mbed.org/api/ssl_8h.html#a469cd1c64bbba4be22347bf8874a017e) (Mbed TLS docs)
+* [<code>mbedtls_ssl_setup</code>](https://tls.mbed.org/api/ssl_8h.html#af79cb539a0ee6ac20cf9c574f4c3b343) (Mbed TLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Configuring the session settings
 
@@ -103,13 +113,16 @@ if (mbedtls_ssl_set_hostname(&ssl, "x509errors.org") != 0) {
 }
 ```
 
-**Relevant links**:
+### Relevant links
 
-[mbedtls_ssl_config_defaults (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa1335b65ba57e81accc91ef95454d5a6),
-[mbedtls_ssl_conf_min_version (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a0eade5c83cc08001672061c5925caaaa),
-[mbedtls_ssl_conf_authmode (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a5695285c9dbfefec295012b566290f37),
-[mbedtls_ssl_set_hostname (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa659024cf89e20d6d2248c0626db7ef2),
-[Server Name Indication (RFC 6066)](https://datatracker.ietf.org/doc/html/rfc6066#section-3),
+* [<code>mbedtls_ssl_config_defaults</code>](https://tls.mbed.org/api/ssl_8h.html#aa1335b65ba57e81accc91ef95454d5a6) (Mbed TLS docs)
+* [<code>mbedtls_ssl_conf_min_version</code>](https://tls.mbed.org/api/ssl_8h.html#a0eade5c83cc08001672061c5925caaaa) (Mbed TLS docs)
+* [<code>mbedtls_ssl_conf_authmode</code>](https://tls.mbed.org/api/ssl_8h.html#a5695285c9dbfefec295012b566290f37) (Mbed TLS docs)
+* [<code>mbedtls_ssl_set_hostname</code>](https://tls.mbed.org/api/ssl_8h.html#aa659024cf89e20d6d2248c0626db7ef2) (Mbed TLS docs)
+* [Server Name Indication](https://datatracker.ietf.org/doc/html/rfc6066#section-3) (RFC 6066)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Specifying trusted root authority certificates
 
@@ -131,10 +144,14 @@ if (mbedtls_x509_crt_parse_file(&ca_certs, "trusted_certs.pem") != 0) {
 mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, NULL);
 ```
 
-**Relevant links**:
-[mbedtls_x509_crt_init (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#ga016dd06bc770e77b84005f305df20ed1),
-[mbedtls_x509_crt_parse_file (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#gad4da63133d3590aa311488497d4c38ec),
-[mbedtls_ssl_conf_ca_chain (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a85c3bb6b682ba361d13de1c0a1eb69fb)
+### Relevant links
+
+* [<code>mbedtls_x509_crt_init</code>](https://tls.mbed.org/api/group__x509__module.html#ga016dd06bc770e77b84005f305df20ed1) (Mbed TLS docs)
+* [<code>mbedtls_x509_crt_parse_file</code>](https://tls.mbed.org/api/group__x509__module.html#gad4da63133d3590aa311488497d4c38ec) (Mbed TLS docs)
+* [<code>mbedtls_ssl_conf_ca_chain</code>](https://tls.mbed.org/api/ssl_8h.html#a85c3bb6b682ba361d13de1c0a1eb69fb) (Mbed TLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #006600" >Optional: Checking revocation using local CRLs </span>
 
@@ -156,10 +173,14 @@ if (mbedtls_x509_crl_parse_file(&crl, "crl.pem") != 0) {
 mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, &crl);
 ```
 
-**Relevant links**:
-[mbedtls_x509_crl_init (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#ga8513a192e281217802837571da98e218),
-[mbedtls_x509_crl_parse_file (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#ga8e096827f1240b8f8bc15d6a83593f22),
-[mbedtls_ssl_conf_ca_chain (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a85c3bb6b682ba361d13de1c0a1eb69fb)
+### Relevant links
+
+* [<code>mbedtls_x509_crl_init</code>](https://tls.mbed.org/api/group__x509__module.html#ga8513a192e281217802837571da98e218) (Mbed TLS docs)
+* [<code>mbedtls_x509_crl_parse_file</code>](https://tls.mbed.org/api/group__x509__module.html#ga8e096827f1240b8f8bc15d6a83593f22) (Mbed TLS docs)
+* [<code>mbedtls_ssl_conf_ca_chain</code>](https://tls.mbed.org/api/ssl_8h.html#a85c3bb6b682ba361d13de1c0a1eb69fb) (Mbed TLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Initializing a TLS connection
 
@@ -182,11 +203,15 @@ if (mbedtls_ssl_handshake(&ssl) != 0) {
 }
 ```
 
-**Relevant links**:
-[mbedtls_net_connect (Mbed TLS docs)](https://tls.mbed.org/api/net__sockets_8h.html#ac12c400864a5aad46666828ce2a089a4),
-[mbedtls_ssl_set_bio (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a8b7442420aef7f1a76fa8c5336362f9e),
-[mbedtls_ssl_handshake (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a4a37e497cd08c896870a42b1b618186e),
-[TLS handshake (RFC 5246)](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4)
+### Relevant links
+
+* [<code>mbedtls_net_connect</code>](https://tls.mbed.org/api/net__sockets_8h.html#ac12c400864a5aad46666828ce2a089a4) (Mbed TLS docs)
+* [<code>mbedtls_ssl_set_bio</code>](https://tls.mbed.org/api/ssl_8h.html#a8b7442420aef7f1a76fa8c5336362f9e) (Mbed TLS docs)
+* [<code>mbedtls_ssl_handshake</code>](https://tls.mbed.org/api/ssl_8h.html#a4a37e497cd08c896870a42b1b618186e) (Mbed TLS docs)
+* [TLS handshake details](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4) (RFC 5246)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
 
@@ -202,12 +227,16 @@ mbedtls_x509_crt_verify_info(message_buffer, 2048, "", res);
 fprintf(stderr, "%s", message_buffer);
 ```
 
-**Relevant links**:
-[mbedtls_ssl_get_verify_result (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a516064f1468d459159ef7cd6c496a026),
-[mbedtls_x509_crt_verify_info (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#gae88f1d8e6696eb2beeffe0a708219e6b),
-[Certificate path validation (RFC 5280)](https://datatracker.ietf.org/doc/html/rfc5280#section-6),
-[Certificate validation errors (MbedTLS docs)](https://tls.mbed.org/api/group__x509__module.html),
-[Certificate validation errors (x509errors)](https://x509errors.org/mbedtls#mbedtls)
+### Relevant links
+
+* [<code>mbedtls_ssl_get_verify_result</code>](https://tls.mbed.org/api/ssl_8h.html#a516064f1468d459159ef7cd6c496a026) (Mbed TLS docs)
+* [<code>mbedtls_x509_crt_verify_info</code>](https://tls.mbed.org/api/group__x509__module.html#gae88f1d8e6696eb2beeffe0a708219e6b) (Mbed TLS docs)
+* [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
+* [Certificate validation errors](https://tls.mbed.org/api/group__x509__module.html) (MbedTLS docs)
+* [Certificate validation errors](https://x509errors.org/mbedtls#mbedtls) (x509errors.org)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Sending and receiving data using the TLS connection
 
@@ -227,9 +256,13 @@ if (mbedtls_ssl_read(ssl, buffer, 4096) != 1) {
 }
 ```
 
-**Relevant links**:
-[mbedtls_ssl_write (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a5bbda87d484de82df730758b475f32e5),
-[mbedtls_ssl_read (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa2c29eeb1deaf5ad9f01a7515006ede5)
+### Relevant links
+
+* [<code>mbedtls_ssl_write</code>](https://tls.mbed.org/api/ssl_8h.html#a5bbda87d484de82df730758b475f32e5) (Mbed TLS docs)
+* [<code>mbedtls_ssl_read</code>](https://tls.mbed.org/api/ssl_8h.html#aa2c29eeb1deaf5ad9f01a7515006ede5) (Mbed TLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Closing the TLS connection
 
@@ -250,13 +283,14 @@ mbedtls_ctr_drbg_free(&drbg);
 mbedtls_entropy_free(&entropy);
 ```
 
-**Relevant links**:
-[mbedtls_ssl_close_notify (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#ac2c1b17128ead2df3082e27b603deb4c),
-[mbedtls_ssl_free (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a2dc104a181bcd11eafbbf7e6923978bc),
-[mbedtls_x509_crt_free (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#gab33c1e4e20bea7ce536119f54a113c6b),
-[mbedtls_ssl_config_free (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a7655f025440a6c5ccd4fc13832abb1dd),
-[mbedtls_net_free (Mbed TLS docs)](https://tls.mbed.org/api/net__sockets_8h.html#a77c35cb3f4b9fe6035d1d3742f3b4a24),
-[mbedtls_ctr_drbg_free (Mbed TLS docs)](https://tls.mbed.org/api/ctr__drbg_8h.html#a1ea42b9eb6f6b33c82359f4c0a57ca43),
-[mbedtls_entropy_free (Mbed TLS docs)](https://tls.mbed.org/api/entropy_8h.html#a06778439f8a0e2daa2d3b444e06ad8dd)
+### Relevant links
+
+* [<code>mbedtls_ssl_close_notify</code>](https://tls.mbed.org/api/ssl_8h.html#ac2c1b17128ead2df3082e27b603deb4c) (Mbed TLS docs)
+* [<code>mbedtls_ssl_free</code>](https://tls.mbed.org/api/ssl_8h.html#a2dc104a181bcd11eafbbf7e6923978bc) (Mbed TLS docs)
+* [<code>mbedtls_x509_crt_free</code>](https://tls.mbed.org/api/group__x509__module.html#gab33c1e4e20bea7ce536119f54a113c6b) (Mbed TLS docs)
+* [<code>mbedtls_ssl_config_free</code>](https://tls.mbed.org/api/ssl_8h.html#a7655f025440a6c5ccd4fc13832abb1dd) (Mbed TLS docs)
+* [<code>mbedtls_net_free</code>](https://tls.mbed.org/api/net__sockets_8h.html#a77c35cb3f4b9fe6035d1d3742f3b4a24) (Mbed TLS docs)
+* [<code>mbedtls_ctr_drbg_free</code>](https://tls.mbed.org/api/ctr__drbg_8h.html#a1ea42b9eb6f6b33c82359f4c0a57ca43) (Mbed TLS docs)
+* [<code>mbedtls_entropy_free</code>](https://tls.mbed.org/api/entropy_8h.html#a06778439f8a0e2daa2d3b444e06ad8dd) (Mbed TLS docs)
 
 </div></div>
