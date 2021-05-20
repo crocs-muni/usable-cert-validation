@@ -15,7 +15,10 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 
 * We work with the API in C of GnuTLS, version 3.7.1.
 * We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
-* <span style = "color: #9b0000" >Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.</span>
+
+{% include alert.html type="warning"
+    content="Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption."
+%}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -192,7 +195,10 @@ if (gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, creds) < 0) {
 ## <span style = "color: #006600" >Optional: Sending an OCSP status request to the server</span>
 
 One of the modern methods of revocation checking is via OCSP-stapling, when the server sends revocation information "stapled" in the TLS handshake. GnuTLS checks such revocation information by default, but the server will not send it unless we explicitly tell it to do so.
-<span style = "color: #9b0000" >Note that if the server does not support OCSP stapling, it may not send the certificate status, and this will not result in a failure. It will only fail if the server certificate contains the OCSP "must-staple" extension.</span>
+
+{% include alert.html type="danger"
+    content="Note that if the server does not support OCSP stapling, it may not send the certificate status, and this will not result in a failure. It will only fail if the server certificate contains the OCSP \"must-staple\" extension."
+%}
 
 ```c
 /* Send the status request extension to the server during the TLS handshake. */
