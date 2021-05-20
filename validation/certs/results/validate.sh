@@ -31,7 +31,7 @@ done
 
 set -- "${args[@]}"
 
-while getopts "c:v:s:n:o:p:d:" OPTION; do
+while getopts "c:v:s:n:o:p:d" OPTION; do
     : "$OPTION" "$OPTARG"
     case $OPTION in
     c)  CERTS_DIR="$OPTARG";;
