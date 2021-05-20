@@ -32,7 +32,8 @@
                         {% for library in site.data.libraries %}
                             {% assign guides = site.guides | where: "slug", library.name %}
                             {% for guide in guides %}
-                                <a class="dropdown-item" href="{{ guide.url }}">{{ library.title }}</a>
+                                <a class="dropdown-item" href="{% if page.title != guide.title %}/guides/{{ guide.slug }}{% else %}#{{ guide.slug }}{% endif %}">
+                                {{ library.title }}</a>
                             {% endfor %}
                         {% endfor %}
                     </div>
