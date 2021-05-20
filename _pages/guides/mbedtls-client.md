@@ -1,67 +1,69 @@
 ---
 layout:     default
-title:      Mbed TLS client - Developer guide
-slug:       mbedtls-client
+title:      "Developer guide: Mbed TLS"
+slug:       mbedtls
 ---
 <div class="section"><div class="container" markdown="1">
 
-## **Client-side TLS connection using Mbed TLS**
-Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS. 
+# {{ page.title }}
+
+Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS.
 
 This guide describes precise steps to take in order to do that successfully using the [Mbed TLS 2.16.9](https://tls.mbed.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
-<span style = "color: #9b0000" >(Note: MbedTLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement.)</span>
+<span style = "color: #9b0000" >(Note: Mbed TLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement.)</span>
 
 <span style = "color: #9b0000" >(Note: This guide _does not_ cover advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
 
-### Preparing necessary data structures
+## Preparing necessary data structures
+
 Mbed TLS requires quite a lot of structures to be initialized before we start.
-~~~c
-    
-    #include "mbedtls/ctr_drbg.h"
-    #include "mbedtls/entropy.h"
-    #include "mbedtls/net_sockets.h"
-    #include "mbedtls/ssl.h"
-    
-    /* Wrapper of the socket descriptor.
-    ** This will take care of the underlying TCP/IP connection. */ 
-    mbedtls_net_context server_fd;
-    mbedtls_net_init(&server_fd);
 
-    /* Entropy (randomness source) context.
-    ** Necessary to produce random data during the TLS handshake. */
-    mbedtls_entropy_context entropy;
-    mbedtls_entropy_init(&entropy);
+```c
+#include "mbedtls/ctr_drbg.h"
+#include "mbedtls/entropy.h"
+#include "mbedtls/net_sockets.h"
+#include "mbedtls/ssl.h"
 
-    /* Context for random number generation.
-    ** Again, needed to produce random data during the handshake. */
-    mbedtls_ctr_drbg_context drbg;
-    mbedtls_ctr_drbg_init(&drbg);
+/* Wrapper of the socket descriptor.
+** This will take care of the underlying TCP/IP connection. */ 
+mbedtls_net_context server_fd;
+mbedtls_net_init(&server_fd);
 
-    /* TLS context which represents our session. */
-    mbedtls_ssl_context ssl;
-    mbedtls_ssl_init(&ssl);
+/* Entropy (randomness source) context.
+** Necessary to produce random data during the TLS handshake. */
+mbedtls_entropy_context entropy;
+mbedtls_entropy_init(&entropy);
 
-    /* Configuration to use within TLS. */
-    mbedtls_ssl_config conf;
-    mbedtls_ssl_config_init(&conf);
+/* Context for random number generation.
+** Again, needed to produce random data during the handshake. */
+mbedtls_ctr_drbg_context drbg;
+mbedtls_ctr_drbg_init(&drbg);
 
-    /* Seed the random number generator. */
-    if (mbedtls_ctr_drbg_seed(&drbg, mbedtls_entropy_func, &entropy, NULL, 0) != 0) {
-        exit(EXIT_FAILURE);
-    }
+/* TLS context which represents our session. */
+mbedtls_ssl_context ssl;
+mbedtls_ssl_init(&ssl);
 
-    /* Assign the random number generator to the TLS config. */
-    if (mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &drbg) != 0) {
-        exit(EXIT_FAILURE);
-    }
+/* Configuration to use within TLS. */
+mbedtls_ssl_config conf;
+mbedtls_ssl_config_init(&conf);
 
-    /* Assign the TLS config to the TLS context. */
-    if (mbedtls_ssl_setup(&ssl, &conf) != 0) {
-        exit(EXIT_FAILURE);
-    }
+/* Seed the random number generator. */
+if (mbedtls_ctr_drbg_seed(&drbg, mbedtls_entropy_func, &entropy, NULL, 0) != 0) {
+    exit(EXIT_FAILURE);
+}
 
-~~~
+/* Assign the random number generator to the TLS config. */
+if (mbedtls_ssl_conf_rng(&conf, mbedtls_ctr_drbg_random, &drbg) != 0) {
+    exit(EXIT_FAILURE);
+}
+
+/* Assign the TLS config to the TLS context. */
+if (mbedtls_ssl_setup(&ssl, &conf) != 0) {
+    exit(EXIT_FAILURE);
+}
+```
+
 **Relevant links**:
 [mbedtls_net_init (Mbed TLS docs)](https://tls.mbed.org/api/net__sockets_8h.html#aed7458e19fc1b4794f3a23aa3df49543),
 [mbedtls_entropy_init (Mbed TLS docs)](https://tls.mbed.org/api/entropy_8h.html#aa901e027093c6fe65dee5760db78aced),
@@ -72,128 +74,134 @@ Mbed TLS requires quite a lot of structures to be initialized before we start.
 [mbedtls_ssl_conf_rng (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a469cd1c64bbba4be22347bf8874a017e),
 [mbedtls_ssl_setup (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#af79cb539a0ee6ac20cf9c574f4c3b343)
 
-### Configuring the session settings
+## Configuring the session settings
+
 For the connection to be functional and secure, we must set multiple options beforehand.
-~~~c
-    
-    /* Set defaults for the TLS configuration.
-    ** This is the recommended setting. */
-    if (mbedtls_ssl_config_defaults(&conf, MBEDTLS_SSL_IS_CLIENT,
-                                           MBEDTLS_SSL_TRANSPORT_STREAM,
-                                           MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
-        exit(EXIT_FAILURE);
-    }
-    
-    /* However, we accept only TLS 1.2 and higher. */
-    mbedtls_ssl_conf_min_version(&conf, MBEDTLS_SSL_MAJOR_VERSION_3,
-                                        MBEDTLS_SSL_MINOR_VERSION_3);
-    /* We need to set the option to validate the peer certificate chain.
-    ** If we skipped this step, an active attacker could impersonate the server. */
-    mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_REQUIRED);
 
-    /* Set hostname for verification.
-    ** Not setting the hostname would mean that we would accept a certificate of any trusted server.
-    ** It also sets the Server Name Indication TLS extension.
-    ** This is required when multiple servers are running at the same IP address (virtual hosting). */
-    if (mbedtls_ssl_set_hostname(&ssl, "x509errors.org") != 0) {
-        exit(EXIT_FAILURE);
-    }
+```c
+/* Set defaults for the TLS configuration.
+** This is the recommended setting. */
+if (mbedtls_ssl_config_defaults(&conf, MBEDTLS_SSL_IS_CLIENT,
+                                        MBEDTLS_SSL_TRANSPORT_STREAM,
+                                        MBEDTLS_SSL_PRESET_DEFAULT) != 0) {
+    exit(EXIT_FAILURE);
+}
 
-~~~
+/* However, we accept only TLS 1.2 and higher. */
+mbedtls_ssl_conf_min_version(&conf, MBEDTLS_SSL_MAJOR_VERSION_3,
+                                    MBEDTLS_SSL_MINOR_VERSION_3);
+/* We need to set the option to validate the peer certificate chain.
+** If we skipped this step, an active attacker could impersonate the server. */
+mbedtls_ssl_conf_authmode(&conf, MBEDTLS_SSL_VERIFY_REQUIRED);
+
+/* Set hostname for verification.
+** Not setting the hostname would mean that we would accept a certificate of any trusted server.
+** It also sets the Server Name Indication TLS extension.
+** This is required when multiple servers are running at the same IP address (virtual hosting). */
+if (mbedtls_ssl_set_hostname(&ssl, "x509errors.org") != 0) {
+    exit(EXIT_FAILURE);
+}
+```
+
 **Relevant links**:
+
 [mbedtls_ssl_config_defaults (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa1335b65ba57e81accc91ef95454d5a6),
 [mbedtls_ssl_conf_min_version (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a0eade5c83cc08001672061c5925caaaa),
 [mbedtls_ssl_conf_authmode (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a5695285c9dbfefec295012b566290f37),
 [mbedtls_ssl_set_hostname (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa659024cf89e20d6d2248c0626db7ef2),
 [Server Name Indication (RFC 6066)](https://datatracker.ietf.org/doc/html/rfc6066#section-3),
 
-### Specifying trusted root authority certificates
+## Specifying trusted root authority certificates
+
 <span style = "color: #9b0000" > When using Mbed TLS, it is necessary to concatenate all trusted CA certificates into one file in the PEM format.</span> Trusted root certs are usually found within a directory such as _/etc/ssl/certs_. If they are not concatenated, concatenate them using e.g. the _cat_ command. We will now assume that a file "trusted_certs.pem" contains all trusted root certificates.
 
 In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. In that case, use arbitrary trusted CA certificate files instead.
-~~~c
 
-    /* Structure to load trusted root certs into. */
-    mbedtls_x509_crt ca_certs;
-    mbedtls_x509_crt_init(&ca_certs);
+```c
+/* Structure to load trusted root certs into. */
+mbedtls_x509_crt ca_certs;
+mbedtls_x509_crt_init(&ca_certs);
 
-    /* Parse the file with root certificates. */
-    if (mbedtls_x509_crt_parse_file(&ca_certs, "trusted_certs.pem") != 0) {
-        exit(EXIT_FAILURE);
-    }
+/* Parse the file with root certificates. */
+if (mbedtls_x509_crt_parse_file(&ca_certs, "trusted_certs.pem") != 0) {
+    exit(EXIT_FAILURE);
+}
 
-    /* Set the certificates as trusted for this session. */
-    mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, NULL);
+/* Set the certificates as trusted for this session. */
+mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, NULL);
+```
 
-~~~
 **Relevant links**:
 [mbedtls_x509_crt_init (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#ga016dd06bc770e77b84005f305df20ed1),
 [mbedtls_x509_crt_parse_file (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#gad4da63133d3590aa311488497d4c38ec),
 [mbedtls_ssl_conf_ca_chain (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a85c3bb6b682ba361d13de1c0a1eb69fb)
 
-### <span style = "color: #006600" >Optional: Checking revocation using local CRLs </span>
+## <span style = "color: #006600" >Optional: Checking revocation using local CRLs </span>
+
 Mbed TLS natively provides only _offline_ revocation checking. That is, the revocation list must already be present locally. If the CRL is contained in "crl.pem", we include it in the configuration as follows.
 
 <span style = "color: #6b6b6b" >(In the most recent versions (Mbed TLS 3.7), it may be possible to implement online revocation checks manually. We will include it in the guide when this version becomes more widely adapted.)</span>
+
 ```c
+/* Structure to load the CRL into. */
+mbedtls_x509_crl crl;
+mbedtls_x509_crl_init(&crl);
 
-    /* Structure to load the CRL into. */
-    mbedtls_x509_crl crl;
-    mbedtls_x509_crl_init(&crl);
+/* Load the CRL from file. */
+if (mbedtls_x509_crl_parse_file(&crl, "crl.pem") != 0) {
+    exit(EXIT_FAILURE);
+}    
 
-    /* Load the CRL from file. */
-    if (mbedtls_x509_crl_parse_file(&crl, "crl.pem") != 0) {
-        exit(EXIT_FAILURE);
-    }    
-    
-    /* Assign it to the config, together with the trusted CA file. */
-    mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, &crl);
-
+/* Assign it to the config, together with the trusted CA file. */
+mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, &crl);
 ```
+
 **Relevant links**:
 [mbedtls_x509_crl_init (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#ga8513a192e281217802837571da98e218),
 [mbedtls_x509_crl_parse_file (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#ga8e096827f1240b8f8bc15d6a83593f22),
 [mbedtls_ssl_conf_ca_chain (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a85c3bb6b682ba361d13de1c0a1eb69fb)
 
-### Initializing a TLS connection
+## Initializing a TLS connection
+
 At this point, we can initialize a TCP/IP connection and then build the TLS connection on top.
+
 ```c
+/* Initialize the underlying TCP/IP connection */
+if (mbedtls_net_connect(&server_fd, , opts.port, MBEDTLS_NET_PROTO_TCP) != 0) {
+    exit(EXIT_FAILURE);
+}
 
-    /* Initialize the underlying TCP/IP connection */
-    if (mbedtls_net_connect(&server_fd, , opts.port, MBEDTLS_NET_PROTO_TCP) != 0) {
-        exit(EXIT_FAILURE);
-    }
+/* Link the socket wrapper to our TLS session structure. 
+** Also set the onput/ouput function that we will use to transfer application data. */
+mbedtls_ssl_set_bio(&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL);
 
-    /* Link the socket wrapper to our TLS session structure. 
-    ** Also set the onput/ouput function that we will use to transfer application data. */
-    mbedtls_ssl_set_bio(&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL);
-
-    /* Perform the TLS handshake.
-    ** During this procedure, the peer certificate is validated. */
-    if (mbedtls_ssl_handshake(&ssl) != 0) {
-        exit(EXIT_FAILURE);
-    }
-
+/* Perform the TLS handshake.
+** During this procedure, the peer certificate is validated. */
+if (mbedtls_ssl_handshake(&ssl) != 0) {
+    exit(EXIT_FAILURE);
+}
 ```
+
 **Relevant links**:
 [mbedtls_net_connect (Mbed TLS docs)](https://tls.mbed.org/api/net__sockets_8h.html#ac12c400864a5aad46666828ce2a089a4),
 [mbedtls_ssl_set_bio (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a8b7442420aef7f1a76fa8c5336362f9e),
 [mbedtls_ssl_handshake (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a4a37e497cd08c896870a42b1b618186e),
 [TLS handshake (RFC 5246)](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4)
 
-### <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
+## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
+
 If certificate validation fails, _mbedtls\_ssl\_handshake()_ will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://tls.mbed.org/api/group__x509__module.html) or on our [page](https://x509errors.org/mbedtls#mbedtls).
+
 ```c
+/* Manually retrieve the result of certificate validation. */
+uint32_t res = mbedtls_ssl_get_verify_result(&ssl);
 
-    /* Manually retrieve the result of certificate validation. */
-    uint32_t res = mbedtls_ssl_get_verify_result(&ssl);
-
-    /* Print the result of certificate validation as a string into the standard error output. */
-    char message_buffer[2048];
-    mbedtls_x509_crt_verify_info(message_buffer, 2048, "", res);
-    fprintf(stderr, "%s", message_buffer);
-
+/* Print the result of certificate validation as a string into the standard error output. */
+char message_buffer[2048];
+mbedtls_x509_crt_verify_info(message_buffer, 2048, "", res);
+fprintf(stderr, "%s", message_buffer);
 ```
+
 **Relevant links**:
 [mbedtls_ssl_get_verify_result (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a516064f1468d459159ef7cd6c496a026),
 [mbedtls_x509_crt_verify_info (Mbed TLS docs)](https://tls.mbed.org/api/group__x509__module.html#gae88f1d8e6696eb2beeffe0a708219e6b),
@@ -201,46 +209,47 @@ If certificate validation fails, _mbedtls\_ssl\_handshake()_ will always fail wi
 [Certificate validation errors (MbedTLS docs)](https://tls.mbed.org/api/group__x509__module.html),
 [Certificate validation errors (x509errors)](https://x509errors.org/mbedtls#mbedtls)
 
-### Sending and receiving data using the TLS connection
-When the connection is successfully established, we can share application data with the server. These two functions provide the basic interface. 
-~~~c
-    
-    /* Prepare a message and send it to the server. */
-    char *message = "Hello server"; 
-    if (mbedtls_ssl_write(ssl, message, strlen(message)) != 1) {
-        exit(EXIT_FAILURE);
-    }
+## Sending and receiving data using the TLS connection
 
-    /* Prepare a static buffer for the response and read the response into that buffer. */
-    char buffer[4096];
-    if (mbedtls_ssl_read(ssl, buffer, 4096) != 1) {
-        exit(EXIT_FAILURE);
-    }
+When the connection is successfully established, we can share application data with the server. These two functions provide the basic interface.
 
-~~~
+```c
+/* Prepare a message and send it to the server. */
+char *message = "Hello server"; 
+if (mbedtls_ssl_write(ssl, message, strlen(message)) != 1) {
+    exit(EXIT_FAILURE);
+}
+
+/* Prepare a static buffer for the response and read the response into that buffer. */
+char buffer[4096];
+if (mbedtls_ssl_read(ssl, buffer, 4096) != 1) {
+    exit(EXIT_FAILURE);
+}
+```
+
 **Relevant links**:
 [mbedtls_ssl_write (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a5bbda87d484de82df730758b475f32e5),
 [mbedtls_ssl_read (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#aa2c29eeb1deaf5ad9f01a7515006ede5)
 
-### Closing the TLS connection
+## Closing the TLS connection
+
 The client is usually the one to indicate that the connection is finished. When we want the connection closed, the following steps are performed.
+
 ```c
+/* Gracefully close the connection by sending the "close notify" message to the server. */
+if (mbedtls_ssl_close_notify(&ssl) != 0) {
+    exit(EXIT_FAILURE);
+}
 
-    /* Gracefully close the connection by sending the "close notify" message to the server. */
-    if (mbedtls_ssl_close_notify(&ssl) != 0) {
-        exit(EXIT_FAILURE);
-    }
-
-    /* Clean up all used resources and structures. */
-    mbedtls_ssl_free(&ssl);
-    mbedtls_x509_crt_free(&ca_certs);
-    mbedtls_ssl_config_free(&conf);
-    mbedtls_net_free(&server_fd);
-    mbedtls_ctr_drbg_free(&drbg);
-    mbedtls_entropy_free(&entropy);
-
-
+/* Clean up all used resources and structures. */
+mbedtls_ssl_free(&ssl);
+mbedtls_x509_crt_free(&ca_certs);
+mbedtls_ssl_config_free(&conf);
+mbedtls_net_free(&server_fd);
+mbedtls_ctr_drbg_free(&drbg);
+mbedtls_entropy_free(&entropy);
 ```
+
 **Relevant links**:
 [mbedtls_ssl_close_notify (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#ac2c1b17128ead2df3082e27b603deb4c),
 [mbedtls_ssl_free (Mbed TLS docs)](https://tls.mbed.org/api/ssl_8h.html#a2dc104a181bcd11eafbbf7e6923978bc),
