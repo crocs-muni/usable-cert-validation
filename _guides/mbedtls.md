@@ -26,7 +26,7 @@ Mbed TLS requires quite a lot of structures to be initialized before we start.
 #include "mbedtls/ssl.h"
 
 /* Wrapper of the socket descriptor.
-** This will take care of the underlying TCP/IP connection. */ 
+** This will take care of the underlying TCP/IP connection. */
 mbedtls_net_context server_fd;
 mbedtls_net_init(&server_fd);
 
@@ -150,7 +150,7 @@ mbedtls_x509_crl_init(&crl);
 /* Load the CRL from file. */
 if (mbedtls_x509_crl_parse_file(&crl, "crl.pem") != 0) {
     exit(EXIT_FAILURE);
-}    
+}
 
 /* Assign it to the config, together with the trusted CA file. */
 mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, &crl);
@@ -171,7 +171,7 @@ if (mbedtls_net_connect(&server_fd, , opts.port, MBEDTLS_NET_PROTO_TCP) != 0) {
     exit(EXIT_FAILURE);
 }
 
-/* Link the socket wrapper to our TLS session structure. 
+/* Link the socket wrapper to our TLS session structure.
 ** Also set the onput/ouput function that we will use to transfer application data. */
 mbedtls_ssl_set_bio(&ssl, &server_fd, mbedtls_net_send, mbedtls_net_recv, NULL);
 
@@ -215,7 +215,7 @@ When the connection is successfully established, we can share application data w
 
 ```c
 /* Prepare a message and send it to the server. */
-char *message = "Hello server"; 
+char *message = "Hello server";
 if (mbedtls_ssl_write(ssl, message, strlen(message)) != 1) {
     exit(EXIT_FAILURE);
 }

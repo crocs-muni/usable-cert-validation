@@ -7,7 +7,7 @@ slug:       openssl
 
 # {{ page.title }}
 
-Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS. 
+Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS.
 
 This guide describes precise steps to take in order to do that successfully using the [OpenSSL 1.1.1](https://www.openssl.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
@@ -64,8 +64,8 @@ if (rr == NULL) {
 ```
 
 **Relevant links**:
-[getaddrinfo (linux manpages)](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html), 
-[Internet Protocol (RFC 791)](https://tools.ietf.org/html/rfc791), 
+[getaddrinfo (linux manpages)](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html),
+[Internet Protocol (RFC 791)](https://tools.ietf.org/html/rfc791),
 [Transmission Control Protocol (RFC 793)](https://tools.ietf.org/html/rfc793)
 
 If everything went well, _sockfd_ is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
@@ -228,7 +228,7 @@ When the connection is successfully established, we can share application data w
 
 ```c
 /* Prepare a message and send it to the server. */
-char *message = "Hello server"; 
+char *message = "Hello server";
 if (SSL_write(ssl, message, strlen(message)) != 1) {
     exit(EXIT_FAILURE);
 }
