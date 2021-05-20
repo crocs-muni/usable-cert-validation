@@ -330,6 +330,7 @@ img.crocs {
 
 /* General code styling */
 
-pre.highlight {
+.highlight pre {
     padding: 1.5em 2em;
+    background-color: rgba(0, 0, 0, 0.05);
 }
