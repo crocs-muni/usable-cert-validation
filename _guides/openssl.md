@@ -7,11 +7,18 @@ slug:       openssl
 
 # {{ page.title }}
 
-Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS.
+{:.lead}
+This guide describes the implementation of a TLS client in [OpenSSL](https://www.openssl.org/).
 
-This guide describes precise steps to take in order to do that successfully using the [OpenSSL 1.1.1](https://www.openssl.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
+{:.lead}
+The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
-<span style = "color: #9b0000" >(Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
+* We work with the API in C of OpenSSL, version 1.1.1.
+* We assume the server to communicate with is at _x509errors.org_ and accepts TLS connections on a standard port 443.
+* <span style = "color: #9b0000" >Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.</span>
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Establishing an underlying TCP/IP connection
 
@@ -63,12 +70,16 @@ if (rr == NULL) {
 }
 ```
 
-**Relevant links**:
-[getaddrinfo (linux manpages)](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html),
-[Internet Protocol (RFC 791)](https://tools.ietf.org/html/rfc791),
-[Transmission Control Protocol (RFC 793)](https://tools.ietf.org/html/rfc793)
-
 If everything went well, _sockfd_ is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
+
+### Relevant links
+
+* [<code>getaddrinfo</code>](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html) (linux manpages)
+* [Internet Protocol](https://tools.ietf.org/html/rfc791) (RFC 791)
+* [Transmission Control Protocol](https://tools.ietf.org/html/rfc793) (RFC 793)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Creating a TLS context
 
@@ -99,11 +110,15 @@ if (SSL_CTX_set_default_verify_paths(ctx) != 1) {
 };
 ```
 
-**Relevant links**:
-[SSL_CTX_new (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html),
-[SSL_CTX_set_min_proto_version (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_min_proto_version.html),
-[SSL_CTX_set_verify (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_verify.html),
-[SSL_CTX_set_default_verify_paths (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_default_verify_paths.html)
+### Relevant links
+
+* [<code>SSL_CTX_new</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html) (OpenSSL docs)
+* [<code>SSL_CTX_set_min_proto_version</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_min_proto_version.html) (OpenSSL docs)
+* [<code>SSL_CTX_set_verify</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_verify.html) (OpenSSL docs)
+* [<code>SSL_CTX_set_default_verify_paths</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_default_verify_paths.html) (OpenSSL docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #9b0000" >Alternative: Setting an arbitrary trust anchor</span>
 
@@ -116,8 +131,12 @@ if (SSL_CTX_load_verify_locations(ctx, "trusted_ca.pem", "trusted_dir") != 1) {
 }
 ```
 
-**Relevant links**:
-[SSL_CTX_load_verify_locations (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_load_verify_locations.html)
+### Relevant links
+
+* [<code>SSL_CTX_load_verify_locations</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_load_verify_locations.html) (OpenSSL docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #006600" >Optional: Custom certificate validation settings</span>
 
@@ -151,10 +170,14 @@ if (X509_VERIFY_PARAM_set1_ip_asc(vpm, "192.168.2.1") != 1) {
 }
 ```
 
-**Relevant links**:
-[SSL_CTX_get0_param (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_get0_param.html),
-[X509_VERIFY_PARAM_set_flags (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html),
-[Subject Alternative Name Extension (RFC 5280)](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6)
+### Relevant links
+
+* [<code>SSL_CTX_get0_param</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_get0_param.html) (OpenSSL docs)
+* [<code>X509_VERIFY_PARAM_set_flags</code>](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html) (OpenSSL docs)
+* [Subject Alternative Name Extension](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6) (RFC 5280)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Initializing a TLS connection
 
@@ -191,14 +214,18 @@ if (SSL_connect(ssl) != 1) {
 }
 ```
 
-**Relevant links**:
-[SSL_new (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_new.html),
-[SSL_set_fd (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_set_fd.html),
-[SSL_set_tlsext_host_name (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_set_tlsext_host_name.html),
-[SSL_set1_host (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_set1_host.html),
-[SSL_connect (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_connect.html),
-[Server Name Indication (RFC 6066)](https://datatracker.ietf.org/doc/html/rfc6066#section-3),
-[TLS handshake (RFC 5246)](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4)
+### Relevant links
+
+* [<code>SSL_new</code>](https://www.openssl.org/docs/manmaster/man3/SSL_new.html) (OpenSSL docs)
+* [<code>SSL_set_fd</code>](https://www.openssl.org/docs/manmaster/man3/SSL_set_fd.html) (OpenSSL docs)
+* [<code>SSL_set_tlsext_host_name</code>](https://www.openssl.org/docs/manmaster/man3/SSL_set_tlsext_host_name.html) (OpenSSL docs)
+* [<code>SSL_set1_host</code>](https://www.openssl.org/docs/manmaster/man3/SSL_set1_host.html) (OpenSSL docs)
+* [<code>SSL_connect</code>](https://www.openssl.org/docs/manmaster/man3/SSL_connect.html) (OpenSSL docs)
+* [Server Name Indication](https://datatracker.ietf.org/doc/html/rfc6066#section-3) (RFC 6066)
+* [TLS handshake](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4) (RFC 5246)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
 
@@ -215,12 +242,16 @@ const char *message = X509_verify_cert_error_string(verifyResult);
 fprintf(stderr, "%s", message);
 ```
 
-**Relevant links**:
-[SSL_get_verify_result (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_get_verify_result.html),
-[X509_verify_cert_error_string (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/X509_verify_cert_error_string.html),
-[Certificate validation errors (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html),
-[Certificate validation errors (X509errors)](https://x509errors.org/#openssl),
-[Certificate path validation (RFC 5280)](https://datatracker.ietf.org/doc/html/rfc5280#section-6)
+### Relevant links
+
+* [<code>SSL_get_verify_result</code>](https://www.openssl.org/docs/manmaster/man3/SSL_get_verify_result.html) (OpenSSL docs)
+* [<code>X509_verify_cert_error_string</code>](https://www.openssl.org/docs/manmaster/man3/X509_verify_cert_error_string.html) (OpenSSL docs)
+* [Certificate validation errors](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) (OpenSSL docs)
+* [Certificate validation errors](https://x509errors.org/#openssl) (x509errors.org)
+* [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Sending and receiving data using the TLS connection
 
@@ -240,9 +271,13 @@ if (SSL_read(ssl, buffer, 4096) != 1) {
 }
 ```
 
-**Relevant links**:
-[SSL_write (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_write.html),
-[SSL_read (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_read.html)
+### Relevant links
+
+* [<code>SSL_write</code>](https://www.openssl.org/docs/manmaster/man3/SSL_write.html) (OpenSSL docs)
+* [<code>SSL_read</code>](https://www.openssl.org/docs/manmaster/man3/SSL_read.html) (OpenSSL docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Closing the TLS connection
 
@@ -276,8 +311,10 @@ if (sockfd >= 0) {
 }
 ```
 
-**Relevant links**:
-[SSL_shutdown (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_shutdown.html),
-[SSL_free (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_free.html),
-[SSL_CTX_free (OpenSSL docs)](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_free.html)
+### Relevant links
+
+* [<code>SSL_shutdown</code>](https://www.openssl.org/docs/manmaster/man3/SSL_shutdown.html) (OpenSSL docs)
+* [<code>SSL_free</code>](https://www.openssl.org/docs/manmaster/man3/SSL_free.html) (OpenSSL docs)
+* [<code>SSL_CTX_free</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_free.html) (OpenSSL docs)
+
 </div></div>
