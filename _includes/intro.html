@@ -14,8 +14,12 @@
         <div class="fadeout" id="intro-fadeout" hidden></div>
         <p class="collapse multi-collapse text-center" id="intro-button">
             <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="collapseExample" onclick="hideIntroFadeout()">
-                <span class="fa fa-fw fa-chevron-down"></span> Open to read more <span class="fa fa-fw fa-chevron-down"></span>
+                <span class="fa fa-fw fa-chevron-down"></span> Open to read more
             </button>
+            {% assign guides = site.guides | where: "slug", page.library %}
+            {% for guide in guides %}
+                <a class="btn btn-primary" href="/guides/{{ page.library }}"><span class="fas fa-fw fa-file-code"></span> See TLS developer guide</a>
+            {% endfor %}
         </p>
     </div>
 </div></div>
