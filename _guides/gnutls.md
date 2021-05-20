@@ -161,7 +161,8 @@ if (r = gnutls_server_name_set(session, GNUTLS_NAME_DNS, "x509errors.org", strle
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #9b0000" >Alternative: Setting a custom trust anchor</span>
+{:.text-danger}
+## Alternative: Setting a custom trust anchor
 
 In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows (any of the two procedures can be skipped). This must be done _before_ we link the credentials structure to the session context.
 
@@ -192,7 +193,8 @@ if (gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, creds) < 0) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #006600" >Optional: Sending an OCSP status request to the server</span>
+{:.text-success}
+## Optional: Sending an OCSP status request to the server
 
 One of the modern methods of revocation checking is via OCSP-stapling, when the server sends revocation information "stapled" in the TLS handshake. GnuTLS checks such revocation information by default, but the server will not send it unless we explicitly tell it to do so.
 
@@ -253,7 +255,8 @@ if (r < 0) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
+{:.text-success}
+## Optional: Checking the result of peer certificate validation
 
 If certificate validation fails, `gnutls_handshake()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html#gnutls_005fcertificate_005fstatus_005ft) or on our [page](https://x509errors.org/gnutls#gnutls).
 

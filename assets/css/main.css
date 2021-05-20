@@ -294,6 +294,14 @@ footer .footer-right {
     margin-bottom: 0;
 }
 
+.text-success {
+    color: rgb(0,102,0)!important;
+}
+
+.text-danger {
+    color: rgb(155,0,0)!important;
+}
+
 /* Gradient fadeout for intro text */
 .fadeout {
     position: relative;
