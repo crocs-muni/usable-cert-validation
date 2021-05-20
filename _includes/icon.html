@@ -15,18 +15,8 @@
     <a class="fas fa-external-link-alt {{ include.float }} color-darkgrey"  href="{{ include.href }}" style="font-size: 0.65em;" title="Link to source"></a>
   {% when 'error-link' %}
     <span class="fas fa-fw fa-link {{ include.float }} color-verydarkgrey" title="= Equal error&#10;> Linked error covers a subset of cases&#10;< Linked error covers a superset of cases"></span>
-  {% when 'equal' %}
-    <span class="fas fa-fw fa-equals {{ include.float }}" title="This error is equal to the current error"></span>
-  {% when 'subset' %}
-    <span class="fas fa-fw fa-greater-than {{ include.float }}" title="This error is a subset of the current error"></span>
-  {% when 'superset' %}
-    <span class="fas fa-fw fa-less-than {{ include.float }}" title="This error is a superset of the current error"></span>
   {% when 'button-bug' %}
     <span class="fas fa-fw fa-bug color-white"></span>
-  {% when 'button-table' %}
-    <span class="fas fa-fw fa-table color-white"></span>
-  {% when 'button-methodology' %}
-    <span class="fas fa-fw fa-project-diagram color-white"></span>
   {% when 'button-email' %}
     <span class="fas fa-fw fa-envelope color-white"></span>
   {% when 'message' %}
