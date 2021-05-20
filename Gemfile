@@ -8,3 +8,6 @@ gem 'jekyll-sitemap'
 # Temporarity provided locally.
 # Local fix applied (URI escaping needed). Pull request submitted.
 # gem 'jekyll-target-blank'
+
+# Temporarily added to resolve issues with Ruby 3.0.1
+gem "webrick", "~> 1.7"
