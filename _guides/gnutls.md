@@ -7,11 +7,18 @@ slug:       gnutls
 
 # {{ page.title }}
 
-Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS.
+{:.lead}
+This guide describes the implementation of a TLS client in [GnuTLS](https://www.gnutls.org/).
 
-This guide describes precise steps to take in order to do that successfully using the [GnuTLS 3.7.1](https://www.gnutls.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
+{:.lead}
+The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
-<span style = "color: #9b0000" >(Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.)</span>
+* We work with the API in C of GnuTLS, version 3.7.1.
+* We assume the server to communicate with is at _x509errors.org_ and accepts TLS connections on a standard port 443.
+* <span style = "color: #9b0000" >Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.</span>
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Establishing an underlying TCP/IP connection
 
@@ -63,12 +70,16 @@ if (rr == NULL) {
 }
 ```
 
-**Relevant links**:
-[getaddrinfo (linux manpages)](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html),
-[Internet Protocol (RFC 791)](https://tools.ietf.org/html/rfc791),
-[Transmission Control Protocol (RFC 793)](https://tools.ietf.org/html/rfc793)
-
 If everything went well, _sockfd_ is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
+
+### Relevant links
+
+* [getaddrinfo](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html) (linux manpages)
+* [Internet Protocol](https://tools.ietf.org/html/rfc791) (RFC 791)
+* [Transmission Control Protocol](https://tools.ietf.org/html/rfc793) (RFC 793)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Creating a session context structure
 
@@ -94,10 +105,14 @@ if (gnutls_certificate_allocate_credentials(&creds) < 0) {
 }
 ```
 
-**Relevant links**:
-[Session Initialization (GnuTLS docs)](https://www.gnutls.org/manual/html_node/Session-initialization.html),
-[gnutls_init (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005finit),
-[gnutls_certificate_allocate_credentials (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fallocate_005fcredentials)
+### Relevant links
+
+* [Session Initialization](https://www.gnutls.org/manual/html_node/Session-initialization.html) (GnuTLS docs)
+* [<code>gnutls_init</code>](https://gnutls.org/manual/gnutls.html#gnutls_005finit) (GnuTLS docs)
+* [<code>gnutls_certificate_allocate_credentials</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fallocate_005fcredentials) (GnuTLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Preparing the necessary session settings
 
@@ -130,14 +145,18 @@ if (r = gnutls_server_name_set(session, GNUTLS_NAME_DNS, "x509errors.org", strle
 }
 ```
 
-**Relevant links**:
-[Session Initialization (GnuTLS docs)](https://www.gnutls.org/manual/html_node/Session-initialization.html),
-[gnutls_set_default_priority (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fset_005fdefault_005fpriority),
-[gnutls_session_set_verify_cert (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fset_005fverify_005fcert-1),
-[gnutls_certificate_set_x509_system_trust (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fset_005fx509_005fsystem_005ftrust-1),
-[gnutls_credentials_set (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcredentials_005fset-1),
-[gnutls_server_name_set (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fserver_005fname_005fset),
-[Server Name Indication (RFC 6066)](https://datatracker.ietf.org/doc/html/rfc6066#section-3)
+### Relevant links
+
+* [Session Initialization](https://www.gnutls.org/manual/html_node/Session-initialization.html) (GnuTLS docs)
+* [<code>gnutls_set_default_priority</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fset_005fdefault_005fpriority) (GnuTLS docs)
+* [<code>gnutls_session_set_verify_cert</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fset_005fverify_005fcert-1) (GnuTLS docs)
+* [<code>gnutls_certificate_set_x509_system_trust</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fset_005fx509_005fsystem_005ftrust-1) (GnuTLS docs)
+* [<code>gnutls_credentials_set</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcredentials_005fset-1) (GnuTLS docs)
+* [<code>gnutls_server_name_set</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fserver_005fname_005fset) (GnuTLS docs)
+* [Server Name Indication](https://datatracker.ietf.org/doc/html/rfc6066#section-3) (RFC 6066)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #9b0000" >Alternative: Setting a custom trust anchor</span>
 
@@ -160,11 +179,15 @@ if (gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, creds) < 0) {
 }
 ```
 
-**Relevant links**:
-[Certificate credentials (GnuTLS docs)](https://gnutls.org/manual/html_node/Certificate-credentials.html),
-[gnutls_certificate_set_x509_trust_file (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fset_005fx509_005ftrust_005ffile),
-[gnutls_certificate_set_x509_trust_dir (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fset_005fx509_005ftrust_005fdir),
-[gnutls_credentials_set (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcredentials_005fset-1)
+### Relevant links
+
+* [Certificate credentials](https://gnutls.org/manual/html_node/Certificate-credentials.html) (GnuTLS docs)
+* [<code>gnutls_certificate_set_x509_trust_file</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fset_005fx509_005ftrust_005ffile) (GnuTLS docs)
+* [<code>gnutls_certificate_set_x509_trust_dir</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fset_005fx509_005ftrust_005fdir) (GnuTLS docs)
+* [<code>gnutls_credentials_set</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcredentials_005fset-1) (GnuTLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #006600" >Optional: Sending an OCSP status request to the server</span>
 
@@ -178,12 +201,16 @@ if (r = gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
 }
 ```
 
-**Relevant links**:
-[gnutls_ocsp_status_request_enable_client (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fenable_005fclient),
-[OCSP protocol (RFC 6960)](https://datatracker.ietf.org/doc/html/rfc6960),
-[OCSP stapling (GnuTLS docs)](https://www.gnutls.org/manual/html_node/OCSP-stapling.html),
-[OCSP "must-staple" extension (RFC 7633)](https://datatracker.ietf.org/doc/html/rfc7633),
-[Certificate Status Request TLS Extension (RFC 6066)](https://datatracker.ietf.org/doc/html/rfc6066#section-8)
+### Relevant links
+
+* [<code>gnutls_ocsp_status_request_enable_client</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fenable_005fclient) (GnuTLS docs)
+* [OCSP protocol](https://datatracker.ietf.org/doc/html/rfc6960) (RFC 6960)
+* [OCSP stapling](https://www.gnutls.org/manual/html_node/OCSP-stapling.html) (GnuTLS docs)
+* [OCSP "must-staple" extension](https://datatracker.ietf.org/doc/html/rfc7633) (RFC 7633)
+* [Certificate Status Request TLS Extension](https://datatracker.ietf.org/doc/html/rfc6066#section-8) (RFC 6066)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Initializing a TLS connection
 
@@ -207,14 +234,18 @@ if (r < 0) {
 }
 ```
 
-**Relevant links**:
-[gnutls_transport_set_int (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005ftransport_005fset_005fint),
-[gnutls_handshake_set_timeout (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fhandshake_005fset_005ftimeout),
-[gnutls_handshake (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fhandshake),
-[gnutls_error_is_fatal (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005ferror_005fis_005ffatal),
-[TLS handshake (RFC 5246)](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4)
-[Setting up the transport layer (GnuTLS docs)](https://www.gnutls.org/manual/html_node/Setting-up-the-transport-layer.html),
-[TLS handshake (GnuTLS docs)](https://www.gnutls.org/manual/html_node/TLS-handshake.html)
+### Relevant links
+
+* [<code>gnutls_transport_set_int</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005ftransport_005fset_005fint) (GnuTLS docs)
+* [<code>gnutls_handshake_set_timeout</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fhandshake_005fset_005ftimeout) (GnuTLS docs)
+* [<code>gnutls_handshake</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fhandshake) (GnuTLS docs)
+* [<code>gnutls_error_is_fatal</code>](https://gnutls.org/manual/gnutls.html#gnutls_005ferror_005fis_005ffatal) (GnuTLS docs)
+* [TLS handshake](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4) (RFC 5246)
+* [Setting up the transport layer](https://www.gnutls.org/manual/html_node/Setting-up-the-transport-layer.html) (GnuTLS docs)
+* [TLS handshake](https://www.gnutls.org/manual/html_node/TLS-handshake.html) (GnuTLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
 
@@ -234,12 +265,16 @@ fprintf(stderr, "%s", out.data);
 gnutls_free(out.data);
 ```
 
-**Relevant links**:
-[gnutls_session_get_verify_cert_status (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fget_005fverify_005fcert_005fstatus),
-[gnutls_certificate_type_get2 (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005ftype_005fget2),
-[gnutls_certificate_verification_status_print (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fverification_005fstatus_005fprint),
-[Certificate validation errors (X509errors)](https://x509errors.org/gnutls#gnutls),
-[Certificate path validation (RFC 5280)](https://datatracker.ietf.org/doc/html/rfc5280#section-6)
+### Relevant links
+
+* [<code>gnutls_session_get_verify_cert_status</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fget_005fverify_005fcert_005fstatus) (GnuTLS docs)
+* [<code>gnutls_certificate_type_get2</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005ftype_005fget2) (GnuTLS docs)
+* [<code>gnutls_certificate_verification_status_print</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fverification_005fstatus_005fprint) (GnuTLS docs)
+* [Certificate validation errors](https://x509errors.org/gnutls#gnutls) (x509errors.org)
+* [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Sending and receiving data using the TLS connection
 
@@ -259,10 +294,14 @@ if (gnutls_record_recv(session, buffer, 4096) < 0) {
 }
 ```
 
-**Relevant links**:
-[Data transfer and termination (GnuTLS docs)](https://www.gnutls.org/manual/html_node/Data-transfer-and-termination.html#Data-transfer-and-termination),
-[gnutls_record_send (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005frecord_005fsend-1),
-[gnutls_record_recv (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#index-gnutls_005frecord_005frecv-1)
+### Relevant links
+
+* [Data transfer and termination](https://www.gnutls.org/manual/html_node/Data-transfer-and-termination.html#Data-transfer-and-termination) (GnuTLS docs)
+* [<code>gnutls_record_send</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005frecord_005fsend-1) (GnuTLS docs)
+* [<code>gnutls_record_recv</code>](https://gnutls.org/manual/gnutls.html#index-gnutls_005frecord_005frecv-1) (GnuTLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
 
 ## Closing the connection
 
@@ -290,10 +329,10 @@ if (sockfd >= 0) {
 }
 ```
 
-**Relevant links**:
-[Data transfer and termination (GnuTLS docs)](https://www.gnutls.org/manual/html_node/Data-transfer-and-termination.html#Data-transfer-and-termination),
-[gnutls_bye (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fbye),
-[gnutls_certificate_free_credentials (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005ffree_005fcredentials),
-[gnutls_deinit (GnuTLS docs)](https://gnutls.org/manual/gnutls.html#gnutls_005fdeinit)
+### Relevant links
+* [Data transfer and termination](https://www.gnutls.org/manual/html_node/Data-transfer-and-termination.html#Data-transfer-and-termination) (GnuTLS docs)
+* [<code>gnutls_bye</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fbye) (GnuTLS docs)
+* [<code>gnutls_certificate_free_credentials</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005ffree_005fcredentials) (GnuTLS docs)
+* [<code>gnutls_deinit</code>](https://gnutls.org/manual/gnutls.html#gnutls_005fdeinit) (GnuTLS docs)
 
 </div></div>
