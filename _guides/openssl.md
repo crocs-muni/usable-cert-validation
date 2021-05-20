@@ -15,7 +15,10 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 
 * We work with the API in C of OpenSSL, version 1.1.1.
 * We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
-* <span style = "color: #9b0000" >Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.</span>
+
+{% include alert.html type="warning"
+    content="Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption."
+%}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">

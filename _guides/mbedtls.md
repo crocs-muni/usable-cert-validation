@@ -15,8 +15,14 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 
 * We work with the API in C of Mbed TLS, version 2.16.9.
 * We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
-* <span style = "color: #9b0000" >Note: Mbed TLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement.</span>
-* <span style = "color: #9b0000" >Note: This guide _does not_ cover advanced techniques that may follow after the connection is already established, e.g. session resumption.</span>
+
+{% include alert.html type="warning"
+    content="Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption."
+%}
+
+{% include alert.html type="danger"
+    content="Note: Mbed TLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement."
+%}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -126,7 +132,11 @@ if (mbedtls_ssl_set_hostname(&ssl, "x509errors.org") != 0) {
 
 ## Specifying trusted root authority certificates
 
-<span style = "color: #9b0000" > When using Mbed TLS, it is necessary to concatenate all trusted CA certificates into one file in the PEM format.</span> Trusted root certs are usually found within a directory such as `/etc/ssl/certs`. If they are not concatenated, concatenate them using e.g. the `cat` command. We will now assume that a file `trusted_certs.pem` contains all trusted root certificates.
+Trusted root certs are usually found within a directory such as `/etc/ssl/certs`. If they are not concatenated, concatenate them using e.g. the `cat` command. We will now assume that a file `trusted_certs.pem` contains all trusted root certificates.
+
+{% include alert.html type="info"
+    content="When using Mbed TLS, it is necessary to concatenate all trusted CA certificates into one file in the PEM format."
+%}
 
 In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. In that case, use arbitrary trusted CA certificate files instead.
 
