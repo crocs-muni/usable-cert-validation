@@ -29,10 +29,11 @@
                 <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
                     <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Guides</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
-                        {% for guide in site.data.guides %}
-                          <a class="dropdown-item" href=
-                          "/{{ guide.name }}">
-                          {{ guide.title }}</a>
+                        {% for library in site.data.libraries %}
+                            {% assign guides = site.guides | where: "slug", library.name %}
+                            {% for guide in guides %}
+                                <a class="dropdown-item" href="{{ guide.url }}">{{ library.title }}</a>
+                            {% endfor %}
                         {% endfor %}
                     </div>
                 </li>
