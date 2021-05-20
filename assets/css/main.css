@@ -327,3 +327,9 @@ section {position:relative}
 img.crocs {
     width: 100%;
 }
+
+/* General code styling */
+
+pre.highlight {
+    padding: 1.5em 2em;
+}
