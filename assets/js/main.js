@@ -7,10 +7,13 @@ $(document).ready(function(){
         .siblings('.card-header')
         .addClass('collapsed');
 
-    // show the intro button
-    $('#intro-button').addClass('show');
-    // show the gradient text-blocker (implicitly hidden for non JS users)
-    document.getElementById("intro-fadeout").hidden = false;
+    // if intro is included
+    if (document.getElementById("intro-fadeout")) {
+        // show the intro button
+        $('#intro-button').addClass('show');
+        // show the gradient text-blocker (implicitly hidden for non JS users)
+        document.getElementById("intro-fadeout").hidden = false;
+    }
 
     // show error if the url redirects to it
     currentHref = window.location.href
