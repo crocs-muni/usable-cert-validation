@@ -7,7 +7,7 @@ slug:       gnutls
 
 # {{ page.title }}
 
-Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS. 
+Assume we want to communicate with a server at _x509errors.org:443_ securely, using TLS.
 
 This guide describes precise steps to take in order to do that successfully using the [GnuTLS 3.7.1](https://www.gnutls.org/) API in C. The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
@@ -64,8 +64,8 @@ if (rr == NULL) {
 ```
 
 **Relevant links**:
-[getaddrinfo (linux manpages)](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html), 
-[Internet Protocol (RFC 791)](https://tools.ietf.org/html/rfc791), 
+[getaddrinfo (linux manpages)](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html),
+[Internet Protocol (RFC 791)](https://tools.ietf.org/html/rfc791),
 [Transmission Control Protocol (RFC 793)](https://tools.ietf.org/html/rfc793)
 
 If everything went well, _sockfd_ is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
@@ -202,7 +202,7 @@ do {
 } while (r < 0 && gnutls_error_is_fatal(r) == 0);
 
 /* Fail if the handshake was not succesful. */
-if (r < 0) { 
+if (r < 0) {
     exit(EXIT_FAILURE);
 }
 ```
@@ -243,11 +243,11 @@ gnutls_free(out.data);
 
 ## Sending and receiving data using the TLS connection
 
-When the connection is successfully established, we can share application data with the server. These two functions provide the basic interface. 
+When the connection is successfully established, we can share application data with the server. These two functions provide the basic interface.
 
 ```c
 /* Prepare a message and send it to the server. */
-char *message = "Hello server"; 
+char *message = "Hello server";
 if (gnutls_record_send(session, message, strlen(message)) < 0) {
     exit(EXIT_FAILURE);
 }
