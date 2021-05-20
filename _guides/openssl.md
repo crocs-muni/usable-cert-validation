@@ -123,7 +123,8 @@ if (SSL_CTX_set_default_verify_paths(ctx) != 1) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #9b0000" >Alternative: Setting an arbitrary trust anchor</span>
+{:.text-danger}
+## Alternative: Setting an arbitrary trust anchor
 
 In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows:
 
@@ -141,7 +142,8 @@ if (SSL_CTX_load_verify_locations(ctx, "trusted_ca.pem", "trusted_dir") != 1) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #006600" >Optional: Custom certificate validation settings</span>
+{:.text-success}
+## Optional: Custom certificate validation settings
 
 Optionally, you may want to put additional constraints on certificate validation. OpenSSL allows for this by modifying the `verify params` structure. In this example, we enforce strict certificate validation and put requirements on the IP address contained in the _Subject Alternative Name_ extension of the server certificate. All possible settings and flags can be found in the original [documentation](https://www.openssl.org/docs/man1.1.0/man3/X509_VERIFY_PARAM_set_flags.html)
 
@@ -230,7 +232,8 @@ if (SSL_connect(ssl) != 1) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
+{:.text-success}
+## Optional: Checking the result of peer certificate validation
 
 If certificate validation fails, `SSL_connect()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [page](https://x509errors.org/#openssl).
 

@@ -163,11 +163,13 @@ mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, NULL);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #006600" >Optional: Checking revocation using local CRLs </span>
+{:.text-success}
+## Optional: Checking revocation using local CRLs
 
 Mbed TLS natively provides only _offline_ revocation checking. That is, the revocation list must already be present locally. If the CRL is contained in `crl.pem`, we include it in the configuration as follows.
 
-<span style = "color: #6b6b6b" >In the most recent versions (Mbed TLS 3.7), it may be possible to implement online revocation checks manually. We will include it in the guide when this version becomes more widely adapted.</span>
+{:.text-muted}
+In the most recent versions (Mbed TLS 3.7), it may be possible to implement online revocation checks manually. We will include it in the guide when this version becomes more widely adapted.
 
 ```c
 /* Structure to load the CRL into. */
@@ -223,7 +225,8 @@ if (mbedtls_ssl_handshake(&ssl) != 0) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
+{:.text-success}
+## Optional: Checking the result of peer certificate validation
 
 If certificate validation fails, `mbedtls_ssl_handshake()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://tls.mbed.org/api/group__x509__module.html) or on our [page](https://x509errors.org/mbedtls#mbedtls).
 
