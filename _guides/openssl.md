@@ -14,7 +14,7 @@ This guide describes the implementation of a TLS client in [OpenSSL](https://www
 The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.
 
 * We work with the API in C of OpenSSL, version 1.1.1.
-* We assume the server to communicate with is at _x509errors.org_ and accepts TLS connections on a standard port 443.
+* We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
 * <span style = "color: #9b0000" >Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.</span>
 
 </div></div>
@@ -70,11 +70,11 @@ if (rr == NULL) {
 }
 ```
 
-If everything went well, _sockfd_ is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
+If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
 
 ### Relevant links
 
-* [<code>getaddrinfo</code>](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html) (linux manpages)
+* [`getaddrinfo`](https://man7.org/linux/man-pages/man3/getaddrinfo.3.html) (linux manpages)
 * [Internet Protocol](https://tools.ietf.org/html/rfc791) (RFC 791)
 * [Transmission Control Protocol](https://tools.ietf.org/html/rfc793) (RFC 793)
 
@@ -112,17 +112,17 @@ if (SSL_CTX_set_default_verify_paths(ctx) != 1) {
 
 ### Relevant links
 
-* [<code>SSL_CTX_new</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html) (OpenSSL docs)
-* [<code>SSL_CTX_set_min_proto_version</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_min_proto_version.html) (OpenSSL docs)
-* [<code>SSL_CTX_set_verify</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_verify.html) (OpenSSL docs)
-* [<code>SSL_CTX_set_default_verify_paths</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_default_verify_paths.html) (OpenSSL docs)
+* [`SSL_CTX_new`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_new.html) (OpenSSL docs)
+* [`SSL_CTX_set_min_proto_version`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_min_proto_version.html) (OpenSSL docs)
+* [`SSL_CTX_set_verify`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_verify.html) (OpenSSL docs)
+* [`SSL_CTX_set_default_verify_paths`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_default_verify_paths.html) (OpenSSL docs)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #9b0000" >Alternative: Setting an arbitrary trust anchor</span>
 
-In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in _trusted\_ca.pem_ and other authorities located in _trusted\_dir_ (these are filepath strings), we can easily change the trust setting as follows:
+In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows:
 
 ```c
 /* Both the file path and the directory path can be set to NULL if they are not used */
@@ -133,14 +133,14 @@ if (SSL_CTX_load_verify_locations(ctx, "trusted_ca.pem", "trusted_dir") != 1) {
 
 ### Relevant links
 
-* [<code>SSL_CTX_load_verify_locations</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_load_verify_locations.html) (OpenSSL docs)
+* [`SSL_CTX_load_verify_locations`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_load_verify_locations.html) (OpenSSL docs)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
 ## <span style = "color: #006600" >Optional: Custom certificate validation settings</span>
 
-Optionally, you may want to put additional constraints on certificate validation. OpenSSL allows for this by modifying the _verify params_ structure. In this example, we enforce strict certificate validation and put requirements on the IP address contained in the _Subject Alternative Name_ extension of the server certificate. All possible settings and flags can be found in the original [documentation](https://www.openssl.org/docs/man1.1.0/man3/X509_VERIFY_PARAM_set_flags.html)
+Optionally, you may want to put additional constraints on certificate validation. OpenSSL allows for this by modifying the `verify params` structure. In this example, we enforce strict certificate validation and put requirements on the IP address contained in the _Subject Alternative Name_ extension of the server certificate. All possible settings and flags can be found in the original [documentation](https://www.openssl.org/docs/man1.1.0/man3/X509_VERIFY_PARAM_set_flags.html)
 
 ```c
 #include <openssl/x509.h>
@@ -172,8 +172,8 @@ if (X509_VERIFY_PARAM_set1_ip_asc(vpm, "192.168.2.1") != 1) {
 
 ### Relevant links
 
-* [<code>SSL_CTX_get0_param</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_get0_param.html) (OpenSSL docs)
-* [<code>X509_VERIFY_PARAM_set_flags</code>](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html) (OpenSSL docs)
+* [`SSL_CTX_get0_param`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_get0_param.html) (OpenSSL docs)
+* [`X509_VERIFY_PARAM_set_flags`](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html) (OpenSSL docs)
 * [Subject Alternative Name Extension](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6) (RFC 5280)
 
 </div></div>
@@ -216,11 +216,11 @@ if (SSL_connect(ssl) != 1) {
 
 ### Relevant links
 
-* [<code>SSL_new</code>](https://www.openssl.org/docs/manmaster/man3/SSL_new.html) (OpenSSL docs)
-* [<code>SSL_set_fd</code>](https://www.openssl.org/docs/manmaster/man3/SSL_set_fd.html) (OpenSSL docs)
-* [<code>SSL_set_tlsext_host_name</code>](https://www.openssl.org/docs/manmaster/man3/SSL_set_tlsext_host_name.html) (OpenSSL docs)
-* [<code>SSL_set1_host</code>](https://www.openssl.org/docs/manmaster/man3/SSL_set1_host.html) (OpenSSL docs)
-* [<code>SSL_connect</code>](https://www.openssl.org/docs/manmaster/man3/SSL_connect.html) (OpenSSL docs)
+* [`SSL_new`](https://www.openssl.org/docs/manmaster/man3/SSL_new.html) (OpenSSL docs)
+* [`SSL_set_fd`](https://www.openssl.org/docs/manmaster/man3/SSL_set_fd.html) (OpenSSL docs)
+* [`SSL_set_tlsext_host_name`](https://www.openssl.org/docs/manmaster/man3/SSL_set_tlsext_host_name.html) (OpenSSL docs)
+* [`SSL_set1_host`](https://www.openssl.org/docs/manmaster/man3/SSL_set1_host.html) (OpenSSL docs)
+* [`SSL_connect`](https://www.openssl.org/docs/manmaster/man3/SSL_connect.html) (OpenSSL docs)
 * [Server Name Indication](https://datatracker.ietf.org/doc/html/rfc6066#section-3) (RFC 6066)
 * [TLS handshake](https://datatracker.ietf.org/doc/html/rfc5246#section-7.4) (RFC 5246)
 
@@ -229,7 +229,7 @@ if (SSL_connect(ssl) != 1) {
 
 ## <span style = "color: #006600" >Optional: Checking the result of peer certificate validation</span>
 
-If certificate validation fails, _SSL\_connect()_ will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [page](https://x509errors.org/#openssl).
+If certificate validation fails, `SSL_connect()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [page](https://x509errors.org/#openssl).
 
 ```c
 /* Retrieve the error code of the error that occured during certificate validation. */
@@ -244,8 +244,8 @@ fprintf(stderr, "%s", message);
 
 ### Relevant links
 
-* [<code>SSL_get_verify_result</code>](https://www.openssl.org/docs/manmaster/man3/SSL_get_verify_result.html) (OpenSSL docs)
-* [<code>X509_verify_cert_error_string</code>](https://www.openssl.org/docs/manmaster/man3/X509_verify_cert_error_string.html) (OpenSSL docs)
+* [`SSL_get_verify_result`](https://www.openssl.org/docs/manmaster/man3/SSL_get_verify_result.html) (OpenSSL docs)
+* [`X509_verify_cert_error_string`](https://www.openssl.org/docs/manmaster/man3/X509_verify_cert_error_string.html) (OpenSSL docs)
 * [Certificate validation errors](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) (OpenSSL docs)
 * [Certificate validation errors](https://x509errors.org/#openssl) (x509errors.org)
 * [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
@@ -273,8 +273,8 @@ if (SSL_read(ssl, buffer, 4096) != 1) {
 
 ### Relevant links
 
-* [<code>SSL_write</code>](https://www.openssl.org/docs/manmaster/man3/SSL_write.html) (OpenSSL docs)
-* [<code>SSL_read</code>](https://www.openssl.org/docs/manmaster/man3/SSL_read.html) (OpenSSL docs)
+* [`SSL_write`](https://www.openssl.org/docs/manmaster/man3/SSL_write.html) (OpenSSL docs)
+* [`SSL_read`](https://www.openssl.org/docs/manmaster/man3/SSL_read.html) (OpenSSL docs)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -313,8 +313,8 @@ if (sockfd >= 0) {
 
 ### Relevant links
 
-* [<code>SSL_shutdown</code>](https://www.openssl.org/docs/manmaster/man3/SSL_shutdown.html) (OpenSSL docs)
-* [<code>SSL_free</code>](https://www.openssl.org/docs/manmaster/man3/SSL_free.html) (OpenSSL docs)
-* [<code>SSL_CTX_free</code>](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_free.html) (OpenSSL docs)
+* [`SSL_shutdown`](https://www.openssl.org/docs/manmaster/man3/SSL_shutdown.html) (OpenSSL docs)
+* [`SSL_free`](https://www.openssl.org/docs/manmaster/man3/SSL_free.html) (OpenSSL docs)
+* [`SSL_CTX_free`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_free.html) (OpenSSL docs)
 
 </div></div>
