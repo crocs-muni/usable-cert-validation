@@ -20,15 +20,6 @@ import picocli.CommandLine.Option;
 @Command(name = "client", version = "client 1.0")
 public class Client implements Runnable {
 
-    //@Option(names = {"--check_crl"})
-    //boolean checkCrl;
-
-    //@Option(names = {"--check_ocsp"})
-    //boolean checkOcsp;
-
-    //@Option(names = {"--check_ocsp_staple"})
-    //boolean checkOcspStaple;
-
     @Option(names = {"--host"})
     String host = "";
 
@@ -116,7 +107,6 @@ public class Client implements Runnable {
         }
 
         SSLParameters params = ctx.getDefaultSSLParameters();
-        // adjust the parameters to be secure
         params.setEndpointIdentificationAlgorithm("HTTPS");
 
         SSLSocket socket = null;

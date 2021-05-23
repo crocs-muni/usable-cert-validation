@@ -31,9 +31,6 @@ private:
     }
 
     bool tls_session_established(const Botan::TLS::Session &session) override {
-        // the session with the tls server was established
-        // return false to prevent the session from being cached, true to
-        // cache the session in the configured session manager
         (void)session;
         return false;
     }
@@ -72,8 +69,6 @@ public:
     int sockfd = -1;
 
     int tcp_connect(const std::string &host, const std::string &port) {
-        // TODO: move this function somewhere else
-
         /* Hints that we send to server with our preferences */
         struct addrinfo hints = {
             .ai_flags = AI_ADDRCONFIG | AI_NUMERICSERV,
@@ -131,7 +126,6 @@ public:
         auto cacert_ptr = std::make_shared<Botan::X509_Certificate>(ca);
         anchor_ptr = std::make_shared<Botan::Certificate_Store_In_Memory>();
         anchor_ptr->add_certificate(cacert_ptr);
-        // TODO: normally we would use Botan::System_Certificate_Store
     }
 
     std::vector<Botan::Certificate_Store *> trusted_certificate_authorities(
@@ -188,10 +182,6 @@ int main(int argc, char **argv) {
     std::string host = vm["host"].as<std::string>();
     std::string port = vm["port"].as<std::string>();
     std::string trust_anchor = vm["trust_anchor"].as<std::string>();
-    // bool check_crl = vm["check_crl"].as<bool>();
-    // bool check_ocsp = vm["check_ocsp"].as<bool>();
-    // bool check_ocsp_staple = vm["check_ocsp_staple"].as<bool>();
-
 
     // prepare rng
     Botan::AutoSeeded_RNG rng;
@@ -223,7 +213,7 @@ int main(int argc, char **argv) {
                               Botan::TLS::Server_Information(host, port),
                               Botan::TLS::Protocol_Version::TLS_V12);
 
-    // move this into specific function do_handshake, check for errors, refactor
+    // handshake
     while (!client.is_closed() && !client.is_active()) {
         fd_set readfds;
         FD_ZERO(&readfds);

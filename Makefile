@@ -31,12 +31,6 @@ test: all
 	@echo "Running tests on the generated sites using html-proofer ..."
 	-@bundle exec ruby utils/web-test.rb
 
-# Test generated certificates for assigned errors
-#$(ERRORS_FOLDER)/*/*.yml:
-#	@printf "Testing certificates for %-70s" $(@D)/$(@F)
-#	@if RES=`grep verify-expected $@ | wc -l` && [ $$RES -eq 0 ]; then printf "[ -- ]\n"; \
-#		else utils/test-cert-validation.sh $(CERTS_BUILD_FOLDER) $@ && printf "[ OK ]\n"; fi
-
 # Web targets
 local: all
 	bundle exec jekyll serve

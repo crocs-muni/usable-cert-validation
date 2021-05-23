@@ -348,7 +348,7 @@
   slug: invalid-argument
   tags: [ format ]
   message: |
-    Botan::Invalid_Argument
+    Botan::Invalid_argument
   weight: 703
 
 - code: TLS_EXCEPTION

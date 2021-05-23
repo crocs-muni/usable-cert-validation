@@ -21,7 +21,7 @@ class Server:
         pass
 
     def listen(self, addr: str, port: int):
-        """Wait for a single connection, perform a handshake, then terminate.
+        """Wait for a connection, perform a handshake, don't respond futher.
 
         Keyword arguments:
         addr -- IP address to listen on
@@ -39,6 +39,7 @@ class Server:
 
 
 def main():
+    # Parse command-line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument('--host')
     parser.add_argument('--port')
@@ -46,6 +47,7 @@ def main():
     parser.add_argument('--chain_file')
     args = parser.parse_args()
 
+    # Start the server
     server = Server(args.key_file, args.chain_file)
     server.listen(args.host, int(args.port))
 

@@ -13,9 +13,8 @@ OUT_DIR=""
 # port to run main server on
 PORT_CTR_FILE=""
 
-# Parse command line arguments
 
-# Replace long arguments
+# parse command line arguments
 for arg; do
     case "$arg" in
         --certs_dir)         args+=( -c ) ;;
@@ -62,14 +61,17 @@ HOST=localhost
 
 
 main() {
+	# create a port counter if it doesn't exist
     if [ ! -f "${PORT_CTR_FILE}" ]
     then
       echo "50000" > ${PORT_CTR_FILE}
     fi
 
+    # will run on port based on the port counter
     MAIN_PORT=$(cat "${PORT_CTR_FILE}")
     increment_port
     
+    # run the servers and wait a bit
     MAIN_PID=-1
     CRL_PID=-1
     run_servers
@@ -124,9 +126,11 @@ main() {
 
 
 run_servers() {
+    # pick a server to run based on the configuratin file
     SERVER_CONFIG=$(cat "${VCONFIG_FILE}" | shyaml -y get-value servers)
     WHICH_MAIN=$(echo "${SERVER_CONFIG}" | shyaml get-value main.which "botan")
 
+    # normal run or debug run (with detailed output)
     if [ "${WHICH_MAIN}" == "python" ]
     then
         if [ "$DEBUG" == "true" ]
@@ -161,6 +165,7 @@ run_servers() {
     fi
     MAIN_PID=$!
 
+    # run a CRL distribution point if needed
     CRL_PORT=$(cat "${PORT_CTR_FILE}")
     increment_port
     CRL=$(echo "${SERVER_CONFIG}" | shyaml get-value crl.which null)
