@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Let's make the validation of TLS certificates usable.">
+<meta name="author" content="Centre for Research on Cryptography and Security, Masaryk University, Czechia">
+
+<title>Frequently asked questions</title>
+
+<!-- Matomo Tag Manager -->
+<script type="text/javascript">
+  var _mtm = window._mtm = window._mtm || [];
+  _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+  g.type='text/javascript'; g.async=true; g.src='https://fadmin.fi.muni.cz/piwik/js/container_PX176f6U.js'; s.parentNode.insertBefore(g,s);
+  </script>
+<!-- End Matomo Tag Manager -->
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="/assets/css/main.css" rel="stylesheet">
+<script src="https://kit.fontawesome.com/036c3720fc.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700&display=swap&subset=latin-ext" rel="stylesheet">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+</head>
+<body data-spy="scroll" data-target="#navbar" data-offset="100">
+  <nav class="navbar navbar-expand-md navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span class="fa-stack">
+                <span class="fas fa-fw fa-lg fa-certificate fa-stack-1x color-verydarkgrey"></span>
+                <span class="fas fa-fw fa-xs fa-check fa-stack-1x color-white"></span>
+            </span>
+            Frequently asked questions
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Show/hide navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="/#home">Intro</a>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Libraries</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                          <a class="dropdown-item" href="/#openssl">
+                          OpenSSL</a>
+                        
+                          <a class="dropdown-item" href="/gnutls#gnutls">
+                          GnuTLS</a>
+                        
+                          <a class="dropdown-item" href="/botan#botan">
+                          Botan</a>
+                        
+                          <a class="dropdown-item" href="/mbedtls#mbedtls">
+                          Mbed TLS</a>
+                        
+                          <a class="dropdown-item" href="/openjdk#openjdk">
+                          OpenJDK</a>
+                        
+                    </div>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Guides</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/openssl">
+                                OpenSSL</a>
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/gnutls">
+                                GnuTLS</a>
+                            
+                        
+                            
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/mbedtls">
+                                Mbed TLS</a>
+                            
+                        
+                            
+                            
+                        
+                    </div>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="#faq">FAQ</a>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="/#about">About</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+  <main role="main">
+    <div class="section"><div class="container">
+    <h1 id="faq">Frequently asked questions</h1>
+
+    <p>Here you can find further details on our project in the question-and-answer format.<br>
+Should you have other questions or feedback, feel free to email the project team at <a href="mailto:webmaster@x509errors.org">webmaster@x509errors.org</a>.</p>
+
+    <h2 id="is-certificate-validation-really-that-problematic">Is certificate validation really that problematic?</h2>
+
+    <p>Yes, it is.</p>
+
+    <p>And there are multiple real-world examples. Many of the can be found in the excellent paper <a href="http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">The Most Dangerous Code in the World: Validating SSL Certificates in Non-Browser Software</a>. Quoting the authors of the paper: <em>“[…] SSL certificate validation is completely broken in many security-critical applications and libraries. Vulnerable software includes Amazon’s EC2 Java library and all cloud clients based on it; Amazon’s and PayPal’s merchant SDKs responsible for transmitting payment details from e-commerce sites to payment gateways; integrated shopping carts such as osCommerce, ZenCart, Ubercart, and PrestaShop; AdMob code used by mobile websites; Chase mobile banking and several other Android apps and libraries; Java Web-services middleware—including Apache Axis, Axis 2, Codehaus XFire, and Pusher library for Android—and all applications employing this middleware. Any SSL connection from any of these programs is insecure against a man-in-the-middle attack.”</em></p>
+
+    <h2 id="what-libraries-do-we-plan-to-include-into-the-comparison">What libraries do we plan to include into the comparison?</h2>
+
+    <p>Ultimately, we plan to include <a href="https://www.openssl.org/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">OpenSSL</a>, <a href="https://www.gnutls.org/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">GnuTLS</a>, <a href="https://openjdk.java.net/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">OpenJDK</a>, <a href="https://botan.randombit.net/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Botan</a>, <a href="https://tls.mbed.org/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">mBedTLS</a>, <a href="https://www.wolfssl.com/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">WolfSSL</a> (previously named PolarSSL), <a href="https://www.gnupg.org/software/libgcrypt/index.html" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">libgcrypt</a> (used in GPG) and <a href="https://docs.microsoft.com/en-us/windows/win32/seccrypto/cryptoapi-system-architecture" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Microsoft Crypto API</a> (with the follow-up API <a href="https://docs.microsoft.com/en-us/windows/win32/seccng/cng-portal" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">CNG</a>).</p>
+
+    <p>The selection is based on the Internet-wide popularity analysis of of key-generating libraries. The research shows that OpenSSL is <em>by far</em> the most widely used (that’s why we start building our taxonomy from OpenSSL errors). For details, see the original publication of Nemec et al.:  <a href="https://crocs.fi.muni.cz/public/papers/acsac2017" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Measuring Popularity of Cryptographic Libraries in Internet-Wide Scans</a>.</p>
+
+    <h2 id="has-a-similar-consolidation-effort-appeared-before">Has a similar consolidation effort appeared before?</h2>
+
+    <p>Not in the X.509 certificate world (as far as we know). If we speak about APIs in general, <a href="https://en.wikipedia.org/wiki/POSIX" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">POSIX</a> is a great example of API standardization. More recently, an effort similar to ours tries to consolidate the documentation on web development across multiple browsers (see the <a href="https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Mozilla blog post</a> for further details).</p>
+
+    <h2 id="what-further-improvements-do-we-plan">What further improvements do we plan?</h2>
+
+    <ul>
+      <li>Adding reproducible certificate examples for more cases.</li>
+      <li>Adding more libraries to the mapping and documentation (see above).</li>
+      <li>Developing a public repository of code examples performing the secure TLS connection.</li>
+      <li>Conducting experiments regarding the developers’ preferences on documentation content. This will allow us to design a version that fits the developers’ needs.</li>
+      <li>Investigating the occurrence of individual errors in the wild by analyzing the existing certificate databases (think <a href="https://crt.sh/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">crt.sh</a>, <a href="https://censys.io/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Censys</a> or <a href="https://opendata.rapid7.com/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Rapid7 datasets</a>).</li>
+    </ul>
+
+    <h2 id="has-there-been-any-real-world-impact-so-far">Has there been any real-world impact so far?</h2>
+
+    <p>As of late 2019, we are gradually contacting the library developers to collect feedback. Furthermore, research that led to this problem is gradually getting published on various venues (see below). Last but not least, as we find smaller issues, we directly file issues and pull requests in the library repositories (e.g. OpenSSL <a href="https://github.com/openssl/openssl/issues/4548" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">man invocation improvement</a>, <a href="https://github.com/openssl/web/issues/24#issuecomment-353961715" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">web documentation fix</a> or <a href="https://github.com/openssl/openssl/pull/9529" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">error documentation fix</a>).</p>
+
+  </div></div>
+
+<div class="section"><div class="container">
+    <h1 id="our-related-work">Our related work</h1>
+
+    <p>Below we list our current and past related work (in the form of academic papers) on the usability of X.509 certificate ecosystem.</p>
+
+    <h2 id="trust-perceptions-in-flawed-tls-certificates">Trust perceptions in flawed TLS certificates</h2>
+
+    <p>Our paper <a href="https://crocs.fi.muni.cz/public/papers/acsac2019" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Will You Trust This TLS Certificate? Perceptions of People Working in IT</a> was published at the Annual Computer Security Applications Conference (ACSAC) 2019.</p>
+
+    <blockquote>
+      <p><strong>Abstract:</strong> Flawed TLS certificates are not uncommon on the Internet. While they signal a potential issue, in most cases they have benign causes (e.g., misconfiguration or even deliberate deployment). This adds fuzziness to the decision on whether to trust a connection or not. Little is known about perceptions of flawed certificates by IT professionals, even though their decisions impact high numbers of end users. Moreover, it is unclear how much does the content of error messages and documentation influence these perceptions.</p>
+
+      <p>To shed light on these issues, we observed 75 attendees of an industrial IT conference investigating, different certificate validation errors. Furthermore, we focused on the influence of re-worded error messages and redesigned documentation. We find that people working in IT have very nuanced opinions regarding the tested certificate flaws with trust decisions being far from binary. The self-signed and the name constrained certificates seem to be over-trusted (the latter also being poorly understood). We show that even small changes in existing error messages and documentation can positively influence resource use, comprehension, and trust assessment. Our conclusions can be directly used in practice by adopting the re-worded error messages and documentation.</p>
+    </blockquote>
+
+    <h2 id="the-usability-of-certificate-manipulation-tools">The usability of certificate-manipulation tools</h2>
+
+    <p>Our paper <a href="https://crocs.fi.muni.cz/public/papers/rsa2018" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Why Johnny the Developer Can’t Work with Public Key Certificates</a> was published at RSA Cryptographers’ Track 2018.</p>
+
+    <blockquote>
+      <p><strong>Abstract:</strong> There have been many studies exposing poor usability of security software for the common end user. However, only a few inspect the usability challenges faced by more knowledgeable users. We conducted an experiment to empirically assess usability of the command line interface of OpenSSL, a well known and widely used cryptographic library. Based on the results, we try to propose specific improvements that would encourage more secure behavior. We observed 87 developers/administrators at two certificate-related tasks in a controlled environment. Furthermore, we collected participant opinions on both the tool interface and available documentation. Based on the overall results, we deem the OpenSSL usability insufficient according to both user opinions and standardized measures. Moreover, the perceived usability seems to be correlated with previous experience and used resources. There was a great disproportion between the participant views of a successful task accomplishment and the reality. A general dissatisfaction with both OpenSSL interface and its manual page was shared among the majority of the participants. As hinted by a participant, OpenSSL gradually “turned into a complicated set of sharp kitchen knives” – it can perform various jobs very well, but laymen risk stabbing themselves in the process. This highlights the necessity of a usable design even for tools targeted at experienced users.</p>
+    </blockquote>
+
+    <h2 id="the-evolution-of-tls-warnings-in-browsers">The evolution of TLS warnings in browsers</h2>
+
+    <p>Our paper in collaboration with our colleague <a href="https://crocs.fi.muni.cz/people/lkraus" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Lydia Kraus</a> entitled <a href="https://crocs.fi.muni.cz/public/papers/spw2019" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Evolution of SSL/TLS Indicators and Warnings in Web Browsers</a> was published at the Security Protocols Workshop (SPW) of 2019.</p>
+
+    <blockquote>
+      <p><strong>Abstract:</strong> The creation of the World Wide Web (WWW) in the early 1990’s finally made the Internet accessible to a wider part of the population. With this increase in users, security became more important. To address confidentiality and integrity requirements on the web, Netscape—by then a major web browser vendor—presented the Secure Socket Layer (SSL), later versions of which were renamed to Transport Layer Security (TLS). In turn, this necessitated the introduction of both security indicators in browsers to inform users about the TLS connection state and also of warnings to inform users about potential errors in the TLS connection to a website. Looking at the evolution of indicators and warnings, we find that the qualitative data on security indicators and warnings, i.e., screen shots of different browsers over time is inconsistent. Hence, in this paper we outline our methodology for collecting a comprehensive data set of web browser security indicators and warnings, which will enable researchers to better understand how security indicators and TLS warnings in web browsers evolved over time.</p>
+    </blockquote>
+
+    <p>Based on the ideas presented in this paper, we started developing a tool for automatic collection of SSL/TLS warnings and errors in different browser. The tool <strong>TLS warning collector</strong> can be found on <a href="https://github.com/crocs-muni/tls-warning-collector" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">GitHub</a>.</p>
+
+  </div></div>
+
+  </main>
+  <div id="feedback">
+    <div class="card card-body collapsed">
+        <h4>Feedback</h4>
+        <p>Something is not working? File a bug report to our repository, please.</p>
+        <a class="ext-link ext-link btn btn-primary d-block mb-3" href="https://github.com/crocs-muni/usable-cert-validation/issues/new?labels=bug&amp;title=Bug+report&amp;body=Please+describe+what+does+not+work..." target="_blank" rel="noopener noreferrer">
+    <span class="fas fa-fw fa-bug color-white"></span>
+  
+ Bug report</a>
+        <p>Other comments or ideas?</p>
+        <a class="btn btn-primary d-block" target="_blank" href="mailto:webmaster@x509errors.org?subject=Site+feedback">
+    <span class="fas fa-fw fa-envelope color-white"></span>
+  
+ Email us!</a>
+    </div>
+    <div class="btn btn-secondary">
+<span class="fas fa-fw fa-question-circle"></span> Feedback</div>
+</div>
+
+  <footer>
+    <div class="container clearfix">
+        <span class="footer-left">
+            <a class="no-ext-link-icon" href="mailto:webmaster@x509errors.org" title="Contact email">
+            <span class="fas fa-fw fa-envelope"></span> webmaster@x509errors.org</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation" title="GitHub repository" target="_blank" rel="noopener noreferrer">
+            <span class="fab fa-fw fa-github"></span> usable-cert-validation</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation/commit/94ec4c4750960074dc9e4f0da226b7dd1ff8276a" title="Last modification" target="_blank" rel="noopener noreferrer">
+            <span class="fas fa-fw fa-clock"></span> 2021-07-13</a>
+        </span>
+        <span class="footer-right">
+            © 2020 <a class="ext-link ext-link no-ext-link-icon" href="https://muni.cz/" target="_blank" rel="noopener noreferrer">Masaryk University</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://crocs.fi.muni.cz/" target="_blank" rel="noopener noreferrer">Centre for Research on Cryptography and Security</a>
+        </span>
+    </div>
+</footer>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

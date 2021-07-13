@@ -1,0 +1,344 @@
+/* Common HTML tags */
+@import "friendly.css";
+
+body {
+    font-family: 'Source Sans Pro', sans-serif !important;
+    font-size: 1.0rem;
+    position: relative;
+    text-align: justify;
+    /* learn more: http://philipwalton.github.io/solved-by-flexbox/demos/sticky-footer/ */
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+@media screen and (max-width: 768px) {
+    body {
+        text-align: left;
+    }
+}
+
+main {
+    flex: 1;
+}
+
+h1 {
+    font-weight: bold;
+    font-size: 3.5rem;
+    margin-bottom: 2rem;
+}
+
+h3 {
+    font-size: 1.4rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.7rem;
+}
+
+h4 {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 0.2rem;
+}
+
+h1:target,
+h2:target {
+    padding-top: 5rem;
+    margin-top: -5rem;
+}
+
+.container p:last-child {
+    margin-bottom: 0;
+}
+
+p+ul {
+    margin-top: -0.5em;
+}
+
+a {
+    cursor: pointer;
+}
+
+a.ext-link:after {
+    display: inline-block;
+    font-family: "Font Awesome 5 Free";
+    content: "\f35d";
+    margin-left: 0.3em;
+    font-size: 60%;
+    font-weight: 900;
+    font-style: normal;
+    text-decoration: none;
+    position: relative;
+    top: -0.15em;
+}
+
+a.no-ext-link-icon:after {
+    content: none;
+}
+
+a.fas:hover {
+    color: #303030;
+}
+
+.error-box a .fas, .error-box a .fab {
+    margin-left: 0.3em;
+    margin-right: 0.1em;
+}
+
+blockquote {
+    margin: 0 1em 0 1em;
+    font-style: italic;
+    color: #6c757d;
+}
+
+/* Feedback box */
+
+#feedback {
+    position: fixed;
+    left: 0;
+    top: 15%;
+    margin-left: -3px;
+}
+
+@media screen and (max-width: 768px) {
+    #feedback {
+        display: none;
+    }
+}
+
+#feedback .card {
+    float: left;
+    width: 300px;
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    background-color: #FAFAFA;
+    transition: margin .25s ease;
+}
+
+#feedback .card.collapsed {
+    margin-left: -300px;
+}
+
+#feedback .btn-secondary {
+    float: right;
+    font-size: 1.5rem;
+    margin-top: 120px;
+    margin-left: -3.6rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: 0.25rem 0.25rem 0 0;
+    background-color: #6c757d;
+    transform: rotate(90deg);
+}
+
+#feedback .btn-secondary:hover { background-color: #505050; }
+
+/* Core design: sectioning, header, footer, buttons */
+
+.color-verydarkgrey { color: #505050; }
+.color-mediumdarkgrey { color: #6c757d; }
+.color-darkgrey { color: darkgrey; }
+.color-red { color: red; }
+.color-white { color: white; }
+.color-reset { color: inherit !important; }
+
+.section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+@media screen and (max-width: 576px) {
+    .section {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+}
+
+.linked-anchor {
+    scroll-margin-top: 4rem;
+}
+
+.section:nth-of-type(even) {
+    background: #F8F8FB;
+}
+
+.navbar-scrolled {
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    background: #F7F7F7;
+}
+
+.navbar-brand {
+    width: 0px;
+    overflow: hidden;
+}
+
+.navbar-scrolled .navbar-brand {
+    width: auto;
+}
+
+.navbar-brand .fa-stack {
+    width: 1.5em;
+    margin-top: -0.2rem;
+}
+
+.navbar a {
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.navbar .nav-link.active, 
+.navbar .nav-link.show, 
+.navbar .active > .nav-link, 
+.navbar .show > .nav-link {
+    font-weight: bold;
+}
+
+.navbar-expand-md .navbar-nav .nav-link {
+    padding-left: 1rem;
+    padding-right: 1rem;
+}
+
+footer {
+    width: 100%;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    background: #E7E7E7;
+    color: #303030;
+}
+
+footer a {
+    color: #303030;
+}
+
+footer a:hover {
+    text-decoration: none;
+}
+
+footer .footer-left {
+    float: left;
+}
+
+footer .footer-right {
+    float: right;
+    text-align: right;
+}
+
+
+@media screen and (max-width: 768px) {
+    footer .footer-right {
+        margin-top: 1rem;
+        float: left;
+        text-align: left;
+    }
+}
+
+.card {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.02)
+}
+
+/* Error box */
+
+.error-box .card-header {
+    cursor: pointer;
+    font-size: 1.4rem;
+    background: none;
+}
+
+.error-box .card-header .float-right {
+    line-height: 2rem;
+}
+
+.error-box .card h3:first-child { 
+    margin-top: 0px;
+}
+
+.error-box:last-child .card-header {
+    border: none;
+}
+
+.error-box .card-header.collapsed .fa-chevron-down,
+.error-box .card-header .fa-chevron-right {
+  display: none;
+}
+
+.error-box .card-header.collapsed .fa-chevron-right,
+.error-box .card-header .fa-chevron-down {
+  display: inline-block;
+}
+
+/* Other style elements */
+
+.lead {
+    font-size: 150%;
+    margin-top: 1rem;
+}
+
+.intro {
+    text-align: left;
+}
+
+@media screen and (max-width: 768px) {
+    .intro .card {
+        margin-bottom: 20px;
+    }
+}
+
+.intro h4 {
+    margin-bottom: 0.75rem;
+}
+
+.intro p {
+    margin-bottom: 0.5rem;
+}
+
+.intro p:last-child {
+    margin-bottom: 0;
+}
+
+.text-success {
+    color: rgb(0,102,0)!important;
+}
+
+.text-danger {
+    color: rgb(155,0,0)!important;
+}
+
+/* Gradient fadeout for intro text */
+.fadeout {
+    position: relative;
+    margin-top: -4.5rem;
+    bottom: 0em;
+    width:100%;
+    height: 3em;
+    background: -webkit-linear-gradient(
+        rgba(250, 0, 0, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    ); 
+    background-image: -moz-linear-gradient(
+        rgba(250, 0, 0, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -o-linear-gradient(
+        rgba(250, 0, 0, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: linear-gradient(
+        rgba(250, 0, 0, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+    background-image: -ms-linear-gradient(
+        rgba(250, 0, 0, 0) 0%,
+        rgba(255, 255, 255, 1) 100%
+    );
+} 
+section {position:relative}  
+
+img.crocs {
+    width: 100%;
+}
+
+/* General code styling */
+
+.highlight pre {
+    padding: 1.5em 2em;
+    background-color: rgba(0, 0, 0, 0.05);
+}

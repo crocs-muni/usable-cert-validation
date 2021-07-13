@@ -1,0 +1,5 @@
+Contact: mukrop@mail.muni.cz
+Contact: labak-supp@fi.muni.cz
+Acknowledgments: https://github.com/crocs-muni/usable-cert-validation#readme
+Preferred-Languages: en, cs, sk, de
+Canonical: https://x509errors.org/.well-known/security.txt

@@ -1,0 +1,4391 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Let's make the validation of TLS certificates usable.">
+<meta name="author" content="Centre for Research on Cryptography and Security, Masaryk University, Czechia">
+
+<title>Usable X.509 errors: Mbed TLS</title>
+
+<!-- Matomo Tag Manager -->
+<script type="text/javascript">
+  var _mtm = window._mtm = window._mtm || [];
+  _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+  g.type='text/javascript'; g.async=true; g.src='https://fadmin.fi.muni.cz/piwik/js/container_PX176f6U.js'; s.parentNode.insertBefore(g,s);
+  </script>
+<!-- End Matomo Tag Manager -->
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="/assets/css/main.css" rel="stylesheet">
+<script src="https://kit.fontawesome.com/036c3720fc.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700&display=swap&subset=latin-ext" rel="stylesheet">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+</head>
+<body data-spy="scroll" data-target="#navbar" data-offset="100">
+  <nav class="navbar navbar-expand-md navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span class="fa-stack">
+                <span class="fas fa-fw fa-lg fa-certificate fa-stack-1x color-verydarkgrey"></span>
+                <span class="fas fa-fw fa-xs fa-check fa-stack-1x color-white"></span>
+            </span>
+            Usable X.509 errors: Mbed TLS
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Show/hide navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="#home">Intro</a>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Libraries</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                          <a class="dropdown-item" href="/#openssl">
+                          OpenSSL</a>
+                        
+                          <a class="dropdown-item" href="/gnutls#gnutls">
+                          GnuTLS</a>
+                        
+                          <a class="dropdown-item" href="/botan#botan">
+                          Botan</a>
+                        
+                          <a class="dropdown-item" href="#mbedtls">
+                          Mbed TLS</a>
+                        
+                          <a class="dropdown-item" href="/openjdk#openjdk">
+                          OpenJDK</a>
+                        
+                    </div>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Guides</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/openssl">
+                                OpenSSL</a>
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/gnutls">
+                                GnuTLS</a>
+                            
+                        
+                            
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/mbedtls">
+                                Mbed TLS</a>
+                            
+                        
+                            
+                            
+                        
+                    </div>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="/faq">FAQ</a>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+  <main role="main">
+    <div class="section"><div class="container">
+    <h1 id="home">Usable X.509 errors: Mbed TLS</h1>
+    <div class="lead">
+        <p>Our goal is to simplify the ecosystem by consolidating the errors and their documentation (similarly to <a href="https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">web documentation</a>) and better explaining what the validation errors mean.</p>
+        <div class="collapse multi-collapse show" id="collapsed-text">
+            <p>Correctly validating X.509 certificates turns out to be pretty complicated (e.g., <a href="http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Georgiev2012</a>, <a href="https://crocs.fi.muni.cz/papers/acsac2019" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Ukrop2019</a>). Yet certificate validation is crucial for secure communication on the Internet (think <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">TLS</a>).</p>
+            <p>For every error, we aim to provide our redesigned documentation (
+    <span class="fas fa-fw fa-flag  text-primary" title="Our documentation"></span>
+  
+), an example certificate (
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+), original documentation provided by the library (
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+, unused or deprecated errors denoted by 
+    <span class="fas fa-fw fa-times  color-verylightgray" title="Unused or deprecated"></span>
+  
+). Furthermore, we provide links to corresponding errors from other libraries (
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+). In the future, we plan on adding error frequencies based on IP-wide scans and elaborating on the consequences of individual errors.</p>
+            <p class="text-center">
+                <a class="btn btn-primary" href="/faq">
+                    See more in FAQ
+                </a>
+            </p>
+        </div>
+        <div class="fadeout" id="intro-fadeout" hidden></div>
+        <p class="collapse multi-collapse text-center" id="intro-button">
+            <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="collapseExample" onclick="hideIntroFadeout()">
+                <span class="fa fa-fw fa-chevron-down"></span> Open to read more
+            </button>
+            
+            
+                <a class="btn btn-primary" href="/guides/mbedtls"><span class="fas fa-fw fa-file-code"></span> See TLS developer guide</a>
+            
+        </p>
+    </div>
+</div></div>
+
+
+
+
+
+
+    <div id="mbedtls" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="time-validity-errors">Time validity errors</h2>
+        <p>
+        Errors occuring when a certificate is outside its validity period or when it is revoked by its CA. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.5" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Validity</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc5280#section-3.3" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Revocation</a> (RFC 5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-future-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-future" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-future">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_FUTURE">MBEDTLS_­X509_­BADCERT_­FUTURE</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-future">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate validity starts in the future.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate validity starts in the future
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­FUTURE in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NOT_YET_VALID.zip">NOT_YET_VALID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NOT_YET_VALID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­FUTURE in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-cert-not-yet-valid-link">X509_­V_­ERR_­CERT_­NOT_­YET_­VALID</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-not-activated-link">GNUTLS_­CERT_­NOT_­ACTIVATED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#cert-not-yet-valid-link">CERT_­NOT_­YET_­VALID</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#validity-check-failed-link">VALIDITY_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-expired-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-expired" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-expired">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_EXPIRED">MBEDTLS_­X509_­BADCERT_­EXPIRED</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-expired">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate validity has expired.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate validity has expired
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­EXPIRED in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EXPIRED.zip">EXPIRED </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EXPIRED/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­EXPIRED in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-cert-has-expired-link">X509_­V_­ERR_­CERT_­HAS_­EXPIRED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-expired-link">GNUTLS_­CERT_­EXPIRED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#cert-has-expired-link">CERT_­HAS_­EXPIRED</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#validity-check-failed-link">VALIDITY_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcrl-future-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcrl-future" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcrl-future">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCRL_FUTURE">MBEDTLS_­X509_­BADCRL_­FUTURE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcrl-future">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRL is from the future.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The CRL is from the future
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcrl-expired-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcrl-expired" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcrl-expired">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCRL_EXPIRED">MBEDTLS_­X509_­BADCRL_­EXPIRED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcrl-expired">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRL is expired.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The CRL is expired
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-revoked-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-revoked" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-revoked">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_REVOKED">MBEDTLS_­X509_­BADCERT_­REVOKED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-revoked">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate has been revoked (is on a CRL).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate has been revoked (is on a CRL)
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="mbedtls" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="trust-or-chain-related-errors">Trust or chain related errors</h2>
+        <p>
+        These errors occur when the trust chain to the root certificate is not built correctly or fails. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-3.2" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Paths</a> (RFC 5280), <a href="https://tools.ietf.org/html/rfc5280#section-5" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Revocation Lists</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc2560" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">OCSP</a> (RFC 2560)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-not-trusted-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-not-trusted" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-not-trusted">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_NOT_TRUSTED">MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-not-trusted">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate is not correctly signed by the trusted CA.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate is not correctly signed by the trusted CA
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_PATH_LEN_EXCEEDED.zip">BC_PATH_LEN_EXCEEDED </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_PATH_LEN_EXCEEDED/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/CHAIN_LOOP.zip">CHAIN_LOOP </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/CHAIN_LOOP/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/INVALID_SIGNATURE.zip">INVALID_SIGNATURE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/INVALID_SIGNATURE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_CA_FALSE.zip">ISSUER_CA_FALSE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_CA_FALSE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_NO_MATCH_SUBJECT.zip">ISSUER_NO_MATCH_SUBJECT </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_NO_MATCH_SUBJECT/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NO_CERTSIGN_IN_KEYUSAGE.zip">NO_CERTSIGN_IN_KEYUSAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NO_CERTSIGN_IN_KEYUSAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SELF_SIGNED_END_ENTITY.zip">SELF_SIGNED_END_ENTITY </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SELF_SIGNED_END_ENTITY/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SELF_SIGNED_INTERMEDIATE.zip">SELF_SIGNED_INTERMEDIATE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SELF_SIGNED_INTERMEDIATE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/UNKNOWN_ROOT_CN.zip">UNKNOWN_ROOT_CN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/UNKNOWN_ROOT_CN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-path-length-exceeded-link">X509_­V_­ERR_­PATH_­LENGTH_­EXCEEDED</a>, 
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>, 
+                        
+                            <a href="/#x509-v-err-cert-signature-failure-link">X509_­V_­ERR_­CERT_­SIGNATURE_­FAILURE</a>, 
+                        
+                            <a href="/#x509-v-err-invalid-ca-link">X509_­V_­ERR_­INVALID_­CA</a>, 
+                        
+                            <a href="/#x509-v-err-self-signed-cert-in-chain-link">X509_­V_­ERR_­SELF_­SIGNED_­CERT_­IN_­CHAIN</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signer-constraints-failure-link">GNUTLS_­CERT_­SIGNER_­CONSTRAINTS_­FAILURE</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-found-link">GNUTLS_­CERT_­SIGNER_­NOT_­FOUND</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-key-usage-violation-link">GNUTLS_­E_­KEY_­USAGE_­VIOLATION</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signature-failure-link">GNUTLS_­CERT_­SIGNATURE_­FAILURE</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-ca-link">GNUTLS_­CERT_­SIGNER_­NOT_­CA</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#cert-chain-too-long-link">CERT_­CHAIN_­TOO_­LONG</a>, 
+                        
+                            <a href="/botan#cert-issuer-not-found-link">CERT_­ISSUER_­NOT_­FOUND</a>, 
+                        
+                            <a href="/botan#signature-error-link">SIGNATURE_­ERROR</a>, 
+                        
+                            <a href="/botan#ca-cert-not-for-cert-issuer-link">CA_­CERT_­NOT_­FOR_­CERT_­ISSUER</a>, 
+                        
+                            <a href="/botan#cannot-establish-trust-link">CANNOT_­ESTABLISH_­TRUST</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#path-len-constraint-violated-link">PATH_­LEN_­CONSTRAINT_­VIOLATED</a>, 
+                        
+                            <a href="/openjdk#unable-to-find-valid-certification-path-link">UNABLE_­TO_­FIND_­VALID_­CERTIFICATION_­PATH</a>, 
+                        
+                            <a href="/openjdk#signature-check-failed-link">SIGNATURE_­CHECK_­FAILED</a>, 
+                        
+                            <a href="/openjdk#not-a-ca-certificate-link">NOT_­A_­CA_­CERTIFICATE</a>, 
+                        
+                            <a href="/openjdk#ca-key-usage-failed-link">CA_­KEY_­USAGE_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcrl-not-trusted-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcrl-not-trusted" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcrl-not-trusted">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCRL_NOT_TRUSTED">MBEDTLS_­X509_­BADCRL_­NOT_­TRUSTED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcrl-not-trusted">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRL is not correctly signed by the trusted CA.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The CRL is not correctly signed by the trusted CA
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+
+
+
+
+
+    <div id="mbedtls" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="name-related-errors">Name related errors</h2>
+        <p>
+        Errors signalizing problems with either hostname verification, NameConstaints standard extension or IP Address Delegation extension. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.10" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">NameConstaints extension</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc3779#section-2" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">IP Address Delegation extension</a> (RFC 3779),  <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.6" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Common Name</a> (RFC 5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-cn-mismatch-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-cn-mismatch" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-cn-mismatch">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_CN_MISMATCH">MBEDTLS_­X509_­BADCERT_­CN_­MISMATCH</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-cn-mismatch">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate Common Name (CN) does not match with the expected CN.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate Common Name (CN) does not match with the expected CN
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­CN_­MISMATCH in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_SUBJECT_AND_NO_SAN.zip">EMPTY_SUBJECT_AND_NO_SAN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_SUBJECT_AND_NO_SAN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/HOST_NO_MATCH_CN.zip">HOST_NO_MATCH_CN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/HOST_NO_MATCH_CN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­CN_­MISMATCH in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-hostname-mismatch-link">X509_­V_­ERR_­HOSTNAME_­MISMATCH</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#cert-name-nomatch-link">CERT_­NAME_­NOMATCH</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>, 
+                        
+                            <a href="/openjdk#no-name-matching-link">NO_­NAME_­MATCHING</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="mbedtls" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="usage-and-policy-errors">Usage and policy errors</h2>
+        <p>
+        Errors related to standard extensions CertificatePolicies, KeyUsage and ExtendedKeyUsage. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.3" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">KeyUsage extension</a> (RFC5280),  <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.12" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">ExtendedKeyUsage extension</a> (RFC5280),  <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.4" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">CertificatePolicies extension</a> (RFC5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-ns-cert-type-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-ns-cert-type" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-ns-cert-type">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_NS_CERT_TYPE">MBEDTLS_­X509_­BADCERT_­NS_­CERT_­TYPE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-ns-cert-type">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Usage does not match the nsCertType extension.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Usage does not match the nsCertType extension
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-key-usage-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-key-usage" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-key-usage">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_KEY_USAGE">MBEDTLS_­X509_­BADCERT_­KEY_­USAGE</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-key-usage">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Usage does not match the keyUsage extension.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Usage does not match the keyUsage extension
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­KEY_­USAGE in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/CHAIN_LOOP.zip">CHAIN_LOOP </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/CHAIN_LOOP/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_KEY_USAGE_END_CERT.zip">EMPTY_KEY_USAGE_END_CERT </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_KEY_USAGE_END_CERT/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­KEY_­USAGE in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>, 
+                        
+                            <a href="/#x509-v-err-invalid-purpose-link">X509_­V_­ERR_­INVALID_­PURPOSE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-found-link">GNUTLS_­CERT_­SIGNER_­NOT_­FOUND</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-key-usage-violation-link">GNUTLS_­E_­KEY_­USAGE_­VIOLATION</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#cert-issuer-not-found-link">CERT_­ISSUER_­NOT_­FOUND</a>, 
+                        
+                            <a href="/botan#verified-link">VERIFIED</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#unable-to-find-valid-certification-path-link">UNABLE_­TO_­FIND_­VALID_­CERTIFICATION_­PATH</a>, 
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#incorrect-key-usage-bits-link">INCORRECT_­KEY_­USAGE_­BITS</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-ext-key-usage-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-ext-key-usage" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-ext-key-usage">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_EXT_KEY_USAGE">MBEDTLS_­X509_­BADCERT_­EXT_­KEY_­USAGE</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-ext-key-usage">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Usage does not match the extendedKeyUsage extension.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Usage does not match the extendedKeyUsage extension
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­EXT_­KEY_­USAGE in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/UNKNOWN_EXT_KEY_USAGE.zip">UNKNOWN_EXT_KEY_USAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/UNKNOWN_EXT_KEY_USAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­EXT_­KEY_­USAGE in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-invalid-purpose-link">X509_­V_­ERR_­INVALID_­PURPOSE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#invalid-usage-link">INVALID_­USAGE</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#ext-key-usage-no-tls-server-link">EXT_­KEY_­USAGE_­NO_­TLS_­SERVER</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="mbedtls" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="algorithm-related-errors">Algorithm related errors</h2>
+        <p>
+        Various errors signalizing usage of invalid or deprecated algorithms. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc7935" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Algorithm and Key Size Profile for PKI</a> (RFC 7935),  <a href="https://tools.ietf.org/html/rfc6460" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Suite B Profile for TLS</a> (RFC 6460)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-bad-key-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-bad-key" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-bad-key">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_BAD_KEY">MBEDTLS_­X509_­BADCERT_­BAD_­KEY</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-bad-key">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate is signed with an unacceptable key (eg bad curve, RSA too short).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­BAD_­KEY in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/END_ENTITY_RSA_KEY_1024.zip">END_ENTITY_RSA_KEY_1024 </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/END_ENTITY_RSA_KEY_1024/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_RSA_KEY_1024.zip">ISSUER_RSA_KEY_1024 </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_RSA_KEY_1024/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­BAD_­KEY in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-ee-key-too-small-link">X509_­V_­ERR_­EE_­KEY_­TOO_­SMALL</a>, 
+                        
+                            <a href="/#x509-v-err-ca-key-too-small-link">X509_­V_­ERR_­CA_­KEY_­TOO_­SMALL</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-insecure-algorithm-link">GNUTLS_­CERT_­INSECURE_­ALGORITHM</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#tls-exception-link">TLS_­EXCEPTION</a>, 
+                        
+                            <a href="/botan#signature-method-too-weak-link">SIGNATURE_­METHOD_­TOO_­WEAK</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcrl-bad-key-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcrl-bad-key" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcrl-bad-key">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCRL_BAD_KEY">MBEDTLS_­X509_­BADCRL_­BAD_­KEY</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcrl-bad-key">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRL is signed with an unacceptable key (eg bad curve, RSA too short).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The CRL is signed with an unacceptable key (eg bad curve, RSA too short).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-bad-pk-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-bad-pk" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-bad-pk">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_BAD_PK">MBEDTLS_­X509_­BADCERT_­BAD_­PK</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-bad-pk">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcrl-bad-pk-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcrl-bad-pk" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcrl-bad-pk">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCRL_BAD_PK">MBEDTLS_­X509_­BADCRL_­BAD_­PK</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcrl-bad-pk">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The CRL is signed with an unacceptable PK alg (eg RSA vs ECDSA).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-bad-md-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-bad-md" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-bad-md">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_BAD_MD">MBEDTLS_­X509_­BADCERT_­BAD_­MD</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-bad-md">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The certificate is signed with an unacceptable hash.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The certificate is signed with an unacceptable hash.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­X509_­BADCERT_­BAD_­MD in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_HASH_MD5.zip">ISSUER_HASH_MD5 </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_HASH_MD5/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­X509_­BADCERT_­BAD_­MD in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-ca-md-too-weak-link">X509_­V_­ERR_­CA_­MD_­TOO_­WEAK</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-insecure-algorithm-link">GNUTLS_­CERT_­INSECURE_­ALGORITHM</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#untrusted-hash-link">UNTRUSTED_­HASH</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#failed-signature-algorithm-link">FAILED_­SIGNATURE_­ALGORITHM</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcrl-bad-md-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcrl-bad-md" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcrl-bad-md">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCRL_BAD_MD">MBEDTLS_­X509_­BADCRL_­BAD_­MD</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcrl-bad-md">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRL is signed with an unacceptable hash.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>The CRL is signed with an unacceptable hash.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-unknown-sig-alg-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-unknown-sig-alg" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-unknown-sig-alg">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_UNKNOWN_SIG_ALG">MBEDTLS_­ERR_­X509_­UNKNOWN_­SIG_­ALG</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-unknown-sig-alg">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Signature algorithm (oid) is unsupported.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Signature algorithm (oid) is unsupported
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-feature-unavailable-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-feature-unavailable" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-feature-unavailable">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_FEATURE_UNAVAILABLE">MBEDTLS_­ERR_­X509_­FEATURE_­UNAVAILABLE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-feature-unavailable">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Unavailable feature, e.g. RSA hashing/encryption combination.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Unavailable feature, e.g. RSA hashing/encryption combination
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="mbedtls" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="formatting-errors">Formatting errors</h2>
+        <p>
+        These errors occur when a field of the certificate/CRL contains invalid values or is badly formatted. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.1.1.3" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Signature</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.5.1" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Time formatting</a> (RFC 5280), <a href="https://tools.ietf.org/html/rfc5280#section-4.1.1.2" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Signature Algorithm</a> (RFC 5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-cert-unknown-format-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-cert-unknown-format" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-cert-unknown-format">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_CERT_UNKNOWN_FORMAT">MBEDTLS_­ERR_­X509_­CERT_­UNKNOWN_­FORMAT</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-cert-unknown-format">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Format not recognized as DER or PEM. 
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Format not recognized as DER or PEM
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-sig-mismatch-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-sig-mismatch" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-sig-mismatch">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_SIG_MISMATCH">MBEDTLS_­ERR_­X509_­SIG_­MISMATCH</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-sig-mismatch">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Signature algorithms do not match.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Signature algorithms do not match.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­ERR_­X509_­SIG_­MISMATCH in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/WRONG_SIGNATURE_ALGORITHM.zip">WRONG_SIGNATURE_ALGORITHM </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/WRONG_SIGNATURE_ALGORITHM/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­ERR_­X509_­SIG_­MISMATCH in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-cert-signature-failure-link">X509_­V_­ERR_­CERT_­SIGNATURE_­FAILURE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-certificate-error-link">GNUTLS_­E_­CERTIFICATE_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#decoding-error-link">DECODING_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-unknown-oid-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-unknown-oid" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-unknown-oid">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_UNKNOWN_OID">MBEDTLS_­ERR_­X509_­UNKNOWN_­OID</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-unknown-oid">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Requested OID is unknown.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Requested OID is unknown
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-version-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-version" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-version">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_VERSION">MBEDTLS_­ERR_­X509_­INVALID_­VERSION</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-version">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRT/CRL/CSR version element is invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The CRT/CRL/CSR version element is invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-signature-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-signature" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-signature">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_SIGNATURE">MBEDTLS_­ERR_­X509_­INVALID_­SIGNATURE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-signature">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The signature tag or value invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The signature tag or value invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-serial-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-serial" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-serial">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_SERIAL">MBEDTLS_­ERR_­X509_­INVALID_­SERIAL</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-serial">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The serial tag or value is invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The serial tag or value is invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-name-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-name" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-name">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_NAME">MBEDTLS_­ERR_­X509_­INVALID_­NAME</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-name">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The name tag or value is invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The name tag or value is invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-format-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-format" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-format">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_FORMAT">MBEDTLS_­ERR_­X509_­INVALID_­FORMAT</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-format">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The CRT/CRL/CSR format is invalid, e.g. different type expected.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The CRT/CRL/CSR format is invalid, e.g. different type expected
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­ERR_­X509_­INVALID_­FORMAT in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/V1_CERT_WITH_EXTENSIONS.zip">V1_CERT_WITH_EXTENSIONS </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/V1_CERT_WITH_EXTENSIONS/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­ERR_­X509_­INVALID_­FORMAT in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-certificate-error-link">GNUTLS_­E_­CERTIFICATE_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#ext-in-v1-v2-cert-link">EXT_­IN_­V1_­V2_­CERT</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-extensions-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-extensions" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-extensions">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_EXTENSIONS">MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-extensions">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The extension tag or value is invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The extension tag or value is invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_PATH_LEN_NEGATIVE.zip">BC_PATH_LEN_NEGATIVE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_PATH_LEN_NEGATIVE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/DUPLICATE_BC_EXTENSION.zip">DUPLICATE_BC_EXTENSION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/DUPLICATE_BC_EXTENSION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_EXT_KEY_USAGE.zip">EMPTY_EXT_KEY_USAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_EXT_KEY_USAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_IP_ADDR_BLOCKS.zip">EMPTY_IP_ADDR_BLOCKS </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_IP_ADDR_BLOCKS/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/IP_ADDR_BLOCKS_NO_SUBSET.zip">IP_ADDR_BLOCKS_NO_SUBSET </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/IP_ADDR_BLOCKS_NO_SUBSET/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_EMPTY.zip">NC_EMPTY </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_EMPTY/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_EXCLUDED_VIOLATION.zip">NC_EXCLUDED_VIOLATION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_EXCLUDED_VIOLATION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_MAXIMUM_PRESENT.zip">NC_MAXIMUM_PRESENT </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_MAXIMUM_PRESENT/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_MINIMUM_NOT_ZERO.zip">NC_MINIMUM_NOT_ZERO </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_MINIMUM_NOT_ZERO/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_PERMITTED_VIOLATION.zip">NC_PERMITTED_VIOLATION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_PERMITTED_VIOLATION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_UNKNOWN_NAME_TYPE.zip">NC_UNKNOWN_NAME_TYPE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_UNKNOWN_NAME_TYPE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_CA.zip">PROXY_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_LENGTH_EXCEEDED.zip">PROXY_LENGTH_EXCEEDED </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_LENGTH_EXCEEDED/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_NAME_NO_MATCH_ISSUER.zip">PROXY_NAME_NO_MATCH_ISSUER </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_NAME_NO_MATCH_ISSUER/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_WITH_SAN.zip">PROXY_WITH_SAN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_WITH_SAN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SAN_EMPTY_EMAIL.zip">SAN_EMPTY_EMAIL </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SAN_EMPTY_EMAIL/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SAN_NULL_BYTE_IN_EMAIL.zip">SAN_NULL_BYTE_IN_EMAIL </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SAN_NULL_BYTE_IN_EMAIL/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/UNKNOWN_CRITICAL_EXTENSION.zip">UNKNOWN_CRITICAL_EXTENSION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/UNKNOWN_CRITICAL_EXTENSION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID_PROXY.zip">VALID_PROXY </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID_PROXY/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>, 
+                        
+                            <a href="/#x509-v-err-invalid-purpose-link">X509_­V_­ERR_­INVALID_­PURPOSE</a>, 
+                        
+                            <a href="/#x509-v-err-invalid-extension-link">X509_­V_­ERR_­INVALID_­EXTENSION</a>, 
+                        
+                            <a href="/#x509-v-err-unnested-resource-link">X509_­V_­ERR_­UNNESTED_­RESOURCE</a>, 
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>, 
+                        
+                            <a href="/#x509-v-err-excluded-violation-link">X509_­V_­ERR_­EXCLUDED_­VIOLATION</a>, 
+                        
+                            <a href="/#x509-v-err-subtree-minmax-link">X509_­V_­ERR_­SUBTREE_­MINMAX</a>, 
+                        
+                            <a href="/#x509-v-err-permitted-violation-link">X509_­V_­ERR_­PERMITTED_­VIOLATION</a>, 
+                        
+                            <a href="/#x509-v-err-unsupported-constraint-type-link">X509_­V_­ERR_­UNSUPPORTED_­CONSTRAINT_­TYPE</a>, 
+                        
+                            <a href="/#x509-v-err-proxy-path-length-exceeded-link">X509_­V_­ERR_­PROXY_­PATH_­LENGTH_­EXCEEDED</a>, 
+                        
+                            <a href="/#x509-v-err-proxy-subject-name-violation-link">X509_­V_­ERR_­PROXY_­SUBJECT_­NAME_­VIOLATION</a>, 
+                        
+                            <a href="/#x509-v-err-unsupported-name-syntax-link">X509_­V_­ERR_­UNSUPPORTED_­NAME_­SYNTAX</a>, 
+                        
+                            <a href="/#x509-v-err-unhandled-critical-extension-link">X509_­V_­ERR_­UNHANDLED_­CRITICAL_­EXTENSION</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-x509-duplicate-extension-link">GNUTLS_­E_­X509_­DUPLICATE_­EXTENSION</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-unknown-crit-extensions-link">GNUTLS_­CERT_­UNKNOWN_­CRIT_­EXTENSIONS</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-constraints-failure-link">GNUTLS_­CERT_­SIGNER_­CONSTRAINTS_­FAILURE</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-ca-link">GNUTLS_­CERT_­SIGNER_­NOT_­CA</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-certificate-error-link">GNUTLS_­E_­CERTIFICATE_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#unknown-critical-extension-link">UNKNOWN_­CRITICAL_­EXTENSION</a>, 
+                        
+                            <a href="/botan#duplicate-cert-extension-link">DUPLICATE_­CERT_­EXTENSION</a>, 
+                        
+                            <a href="/botan#verified-link">VERIFIED</a>, 
+                        
+                            <a href="/botan#encoding-error-link">ENCODING_­ERROR</a>, 
+                        
+                            <a href="/botan#name-constraint-error-link">NAME_­CONSTRAINT_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>, 
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>, 
+                        
+                            <a href="/openjdk#ext-key-usage-no-tls-server-link">EXT_­KEY_­USAGE_­NO_­TLS_­SERVER</a>, 
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#unrecognized-critical-extension-link">UNRECOGNIZED_­CRITICAL_­EXTENSION</a>, 
+                        
+                            <a href="/openjdk#maximum-name-constraints-link">MAXIMUM_­NAME_­CONSTRAINTS</a>, 
+                        
+                            <a href="/openjdk#minimum-name-constraints-link">MINIMUM_­NAME_­CONSTRAINTS</a>, 
+                        
+                            <a href="/openjdk#name-constraints-check-failed-link">NAME_­CONSTRAINTS_­CHECK_­FAILED</a>, 
+                        
+                            <a href="/openjdk#unsupported-handshake-message-link">UNSUPPORTED_­HANDSHAKE_­MESSAGE</a>, 
+                        
+                            <a href="/openjdk#ca-key-usage-failed-link">CA_­KEY_­USAGE_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-date-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-date" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-date">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_DATE">MBEDTLS_­ERR_­X509_­INVALID_­DATE</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-date">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The date tag or value is invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The date tag or value is invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­ERR_­X509_­INVALID_­DATE in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NOTAFTER_FIELD_INVALID.zip">NOTAFTER_FIELD_INVALID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NOTAFTER_FIELD_INVALID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NOTBEFORE_FIELD_INVALID.zip">NOTBEFORE_FIELD_INVALID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NOTBEFORE_FIELD_INVALID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­ERR_­X509_­INVALID_­DATE in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-error-in-cert-not-after-field-link">X509_­V_­ERR_­ERROR_­IN_­CERT_­NOT_­AFTER_­FIELD</a>, 
+                        
+                            <a href="/#x509-v-err-error-in-cert-not-before-field-link">X509_­V_­ERR_­ERROR_­IN_­CERT_­NOT_­BEFORE_­FIELD</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-asn1-der-error-link">GNUTLS_­E_­ASN1_­DER_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-invalid-alg-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-invalid-alg" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-invalid-alg">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_INVALID_ALG">MBEDTLS_­ERR_­X509_­INVALID_­ALG</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-invalid-alg">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>The algorithm tag or value is invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - The algorithm tag or value is invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-cert-unknown-format-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-cert-unknown-format" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-cert-unknown-format">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_CERT_UNKNOWN_FORMAT">MBEDTLS_­ERR_­X509_­CERT_­UNKNOWN_­FORMAT</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-cert-unknown-format">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Format not recognized as DER or PEM.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Format not recognized as DER or PEM
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-bad-input-date-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-bad-input-date" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-bad-input-date">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_BAD_INPUT_DATA">MBEDTLS_­ERR_­X509_­BAD_­INPUT_­DATA</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-bad-input-date">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Input invalid.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Input invalid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="mbedtls" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="uncategorized-errors">Uncategorized errors</h2>
+        <p>
+        These errors are not yet categorized, deprecated or not used at all. <br>
+        
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-missing-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-missing" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-missing">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_MISSING">MBEDTLS_­X509_­BADCERT_­MISSING</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-missing">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Certificate was missing.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate was missing
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-other-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-other" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-other">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_OTHER">MBEDTLS_­X509_­BADCERT_­OTHER</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-other">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Other reason (can be used by verify callback).
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Other reason (can be used by verify callback)
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-x509-badcert-skip-verify-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-x509-badcert-skip-verify" role="button" aria-expanded="true" aria-controls="#mbedtls-x509-badcert-skip-verify">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_X509_BADCERT_SKIP_VERIFY">MBEDTLS_­X509_­BADCERT_­SKIP_­VERIFY</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-x509-badcert-skip-verify">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Certificate verification was skipped.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate verification was skipped
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-fatal-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-fatal-error" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-fatal-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_FATAL_ERROR">MBEDTLS_­ERR_­X509_­FATAL_­ERROR</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-fatal-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>A fatal error occured, eg the chain is too long or the vrfy callback failed.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - A fatal error occurred, eg the chain is too long or the vrfy callback failed
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-alloc-failed-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-alloc-failed" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-alloc-failed">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_ALLOC_FAILED">MBEDTLS_­ERR_­X509_­ALLOC_­FAILED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-alloc-failed">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Allocation of memory failed.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Allocation of memory failed
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-buffer-too-small-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-buffer-too-small" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-buffer-too-small">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_BUFFER_TOO_SMALL">MBEDTLS_­ERR_­X509_­BUFFER_­TOO_­SMALL</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-buffer-too-small">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Destination buffer is too small.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Destination buffer is too small
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-cert-verify-failed-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-cert-verify-failed" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-cert-verify-failed">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_CERT_VERIFY_FAILED">MBEDTLS_­ERR_­X509_­CERT_­VERIFY_­FAILED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-cert-verify-failed">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Certificate verification failed, e.g. CRL, CA or signature check failed.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Certificate verification failed, e.g. CRL, CA or signature check failed
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-err-x509-file-io-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-err-x509-file-io-error" role="button" aria-expanded="true" aria-controls="#mbedtls-err-x509-file-io-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_ERR_X509_FILE_IO_ERROR">MBEDTLS_­ERR_­X509_­FILE_­IO_­ERROR</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-err-x509-file-io-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <h3>
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+Original documentation:</h3>
+                <p>Read/write of file failed.
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://tls.mbed.org/api/group__x509__module.html" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>X509 - Read/write of file failed
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="mbedtls-ok-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#mbedtls-ok" role="button" aria-expanded="true" aria-controls="#mbedtls-ok">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="MBEDTLS_OK">MBEDTLS_­OK</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="mbedtls-ok">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>ok
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/ARMmbed/mbedtls/blob/development/library/error.c" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing MBEDTLS_­OK in Mbed TLS. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ANY_EXT_KEY_USAGE.zip">ANY_EXT_KEY_USAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ANY_EXT_KEY_USAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_NOT_CRITICAL_CA.zip">BC_NOT_CRITICAL_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_NOT_CRITICAL_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_PATH_LEN_IN_NON_CA.zip">BC_PATH_LEN_IN_NON_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_PATH_LEN_IN_NON_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NEGATIVE_SERIAL_NUMBER.zip">NEGATIVE_SERIAL_NUMBER </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NEGATIVE_SERIAL_NUMBER/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NO_KEY_USAGE_IN_CA.zip">NO_KEY_USAGE_IN_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NO_KEY_USAGE_IN_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/TRUSTED_ONLY_INTERMEDIATE.zip">TRUSTED_ONLY_INTERMEDIATE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/TRUSTED_ONLY_INTERMEDIATE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID.zip">VALID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID_WITH_AIA.zip">VALID_WITH_AIA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID_WITH_AIA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID_WITH_CRLDP.zip">VALID_WITH_CRLDP </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID_WITH_CRLDP/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing MBEDTLS_­OK in Mbed TLS? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-invalid-purpose-link">X509_­V_­ERR_­INVALID_­PURPOSE</a>, 
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>, 
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    Botan:
+                        
+                            <a href="/botan#invalid-usage-link">INVALID_­USAGE</a>, 
+                        
+                            <a href="/botan#verified-link">VERIFIED</a>, 
+                        
+                            <a href="/botan#cert-issuer-not-found-link">CERT_­ISSUER_­NOT_­FOUND</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+<div class="section"><div class="container clearfix">
+    <h2 id="about">About the project</h2>
+    <div class="col-lg-3 col-md-4 col-6 float-right">
+        <a class="ext-link ext-link no-ext-link-icon" href="https://crocs.fi.muni.cz" target="_blank" rel="noopener noreferrer">
+            <img class="crocs" src="/assets/img/crocs.png" alt="CRoCS FI MU" title="CRoCS FI MU">
+        </a>
+    </div>
+    <p>The project is developed at the <a href="https://www.fi.muni.cz/research/crocs/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Centre for Research on Cryptography and Security (CRoCS)</a> at <a href="http://www.muni.cz/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Masaryk University</a>, Brno, Czech Republic by <a href="https://crocs.fi.muni.cz/people/mukrop" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Martin Ukrop</a>, Pavol Žáčik, Eric Valčík with the help of Michaela Balážová and Matěj Grabovský. For more details, see the ReadMe file in <a href="https://github.com/crocs-muni/usable-cert-validation" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+the project repository</a> on GitHub.</p>
+    <p>The authors are grateful for the financial support by and <a href="https://research.redhat.com/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Red Hat Czech</a> and <a href="https://www.kiwi.com" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Kiwi.com</a>.
+</p>
+</div></div>
+
+
+  </main>
+  <div id="feedback">
+    <div class="card card-body collapsed">
+        <h4>Feedback</h4>
+        <p>Something is not working? File a bug report to our repository, please.</p>
+        <a class="ext-link ext-link btn btn-primary d-block mb-3" href="https://github.com/crocs-muni/usable-cert-validation/issues/new?labels=bug&amp;title=Bug+report&amp;body=Please+describe+what+does+not+work..." target="_blank" rel="noopener noreferrer">
+    <span class="fas fa-fw fa-bug color-white"></span>
+  
+ Bug report</a>
+        <p>Other comments or ideas?</p>
+        <a class="btn btn-primary d-block" target="_blank" href="mailto:webmaster@x509errors.org?subject=Site+feedback">
+    <span class="fas fa-fw fa-envelope color-white"></span>
+  
+ Email us!</a>
+    </div>
+    <div class="btn btn-secondary">
+<span class="fas fa-fw fa-question-circle"></span> Feedback</div>
+</div>
+
+  <footer>
+    <div class="container clearfix">
+        <span class="footer-left">
+            <a class="no-ext-link-icon" href="mailto:webmaster@x509errors.org" title="Contact email">
+            <span class="fas fa-fw fa-envelope"></span> webmaster@x509errors.org</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation" title="GitHub repository" target="_blank" rel="noopener noreferrer">
+            <span class="fab fa-fw fa-github"></span> usable-cert-validation</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation/commit/94ec4c4750960074dc9e4f0da226b7dd1ff8276a" title="Last modification" target="_blank" rel="noopener noreferrer">
+            <span class="fas fa-fw fa-clock"></span> 2021-07-13</a>
+        </span>
+        <span class="footer-right">
+            © 2020 <a class="ext-link ext-link no-ext-link-icon" href="https://muni.cz/" target="_blank" rel="noopener noreferrer">Masaryk University</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://crocs.fi.muni.cz/" target="_blank" rel="noopener noreferrer">Centre for Research on Cryptography and Security</a>
+        </span>
+    </div>
+</footer>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Let's make the validation of TLS certificates usable.">
+<meta name="author" content="Centre for Research on Cryptography and Security, Masaryk University, Czechia">
+
+<title>Developer guide: GnuTLS</title>
+
+<!-- Matomo Tag Manager -->
+<script type="text/javascript">
+  var _mtm = window._mtm = window._mtm || [];
+  _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+  g.type='text/javascript'; g.async=true; g.src='https://fadmin.fi.muni.cz/piwik/js/container_PX176f6U.js'; s.parentNode.insertBefore(g,s);
+  </script>
+<!-- End Matomo Tag Manager -->
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="/assets/css/main.css" rel="stylesheet">
+<script src="https://kit.fontawesome.com/036c3720fc.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700&display=swap&subset=latin-ext" rel="stylesheet">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+</head>
+<body data-spy="scroll" data-target="#navbar" data-offset="100">
+  <nav class="navbar navbar-expand-md navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span class="fa-stack">
+                <span class="fas fa-fw fa-lg fa-certificate fa-stack-1x color-verydarkgrey"></span>
+                <span class="fas fa-fw fa-xs fa-check fa-stack-1x color-white"></span>
+            </span>
+            Developer guide: GnuTLS
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Show/hide navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="/#home">Intro</a>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Libraries</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                          <a class="dropdown-item" href="/#openssl">
+                          OpenSSL</a>
+                        
+                          <a class="dropdown-item" href="/gnutls#gnutls">
+                          GnuTLS</a>
+                        
+                          <a class="dropdown-item" href="/botan#botan">
+                          Botan</a>
+                        
+                          <a class="dropdown-item" href="/mbedtls#mbedtls">
+                          Mbed TLS</a>
+                        
+                          <a class="dropdown-item" href="/openjdk#openjdk">
+                          OpenJDK</a>
+                        
+                    </div>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Guides</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/openssl">
+                                OpenSSL</a>
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="#gnutls">
+                                GnuTLS</a>
+                            
+                        
+                            
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/mbedtls">
+                                Mbed TLS</a>
+                            
+                        
+                            
+                            
+                        
+                    </div>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="/faq">FAQ</a>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+  <main role="main">
+    <div class="section"><div class="container">
+
+    <h1 id="gnutls">Developer guide: GnuTLS</h1>
+
+    <p class="lead">This guide describes the implementation of a TLS client in <a href="https://www.gnutls.org/" target="_blank" rel="noopener noreferrer" class="ext-link">GnuTLS</a>.</p>
+
+    <p class="lead">The guide covers basic aspects of initiating a secure TLS connection, including certificate validation and hostname verification. When various alternative approaches are possible, the guide presents each of them and specifies their use cases to help you choose which approach suits your needs best.</p>
+
+    <ul>
+      <li>We work with the API in C of GnuTLS, version 3.7.1.</li>
+      <li>We assume the server to communicate with is at <code class="language-plaintext highlighter-rouge">x509errors.org</code> and accepts TLS connections on a standard port <code class="language-plaintext highlighter-rouge">443</code>.</li>
+    </ul>
+
+    <div class="alert alert-warning" role="alert">
+      <p>Note: For now, the guide <em>does not</em> cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption.</p>
+    </div>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 id="establishing-an-underlying-tcpip-connection">Establishing an underlying TCP/IP connection</h2>
+
+    <p>First, we need to establish an <em>insecure</em> TCP/IP connection with the server. For the most simple connection, a standard set of <em>POSIX</em> functions will suffice.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;sys/socket.h&gt;
+#include &lt;unistd.h&gt;
+</span>
+<span class="cm">/* TCP/IP socket descriptor. */</span>
+<span class="kt">int</span> <span class="n">sockfd</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+<span class="cm">/* We will send the server our connection preferences in the form of hints. */</span>
+<span class="k">struct</span> <span class="n">addrinfo</span> <span class="n">hints</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+
+<span class="cm">/* We allow both IPv4 and IPv6. */</span>
+<span class="n">hints</span><span class="p">.</span><span class="n">ai_family</span> <span class="o">=</span> <span class="n">AF_UNSPEC</span><span class="p">;</span>
+<span class="cm">/* We want a stream socket, not a datagram one. */</span>
+<span class="n">hints</span><span class="p">.</span><span class="n">ai_socktype</span> <span class="o">=</span> <span class="n">SOCK_STREAM</span><span class="p">;</span>
+<span class="cm">/* We know the numeric port number beforehand. */</span>
+<span class="n">hints</span><span class="p">.</span><span class="n">ai_flags</span> <span class="o">=</span> <span class="n">AI_ADDRCONFIG</span> <span class="o">|</span> <span class="n">AI_NUMERICSERV</span><span class="p">;</span>
+<span class="cm">/* We want to use TCP. */</span>
+<span class="n">hints</span><span class="p">.</span><span class="n">ai_protocol</span> <span class="o">=</span> <span class="n">IPPROTO_TCP</span><span class="p">;</span>
+
+<span class="k">struct</span> <span class="n">addrinfo</span> <span class="o">*</span><span class="n">result</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+<span class="cm">/* We query a list of addresses for the given hostname. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">getaddrinfo</span><span class="p">(</span><span class="s">"x509errors.org"</span><span class="p">,</span> <span class="s">"443"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">hints</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">result</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">result</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Try to connect to each address from the server list until successful. */</span>
+<span class="k">struct</span> <span class="n">addrinfo</span> <span class="o">*</span><span class="n">rr</span><span class="p">;</span>
+<span class="k">for</span> <span class="p">(</span><span class="n">rr</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span> <span class="n">rr</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">,</span> <span class="n">rr</span> <span class="o">=</span> <span class="n">rr</span><span class="o">-&gt;</span><span class="n">ai_next</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sockfd</span> <span class="o">=</span> <span class="n">socket</span><span class="p">(</span><span class="n">rr</span><span class="o">-&gt;</span><span class="n">ai_family</span><span class="p">,</span> <span class="n">rr</span><span class="o">-&gt;</span><span class="n">ai_socktype</span><span class="p">,</span> <span class="n">rr</span><span class="o">-&gt;</span><span class="n">ai_protocol</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">sockfd</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">continue</span><span class="p">;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">connect</span><span class="p">(</span><span class="n">sockfd</span><span class="p">,</span> <span class="n">rr</span><span class="o">-&gt;</span><span class="n">ai_addr</span><span class="p">,</span> <span class="n">rr</span><span class="o">-&gt;</span><span class="n">ai_addrlen</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">break</span><span class="p">;</span>
+    <span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* We don't need the server info anymore. */</span>
+<span class="n">freeaddrinfo</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+
+<span class="cm">/* We must fail if we didn't manage to connect to any server address. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">rr</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <p>If everything went well, <code class="language-plaintext highlighter-rouge">sockfd</code> is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.</p>
+
+    <h3 id="relevant-links">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://man7.org/linux/man-pages/man3/getaddrinfo.3.html" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">getaddrinfo</code></a> (linux manpages)</li>
+      <li>
+<a href="https://tools.ietf.org/html/rfc791" target="_blank" rel="noopener noreferrer" class="ext-link">Internet Protocol</a> (RFC 791)</li>
+      <li>
+<a href="https://tools.ietf.org/html/rfc793" target="_blank" rel="noopener noreferrer" class="ext-link">Transmission Control Protocol</a> (RFC 793)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 id="creating-a-session-context-structure">Creating a session context structure</h2>
+
+    <p>Before we connect, a session context structure has to be created and initialized. It will store all the necessary configuration and settings.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;gnutls/gnutls.h&gt;
+</span>
+<span class="cm">/* Create a TLS session context. */</span>
+<span class="n">gnutls_session_t</span> <span class="n">session</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+<span class="cm">/* Initialize the TLS session context. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_init</span><span class="p">(</span><span class="o">&amp;</span><span class="n">session</span><span class="p">,</span> <span class="n">GNUTLS_CLIENT</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Create a credentials structure. This is required to set a trusted root. */</span>
+<span class="n">gnutls_certificate_credentials_t</span> <span class="n">creds</span> <span class="o">=</span> <span class="nb">NULL</span><span class="p">;</span>
+
+<span class="cm">/* Initialize the credentials structure. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_certificate_allocate_credentials</span><span class="p">(</span><span class="o">&amp;</span><span class="n">creds</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-1">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://www.gnutls.org/manual/html_node/Session-initialization.html" target="_blank" rel="noopener noreferrer" class="ext-link">Session Initialization</a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005finit" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_init</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fallocate_005fcredentials" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_certificate_allocate_credentials</code></a> (GnuTLS docs)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 id="preparing-the-necessary-session-settings">Preparing the necessary session settings</h2>
+
+    <p>For the connection to be functional and secure, we must set multiple options beforehand.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cm">/* Set default cipher suite priorities. These are the recommended option. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_set_default_priority</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="cm">/* Enable server certificate validation, together with a hostname check.
+** Not setting the hostname would mean that we would accept a certificate of any trusted server. */</span>
+<span class="n">gnutls_session_set_verify_cert</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="s">"x509errors.org"</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="cm">/* In certificate validation, we usually want to trust the system default certificate authorities. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_certificate_set_x509_system_trust</span><span class="p">(</span><span class="n">creds</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Associate the credentials structure with the session structure. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_credentials_set</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">GNUTLS_CRD_CERTIFICATE</span><span class="p">,</span> <span class="n">creds</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Set the Server Name Indication TLS extension to specify the name of the server. */</span>
+<span class="cm">/* This is required when multiple servers are running at the same IP address (virtual hosting). */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">=</span> <span class="n">gnutls_server_name_set</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">GNUTLS_NAME_DNS</span><span class="p">,</span> <span class="s">"x509errors.org"</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="s">"x509errors.org"</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-2">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://www.gnutls.org/manual/html_node/Session-initialization.html" target="_blank" rel="noopener noreferrer" class="ext-link">Session Initialization</a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fset_005fdefault_005fpriority" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_set_default_priority</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fset_005fverify_005fcert-1" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_session_set_verify_cert</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fset_005fx509_005fsystem_005ftrust-1" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_certificate_set_x509_system_trust</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fcredentials_005fset-1" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_credentials_set</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fserver_005fname_005fset" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_server_name_set</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://datatracker.ietf.org/doc/html/rfc6066#section-3" target="_blank" rel="noopener noreferrer" class="ext-link">Server Name Indication</a> (RFC 6066)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 class="text-danger" id="alternative-setting-a-custom-trust-anchor">Alternative: Setting a custom trust anchor</h2>
+
+    <p>In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in <code class="language-plaintext highlighter-rouge">trusted_ca.pem</code> and other authorities located in <code class="language-plaintext highlighter-rouge">trusted_dir</code>, we can easily change the trust setting as follows (any of the two procedures can be skipped). This must be done <em>before</em> we link the credentials structure to the session context.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cm">/* Set a custom trusted CA for certificate validation from file. The certificate must be in PEM format. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_certificate_set_x509_trust_file</span><span class="p">(</span><span class="n">creds</span><span class="p">,</span> <span class="s">"trusted_ca.pem"</span><span class="p">,</span> <span class="n">GNUTLS_X509_FMT_PEM</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Set a custom trusted CA directory. All certificates in the directory must be in the PEM format. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_certificate_set_x509_trust_dir</span><span class="p">(</span><span class="n">creds</span><span class="p">,</span> <span class="s">"trusted_dir"</span><span class="p">,</span> <span class="n">GNUTLS_X509_FMT_PEM</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Associate the credentials structure with the session structure. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_credentials_set</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">GNUTLS_CRD_CERTIFICATE</span><span class="p">,</span> <span class="n">creds</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-3">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://gnutls.org/manual/html_node/Certificate-credentials.html" target="_blank" rel="noopener noreferrer" class="ext-link">Certificate credentials</a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fset_005fx509_005ftrust_005ffile" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_certificate_set_x509_trust_file</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fset_005fx509_005ftrust_005fdir" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_certificate_set_x509_trust_dir</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fcredentials_005fset-1" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_credentials_set</code></a> (GnuTLS docs)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 class="text-success" id="optional-sending-an-ocsp-status-request-to-the-server">Optional: Sending an OCSP status request to the server</h2>
+
+    <p>One of the modern methods of revocation checking is via OCSP-stapling, when the server sends revocation information “stapled” in the TLS handshake. GnuTLS checks such revocation information by default, but the server will not send it unless we explicitly tell it to do so.</p>
+
+    <div class="alert alert-danger" role="alert">
+      <p>Note that if the server does not support OCSP stapling, it may not send the certificate status, and this will not result in a failure. It will only fail if the server certificate contains the OCSP “must-staple” extension.</p>
+    </div>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cm">/* Send the status request extension to the server during the TLS handshake. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">=</span> <span class="n">gnutls_ocsp_status_request_enable_client</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">NULL</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-4">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fenable_005fclient" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_ocsp_status_request_enable_client</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://datatracker.ietf.org/doc/html/rfc6960" target="_blank" rel="noopener noreferrer" class="ext-link">OCSP protocol</a> (RFC 6960)</li>
+      <li>
+<a href="https://www.gnutls.org/manual/html_node/OCSP-stapling.html" target="_blank" rel="noopener noreferrer" class="ext-link">OCSP stapling</a> (GnuTLS docs)</li>
+      <li>
+<a href="https://datatracker.ietf.org/doc/html/rfc7633" target="_blank" rel="noopener noreferrer" class="ext-link">OCSP “must-staple” extension</a> (RFC 7633)</li>
+      <li>
+<a href="https://datatracker.ietf.org/doc/html/rfc6066#section-8" target="_blank" rel="noopener noreferrer" class="ext-link">Certificate Status Request TLS Extension</a> (RFC 6066)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 id="initializing-a-tls-connection">Initializing a TLS connection</h2>
+
+    <p>At this point, we can link the open socket descriptor to our session context and perform the TLS handshake.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cm">/* Bind the open socket to the TLS session. */</span>
+<span class="n">gnutls_transport_set_int</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">sockfd</span><span class="p">);</span>
+
+<span class="cm">/* Set default timeout for the handshake. */</span>
+<span class="n">gnutls_handshake_set_timeout</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT</span><span class="p">);</span>
+
+<span class="cm">/* Try to perform handshake until successful (this is the standard way). */</span>
+<span class="k">do</span> <span class="p">{</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">gnutls_handshake</span><span class="p">(</span><span class="n">session</span><span class="p">);</span>
+<span class="p">}</span> <span class="k">while</span> <span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">gnutls_error_is_fatal</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">);</span>
+
+<span class="cm">/* Fail if the handshake was not succesful. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-5">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005ftransport_005fset_005fint" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_transport_set_int</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fhandshake_005fset_005ftimeout" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_handshake_set_timeout</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fhandshake" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_handshake</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005ferror_005fis_005ffatal" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_error_is_fatal</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://datatracker.ietf.org/doc/html/rfc5246#section-7.4" target="_blank" rel="noopener noreferrer" class="ext-link">TLS handshake</a> (RFC 5246)</li>
+      <li>
+<a href="https://www.gnutls.org/manual/html_node/Setting-up-the-transport-layer.html" target="_blank" rel="noopener noreferrer" class="ext-link">Setting up the transport layer</a> (GnuTLS docs)</li>
+      <li>
+<a href="https://www.gnutls.org/manual/html_node/TLS-handshake.html" target="_blank" rel="noopener noreferrer" class="ext-link">TLS handshake</a> (GnuTLS docs)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 class="text-success" id="optional-checking-the-result-of-peer-certificate-validation">Optional: Checking the result of peer certificate validation</h2>
+
+    <p>If certificate validation fails, <code class="language-plaintext highlighter-rouge">gnutls_handshake()</code> will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official <a href="https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html#gnutls_005fcertificate_005fstatus_005ft" target="_blank" rel="noopener noreferrer" class="ext-link">documentation</a> or on our <a href="https://x509errors.org/gnutls#gnutls" target="_blank" rel="noopener noreferrer" class="ext-link">page</a>.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cm">/* Retrieve the certificate validation status. */</span>
+<span class="kt">unsigned</span> <span class="n">status</span> <span class="o">=</span> <span class="n">gnutls_session_get_verify_cert_status</span><span class="p">(</span><span class="n">session</span><span class="p">);</span>
+
+<span class="cm">/* Retrieve the certificate type. */</span>
+<span class="n">gnutls_certificate_type_t</span> <span class="n">cert_type</span> <span class="o">=</span> <span class="n">gnutls_certificate_type_get2</span><span class="p">(</span><span class="n">session</span><span class="p">);</span>
+
+<span class="cm">/* Prepare a buffer for the error message, fill it, and print the message to the standard error output. */</span>
+<span class="n">gnutls_datum_t</span> <span class="n">out</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">};</span>
+<span class="n">gnutls_certificate_verification_status_print</span><span class="p">(</span><span class="n">status</span><span class="p">,</span> <span class="n">cert_type</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">out</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span> <span class="s">"%s"</span><span class="p">,</span> <span class="n">out</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+<span class="n">gnutls_free</span><span class="p">(</span><span class="n">out</span><span class="p">.</span><span class="n">data</span><span class="p">);</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-6">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fget_005fverify_005fcert_005fstatus" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_session_get_verify_cert_status</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005ftype_005fget2" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_certificate_type_get2</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fverification_005fstatus_005fprint" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_certificate_verification_status_print</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://x509errors.org/gnutls#gnutls" target="_blank" rel="noopener noreferrer" class="ext-link">Certificate validation errors</a> (x509errors.org)</li>
+      <li>
+<a href="https://datatracker.ietf.org/doc/html/rfc5280#section-6" target="_blank" rel="noopener noreferrer" class="ext-link">Certificate path validation</a> (RFC 5280)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 id="sending-and-receiving-data-using-the-tls-connection">Sending and receiving data using the TLS connection</h2>
+
+    <p>When the connection is successfully established, we can share application data with the server. These two functions provide the basic interface.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cm">/* Prepare a message and send it to the server. */</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">message</span> <span class="o">=</span> <span class="s">"Hello server"</span><span class="p">;</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_record_send</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">strlen</span><span class="p">(</span><span class="n">message</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Prepare a static buffer for the response and read the response into that buffer. */</span>
+<span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">4096</span><span class="p">];</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_record_recv</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">buffer</span><span class="p">,</span> <span class="mi">4096</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-7">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://www.gnutls.org/manual/html_node/Data-transfer-and-termination.html#Data-transfer-and-termination" target="_blank" rel="noopener noreferrer" class="ext-link">Data transfer and termination</a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005frecord_005fsend-1" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_record_send</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#index-gnutls_005frecord_005frecv-1" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_record_recv</code></a> (GnuTLS docs)</li>
+    </ul>
+
+  </div></div>
+<div class="section"><div class="container">
+
+    <h2 id="closing-the-connection">Closing the connection</h2>
+
+    <p>The client is usually the one to indicate that the connection is finished. When we want the connection closed, the following steps are performed.</p>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cm">/* Send the "close notify" message to the server, alerting it that we are closing the connection. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">gnutls_bye</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="n">GNUTLS_SHUT_RDWR</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">exit</span><span class="p">(</span><span class="n">EXIT_FAILURE</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Free the credentials structure. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">creds</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">gnutls_certificate_free_credentials</span><span class="p">(</span><span class="n">creds</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Free the session context structure. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">session</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">gnutls_deinit</span><span class="p">(</span><span class="n">session</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="cm">/* Close the underlying TCP socket. */</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">sockfd</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">close</span><span class="p">(</span><span class="n">sockfd</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+
+    <h3 id="relevant-links-8">Relevant links</h3>
+
+    <ul>
+      <li>
+<a href="https://www.gnutls.org/manual/html_node/Data-transfer-and-termination.html#Data-transfer-and-termination" target="_blank" rel="noopener noreferrer" class="ext-link">Data transfer and termination</a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fbye" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_bye</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005ffree_005fcredentials" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_certificate_free_credentials</code></a> (GnuTLS docs)</li>
+      <li>
+<a href="https://gnutls.org/manual/gnutls.html#gnutls_005fdeinit" target="_blank" rel="noopener noreferrer" class="ext-link"><code class="language-plaintext highlighter-rouge">gnutls_deinit</code></a> (GnuTLS docs)</li>
+    </ul>
+
+  </div></div>
+
+  </main>
+  <div id="feedback">
+    <div class="card card-body collapsed">
+        <h4>Feedback</h4>
+        <p>Something is not working? File a bug report to our repository, please.</p>
+        <a class="ext-link btn btn-primary d-block mb-3" href="https://github.com/crocs-muni/usable-cert-validation/issues/new?labels=bug&amp;title=Bug+report&amp;body=Please+describe+what+does+not+work..." target="_blank" rel="noopener noreferrer">
+    <span class="fas fa-fw fa-bug color-white"></span>
+  
+ Bug report</a>
+        <p>Other comments or ideas?</p>
+        <a class="btn btn-primary d-block" target="_blank" href="mailto:webmaster@x509errors.org?subject=Site+feedback">
+    <span class="fas fa-fw fa-envelope color-white"></span>
+  
+ Email us!</a>
+    </div>
+    <div class="btn btn-secondary">
+<span class="fas fa-fw fa-question-circle"></span> Feedback</div>
+</div>
+
+  <footer>
+    <div class="container clearfix">
+        <span class="footer-left">
+            <a class="no-ext-link-icon" href="mailto:webmaster@x509errors.org" title="Contact email">
+            <span class="fas fa-fw fa-envelope"></span> webmaster@x509errors.org</a><br>
+            <a class="ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation" title="GitHub repository" target="_blank" rel="noopener noreferrer">
+            <span class="fab fa-fw fa-github"></span> usable-cert-validation</a><br>
+            <a class="ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation/commit/94ec4c4750960074dc9e4f0da226b7dd1ff8276a" title="Last modification" target="_blank" rel="noopener noreferrer">
+            <span class="fas fa-fw fa-clock"></span> 2021-07-13</a>
+        </span>
+        <span class="footer-right">
+            © 2020 <a class="ext-link no-ext-link-icon" href="https://muni.cz/" target="_blank" rel="noopener noreferrer">Masaryk University</a><br>
+            <a class="ext-link no-ext-link-icon" href="https://crocs.fi.muni.cz/" target="_blank" rel="noopener noreferrer">Centre for Research on Cryptography and Security</a>
+        </span>
+    </div>
+</footer>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

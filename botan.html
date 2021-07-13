@@ -1,0 +1,5259 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Let's make the validation of TLS certificates usable.">
+<meta name="author" content="Centre for Research on Cryptography and Security, Masaryk University, Czechia">
+
+<title>Usable X.509 errors: Botan</title>
+
+<!-- Matomo Tag Manager -->
+<script type="text/javascript">
+  var _mtm = window._mtm = window._mtm || [];
+  _mtm.push({'mtm.startTime': (new Date().getTime()), 'event': 'mtm.Start'});
+  var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+  g.type='text/javascript'; g.async=true; g.src='https://fadmin.fi.muni.cz/piwik/js/container_PX176f6U.js'; s.parentNode.insertBefore(g,s);
+  </script>
+<!-- End Matomo Tag Manager -->
+
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<link href="/assets/css/main.css" rel="stylesheet">
+<script src="https://kit.fontawesome.com/036c3720fc.js" crossorigin="anonymous"></script>
+<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700&display=swap&subset=latin-ext" rel="stylesheet">
+<link rel="icon" type="image/png" href="/assets/img/favicon.png">
+
+</head>
+<body data-spy="scroll" data-target="#navbar" data-offset="100">
+  <nav class="navbar navbar-expand-md navbar-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span class="fa-stack">
+                <span class="fas fa-fw fa-lg fa-certificate fa-stack-1x color-verydarkgrey"></span>
+                <span class="fas fa-fw fa-xs fa-check fa-stack-1x color-white"></span>
+            </span>
+            Usable X.509 errors: Botan
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Show/hide navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbar">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="#home">Intro</a>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Libraries</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                          <a class="dropdown-item" href="/#openssl">
+                          OpenSSL</a>
+                        
+                          <a class="dropdown-item" href="/gnutls#gnutls">
+                          GnuTLS</a>
+                        
+                          <a class="dropdown-item" href="#botan">
+                          Botan</a>
+                        
+                          <a class="dropdown-item" href="/mbedtls#mbedtls">
+                          Mbed TLS</a>
+                        
+                          <a class="dropdown-item" href="/openjdk#openjdk">
+                          OpenJDK</a>
+                        
+                    </div>
+                </li>
+                <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Guides</a>
+                    <div class="dropdown-menu" aria-labelledby="dropdown01">
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/openssl">
+                                OpenSSL</a>
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/gnutls">
+                                GnuTLS</a>
+                            
+                        
+                            
+                            
+                        
+                            
+                            
+                                <a class="dropdown-item" href="/guides/mbedtls">
+                                Mbed TLS</a>
+                            
+                        
+                            
+                            
+                        
+                    </div>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="/faq">FAQ</a>
+                </li>
+                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
+                    <a class="nav-link" href="#about">About</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+  <main role="main">
+    <div class="section"><div class="container">
+    <h1 id="home">Usable X.509 errors: Botan</h1>
+    <div class="lead">
+        <p>Our goal is to simplify the ecosystem by consolidating the errors and their documentation (similarly to <a href="https://blog.mozilla.org/blog/2017/10/18/mozilla-brings-microsoft-google-w3c-samsung-together-create-cross-browser-documentation-mdn/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">web documentation</a>) and better explaining what the validation errors mean.</p>
+        <div class="collapse multi-collapse show" id="collapsed-text">
+            <p>Correctly validating X.509 certificates turns out to be pretty complicated (e.g., <a href="http://www.cs.utexas.edu/~shmat/shmat_ccs12.pdf" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Georgiev2012</a>, <a href="https://crocs.fi.muni.cz/papers/acsac2019" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Ukrop2019</a>). Yet certificate validation is crucial for secure communication on the Internet (think <a href="https://en.wikipedia.org/wiki/Transport_Layer_Security" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">TLS</a>).</p>
+            <p>For every error, we aim to provide our redesigned documentation (
+    <span class="fas fa-fw fa-flag  text-primary" title="Our documentation"></span>
+  
+), an example certificate (
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+), original documentation provided by the library (
+    <span class="fas fa-fw fa-book " title="Original documentation"></span>
+  
+, unused or deprecated errors denoted by 
+    <span class="fas fa-fw fa-times  color-verylightgray" title="Unused or deprecated"></span>
+  
+). Furthermore, we provide links to corresponding errors from other libraries (
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+). In the future, we plan on adding error frequencies based on IP-wide scans and elaborating on the consequences of individual errors.</p>
+            <p class="text-center">
+                <a class="btn btn-primary" href="/faq">
+                    See more in FAQ
+                </a>
+            </p>
+        </div>
+        <div class="fadeout" id="intro-fadeout" hidden></div>
+        <p class="collapse multi-collapse text-center" id="intro-button">
+            <button class="btn btn-outline-primary" type="button" data-toggle="collapse" data-target=".multi-collapse" aria-expanded="false" aria-controls="collapseExample" onclick="hideIntroFadeout()">
+                <span class="fa fa-fw fa-chevron-down"></span> Open to read more
+            </button>
+            
+            
+        </p>
+    </div>
+</div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="time-validity-errors">Time validity errors</h2>
+        <p>
+        Errors occuring when a certificate is outside its validity period or when it is revoked by its CA. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.5" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Validity</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc5280#section-3.3" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Revocation</a> (RFC 5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="cert-not-yet-valid-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-not-yet-valid" role="button" aria-expanded="true" aria-controls="#cert-not-yet-valid">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_NOT_YET_VALID">CERT_­NOT_­YET_­VALID</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="cert-not-yet-valid">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate is not yet valid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing CERT_­NOT_­YET_­VALID in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NOT_YET_VALID.zip">NOT_YET_VALID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NOT_YET_VALID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing CERT_­NOT_­YET_­VALID in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-cert-not-yet-valid-link">X509_­V_­ERR_­CERT_­NOT_­YET_­VALID</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-not-activated-link">GNUTLS_­CERT_­NOT_­ACTIVATED</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-future-link">MBEDTLS_­X509_­BADCERT_­FUTURE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#validity-check-failed-link">VALIDITY_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="cert-has-expired-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-has-expired" role="button" aria-expanded="true" aria-controls="#cert-has-expired">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_HAS_EXPIRED">CERT_­HAS_­EXPIRED</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="cert-has-expired">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate has expired
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing CERT_­HAS_­EXPIRED in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EXPIRED.zip">EXPIRED </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EXPIRED/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing CERT_­HAS_­EXPIRED in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-cert-has-expired-link">X509_­V_­ERR_­CERT_­HAS_­EXPIRED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-expired-link">GNUTLS_­CERT_­EXPIRED</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-expired-link">MBEDTLS_­X509_­BADCERT_­EXPIRED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#validity-check-failed-link">VALIDITY_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="crl-not-yet-valid-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#crl-not-yet-valid" role="button" aria-expanded="true" aria-controls="#crl-not-yet-valid">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CRL_NOT_YET_VALID">CRL_­NOT_­YET_­VALID</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="crl-not-yet-valid">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>CRL response is not yet valid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="crl-has-expired-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#crl-has-expired" role="button" aria-expanded="true" aria-controls="#crl-has-expired">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CRL_HAS_EXPIRED">CRL_­HAS_­EXPIRED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="crl-has-expired">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>CRL has expired
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-not-yet-valid-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-not-yet-valid" role="button" aria-expanded="true" aria-controls="#ocsp-not-yet-valid">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_NOT_YET_VALID">OCSP_­NOT_­YET_­VALID</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-not-yet-valid">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP is not yet valid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-has-expired-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-has-expired" role="button" aria-expanded="true" aria-controls="#ocsp-has-expired">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_HAS_EXPIRED">OCSP_­HAS_­EXPIRED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-has-expired">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP response has expired
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-is-too-old-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-is-too-old" role="button" aria-expanded="true" aria-controls="#ocsp-is-too-old">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_IS_TOO_OLD">OCSP_­IS_­TOO_­OLD</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-is-too-old">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP response is too old
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="cert-is-revoked-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-is-revoked" role="button" aria-expanded="true" aria-controls="#cert-is-revoked">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_IS_REVOKED">CERT_­IS_­REVOKED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="cert-is-revoked">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate is revoked
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="trust-or-chain-related-errors">Trust or chain related errors</h2>
+        <p>
+        These errors occur when the trust chain to the root certificate is not built correctly or fails. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-3.2" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Paths</a> (RFC 5280), <a href="https://tools.ietf.org/html/rfc5280#section-5" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Revocation Lists</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc2560" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">OCSP</a> (RFC 2560)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="cannot-establish-trust-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cannot-establish-trust" role="button" aria-expanded="true" aria-controls="#cannot-establish-trust">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CANNOT_ESTABLISH_TRUST">CANNOT_­ESTABLISH_­TRUST</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="cannot-establish-trust">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Cannot establish trust
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing CANNOT_­ESTABLISH_­TRUST in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SELF_SIGNED_END_ENTITY.zip">SELF_SIGNED_END_ENTITY </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SELF_SIGNED_END_ENTITY/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SELF_SIGNED_INTERMEDIATE.zip">SELF_SIGNED_INTERMEDIATE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SELF_SIGNED_INTERMEDIATE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing CANNOT_­ESTABLISH_­TRUST in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>, 
+                        
+                            <a href="/#x509-v-err-self-signed-cert-in-chain-link">X509_­V_­ERR_­SELF_­SIGNED_­CERT_­IN_­CHAIN</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-found-link">GNUTLS_­CERT_­SIGNER_­NOT_­FOUND</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-not-trusted-link">MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#unable-to-find-valid-certification-path-link">UNABLE_­TO_­FIND_­VALID_­CERTIFICATION_­PATH</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="chain-lacks-trust-root-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#chain-lacks-trust-root" role="button" aria-expanded="true" aria-controls="#chain-lacks-trust-root">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CHAIN_LACKS_TRUST_ROOT">CHAIN_­LACKS_­TRUST_­ROOT</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="chain-lacks-trust-root">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate chain does not end in a CA certificate
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="cert-pubkey-invalid-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-pubkey-invalid" role="button" aria-expanded="true" aria-controls="#cert-pubkey-invalid">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_PUBKEY_INVALID">CERT_­PUBKEY_­INVALID</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="cert-pubkey-invalid">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate public key invalid, no HTTP support compiled in
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="cert-issuer-not-found-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-issuer-not-found" role="button" aria-expanded="true" aria-controls="#cert-issuer-not-found">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_ISSUER_NOT_FOUND">CERT_­ISSUER_­NOT_­FOUND</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="cert-issuer-not-found">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate issuer not found
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing CERT_­ISSUER_­NOT_­FOUND in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/CHAIN_LOOP.zip">CHAIN_LOOP </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/CHAIN_LOOP/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_NO_MATCH_SUBJECT.zip">ISSUER_NO_MATCH_SUBJECT </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_NO_MATCH_SUBJECT/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/TRUSTED_ONLY_INTERMEDIATE.zip">TRUSTED_ONLY_INTERMEDIATE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/TRUSTED_ONLY_INTERMEDIATE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/UNKNOWN_ROOT_CN.zip">UNKNOWN_ROOT_CN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/UNKNOWN_ROOT_CN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing CERT_­ISSUER_­NOT_­FOUND in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>, 
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-found-link">GNUTLS_­CERT_­SIGNER_­NOT_­FOUND</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-key-usage-violation-link">GNUTLS_­E_­KEY_­USAGE_­VIOLATION</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-key-usage-link">MBEDTLS_­X509_­BADCERT_­KEY_­USAGE</a>, 
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-not-trusted-link">MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED</a>, 
+                        
+                            <a href="/mbedtls#mbedtls-ok-link">MBEDTLS_­OK</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#unable-to-find-valid-certification-path-link">UNABLE_­TO_­FIND_­VALID_­CERTIFICATION_­PATH</a>, 
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="cert-chain-loop-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-chain-loop" role="button" aria-expanded="true" aria-controls="#cert-chain-loop">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_CHAIN_LOOP">CERT_­CHAIN_­LOOP</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="cert-chain-loop">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Loop in certificate chain
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="cert-chain-too-long-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-chain-too-long" role="button" aria-expanded="true" aria-controls="#cert-chain-too-long">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_CHAIN_TOO_LONG">CERT_­CHAIN_­TOO_­LONG</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="cert-chain-too-long">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate chain too long
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing CERT_­CHAIN_­TOO_­LONG in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_PATH_LEN_EXCEEDED.zip">BC_PATH_LEN_EXCEEDED </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_PATH_LEN_EXCEEDED/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing CERT_­CHAIN_­TOO_­LONG in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-path-length-exceeded-link">X509_­V_­ERR_­PATH_­LENGTH_­EXCEEDED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signer-constraints-failure-link">GNUTLS_­CERT_­SIGNER_­CONSTRAINTS_­FAILURE</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-not-trusted-link">MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#path-len-constraint-violated-link">PATH_­LEN_­CONSTRAINT_­VIOLATED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-issuer-not-found-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-issuer-not-found" role="button" aria-expanded="true" aria-controls="#ocsp-issuer-not-found">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_ISSUER_NOT_FOUND">OCSP_­ISSUER_­NOT_­FOUND</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-issuer-not-found">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Unable to find certificate issusing OCSP response
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-signature-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-signature-error" role="button" aria-expanded="true" aria-controls="#ocsp-signature-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_SIGNATURE_ERROR">OCSP_­SIGNATURE_­ERROR</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-signature-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP signature error
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-bad-status-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-bad-status" role="button" aria-expanded="true" aria-controls="#ocsp-bad-status">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_BAD_STATUS">OCSP_­BAD_­STATUS</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-bad-status">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP bad status
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-response-invalid-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-response-invalid" role="button" aria-expanded="true" aria-controls="#ocsp-response-invalid">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_RESPONSE_INVALID">OCSP_­RESPONSE_­INVALID</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-response-invalid">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP parsing valid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-no-revocation-url-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-no-revocation-url" role="button" aria-expanded="true" aria-controls="#ocsp-no-revocation-url">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_NO_REVOCATION_URL">OCSP_­NO_­REVOCATION_­URL</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-no-revocation-url">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP URL not available
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-server-not-available-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-server-not-available" role="button" aria-expanded="true" aria-controls="#ocsp-server-not-available">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_SERVER_NOT_AVAILABLE">OCSP_­SERVER_­NOT_­AVAILABLE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-server-not-available">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP server not available
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="no-revocation-data-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#no-revocation-data" role="button" aria-expanded="true" aria-controls="#no-revocation-data">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="NO_REVOCATION_DATA">NO_­REVOCATION_­DATA</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="no-revocation-data">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>No revocation data
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="basic-extension-errors">Basic extension errors</h2>
+        <p>
+        Errors related to extensions in general or to the BasicConstraints standard extension. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.2" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Extensions</a> (RFC 5280), <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.9" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">BasicConstraints Extension</a> (RFC 5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="unknown-critical-extension-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#unknown-critical-extension" role="button" aria-expanded="true" aria-controls="#unknown-critical-extension">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="UNKNOWN_CRITICAL_EXTENSION">UNKNOWN_­CRITICAL_­EXTENSION</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="unknown-critical-extension">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Unknown critical extension encountered
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing UNKNOWN_­CRITICAL_­EXTENSION in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_PATH_LEN_NEGATIVE.zip">BC_PATH_LEN_NEGATIVE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_PATH_LEN_NEGATIVE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_IP_ADDR_BLOCKS.zip">EMPTY_IP_ADDR_BLOCKS </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_IP_ADDR_BLOCKS/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/IP_ADDR_BLOCKS_NO_SUBSET.zip">IP_ADDR_BLOCKS_NO_SUBSET </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/IP_ADDR_BLOCKS_NO_SUBSET/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_MINIMUM_NOT_ZERO.zip">NC_MINIMUM_NOT_ZERO </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_MINIMUM_NOT_ZERO/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_UNKNOWN_NAME_TYPE.zip">NC_UNKNOWN_NAME_TYPE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_UNKNOWN_NAME_TYPE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_CA.zip">PROXY_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_LENGTH_EXCEEDED.zip">PROXY_LENGTH_EXCEEDED </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_LENGTH_EXCEEDED/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_NAME_NO_MATCH_ISSUER.zip">PROXY_NAME_NO_MATCH_ISSUER </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_NAME_NO_MATCH_ISSUER/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PROXY_WITH_SAN.zip">PROXY_WITH_SAN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PROXY_WITH_SAN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/UNKNOWN_CRITICAL_EXTENSION.zip">UNKNOWN_CRITICAL_EXTENSION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/UNKNOWN_CRITICAL_EXTENSION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID_PROXY.zip">VALID_PROXY </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID_PROXY/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing UNKNOWN_­CRITICAL_­EXTENSION in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>, 
+                        
+                            <a href="/#x509-v-err-invalid-extension-link">X509_­V_­ERR_­INVALID_­EXTENSION</a>, 
+                        
+                            <a href="/#x509-v-err-unnested-resource-link">X509_­V_­ERR_­UNNESTED_­RESOURCE</a>, 
+                        
+                            <a href="/#x509-v-err-subtree-minmax-link">X509_­V_­ERR_­SUBTREE_­MINMAX</a>, 
+                        
+                            <a href="/#x509-v-err-unsupported-constraint-type-link">X509_­V_­ERR_­UNSUPPORTED_­CONSTRAINT_­TYPE</a>, 
+                        
+                            <a href="/#x509-v-err-proxy-path-length-exceeded-link">X509_­V_­ERR_­PROXY_­PATH_­LENGTH_­EXCEEDED</a>, 
+                        
+                            <a href="/#x509-v-err-proxy-subject-name-violation-link">X509_­V_­ERR_­PROXY_­SUBJECT_­NAME_­VIOLATION</a>, 
+                        
+                            <a href="/#x509-v-err-unhandled-critical-extension-link">X509_­V_­ERR_­UNHANDLED_­CRITICAL_­EXTENSION</a>, 
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-unknown-crit-extensions-link">GNUTLS_­CERT_­UNKNOWN_­CRIT_­EXTENSIONS</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-constraints-failure-link">GNUTLS_­CERT_­SIGNER_­CONSTRAINTS_­FAILURE</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-ca-link">GNUTLS_­CERT_­SIGNER_­NOT_­CA</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-err-x509-invalid-extensions-link">MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>, 
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#unrecognized-critical-extension-link">UNRECOGNIZED_­CRITICAL_­EXTENSION</a>, 
+                        
+                            <a href="/openjdk#minimum-name-constraints-link">MINIMUM_­NAME_­CONSTRAINTS</a>, 
+                        
+                            <a href="/openjdk#unsupported-handshake-message-link">UNSUPPORTED_­HANDSHAKE_­MESSAGE</a>, 
+                        
+                            <a href="/openjdk#ca-key-usage-failed-link">CA_­KEY_­USAGE_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ca-cert-not-for-cert-issuer-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ca-cert-not-for-cert-issuer" role="button" aria-expanded="true" aria-controls="#ca-cert-not-for-cert-issuer">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CA_CERT_NOT_FOR_CERT_ISSUER">CA_­CERT_­NOT_­FOR_­CERT_­ISSUER</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="ca-cert-not-for-cert-issuer">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>CA certificate not allowed to issue certs
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing CA_­CERT_­NOT_­FOR_­CERT_­ISSUER in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_CA_FALSE.zip">ISSUER_CA_FALSE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_CA_FALSE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NO_CERTSIGN_IN_KEYUSAGE.zip">NO_CERTSIGN_IN_KEYUSAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NO_CERTSIGN_IN_KEYUSAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing CA_­CERT_­NOT_­FOR_­CERT_­ISSUER in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-invalid-ca-link">X509_­V_­ERR_­INVALID_­CA</a>, 
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signer-not-ca-link">GNUTLS_­CERT_­SIGNER_­NOT_­CA</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-constraints-failure-link">GNUTLS_­CERT_­SIGNER_­CONSTRAINTS_­FAILURE</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-not-trusted-link">MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#not-a-ca-certificate-link">NOT_­A_­CA_­CERTIFICATE</a>, 
+                        
+                            <a href="/openjdk#ca-key-usage-failed-link">CA_­KEY_­USAGE_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="duplicate-cert-extension-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#duplicate-cert-extension" role="button" aria-expanded="true" aria-controls="#duplicate-cert-extension">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="DUPLICATE_CERT_EXTENSION">DUPLICATE_­CERT_­EXTENSION</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="duplicate-cert-extension">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Duplicate certificate extension encountered
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing DUPLICATE_­CERT_­EXTENSION in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/DUPLICATE_BC_EXTENSION.zip">DUPLICATE_BC_EXTENSION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/DUPLICATE_BC_EXTENSION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing DUPLICATE_­CERT_­EXTENSION in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-unable-to-get-issuer-cert-locally-link">X509_­V_­ERR_­UNABLE_­TO_­GET_­ISSUER_­CERT_­LOCALLY</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-x509-duplicate-extension-link">GNUTLS_­E_­X509_­DUPLICATE_­EXTENSION</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-err-x509-invalid-extensions-link">MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ext-in-v1-v2-cert-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ext-in-v1-v2-cert" role="button" aria-expanded="true" aria-controls="#ext-in-v1-v2-cert">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="EXT_IN_V1_V2_CERT">EXT_­IN_­V1_­V2_­CERT</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="ext-in-v1-v2-cert">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Encountered extension in certificate with version &lt; 3
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing EXT_­IN_­V1_­V2_­CERT in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/V1_CERT_WITH_EXTENSIONS.zip">V1_CERT_WITH_EXTENSIONS </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/V1_CERT_WITH_EXTENSIONS/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing EXT_­IN_­V1_­V2_­CERT in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-certificate-error-link">GNUTLS_­E_­CERTIFICATE_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-err-x509-invalid-format-link">MBEDTLS_­ERR_­X509_­INVALID_­FORMAT</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="name-related-errors">Name related errors</h2>
+        <p>
+        Errors signalizing problems with either hostname verification, NameConstaints standard extension or IP Address Delegation extension. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.10" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">NameConstaints extension</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc3779#section-2" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">IP Address Delegation extension</a> (RFC 3779),  <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.6" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Common Name</a> (RFC 5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="cert-name-nomatch-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-name-nomatch" role="button" aria-expanded="true" aria-controls="#cert-name-nomatch">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_NAME_NOMATCH">CERT_­NAME_­NOMATCH</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="cert-name-nomatch">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate does not match provided name
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing CERT_­NAME_­NOMATCH in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_SUBJECT_AND_NO_SAN.zip">EMPTY_SUBJECT_AND_NO_SAN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_SUBJECT_AND_NO_SAN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/HOST_NO_MATCH_CN.zip">HOST_NO_MATCH_CN </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/HOST_NO_MATCH_CN/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing CERT_­NAME_­NOMATCH in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-hostname-mismatch-link">X509_­V_­ERR_­HOSTNAME_­MISMATCH</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-cn-mismatch-link">MBEDTLS_­X509_­BADCERT_­CN_­MISMATCH</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>, 
+                        
+                            <a href="/openjdk#no-name-matching-link">NO_­NAME_­MATCHING</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="chain-name-mismatch-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#chain-name-mismatch" role="button" aria-expanded="true" aria-controls="#chain-name-mismatch">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CHAIN_NAME_MISMATCH">CHAIN_­NAME_­MISMATCH</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="chain-name-mismatch">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate issuer does not match subject of issuing cert
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="name-constraint-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#name-constraint-error" role="button" aria-expanded="true" aria-controls="#name-constraint-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="NAME_CONSTRAINT_ERROR">NAME_­CONSTRAINT_­ERROR</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="name-constraint-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate does not pass name constraint
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing NAME_­CONSTRAINT_­ERROR in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_MAXIMUM_PRESENT.zip">NC_MAXIMUM_PRESENT </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_MAXIMUM_PRESENT/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_PERMITTED_VIOLATION.zip">NC_PERMITTED_VIOLATION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_PERMITTED_VIOLATION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing NAME_­CONSTRAINT_­ERROR in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-subtree-minmax-link">X509_­V_­ERR_­SUBTREE_­MINMAX</a>, 
+                        
+                            <a href="/#x509-v-err-permitted-violation-link">X509_­V_­ERR_­PERMITTED_­VIOLATION</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signer-constraints-failure-link">GNUTLS_­CERT_­SIGNER_­CONSTRAINTS_­FAILURE</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-err-x509-invalid-extensions-link">MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#maximum-name-constraints-link">MAXIMUM_­NAME_­CONSTRAINTS</a>, 
+                        
+                            <a href="/openjdk#name-constraints-check-failed-link">NAME_­CONSTRAINTS_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="dn-too-long-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#dn-too-long" role="button" aria-expanded="true" aria-controls="#dn-too-long">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="DN_TOO_LONG">DN_­TOO_­LONG</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="dn-too-long">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Distinguished name too long
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="usage-and-policy-errors">Usage and policy errors</h2>
+        <p>
+        Errors related to standard extensions CertificatePolicies, KeyUsage and ExtendedKeyUsage. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.3" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">KeyUsage extension</a> (RFC5280),  <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.12" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">ExtendedKeyUsage extension</a> (RFC5280),  <a href="https://tools.ietf.org/html/rfc5280#section-4.2.1.4" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">CertificatePolicies extension</a> (RFC5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="invalid-usage-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#invalid-usage" role="button" aria-expanded="true" aria-controls="#invalid-usage">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="INVALID_USAGE">INVALID_­USAGE</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="invalid-usage">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate does not allow the requested usage
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing INVALID_­USAGE in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ANY_EXT_KEY_USAGE.zip">ANY_EXT_KEY_USAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ANY_EXT_KEY_USAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/UNKNOWN_EXT_KEY_USAGE.zip">UNKNOWN_EXT_KEY_USAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/UNKNOWN_EXT_KEY_USAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing INVALID_­USAGE in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-invalid-purpose-link">X509_­V_­ERR_­INVALID_­PURPOSE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-ok-link">MBEDTLS_­OK</a>, 
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-ext-key-usage-link">MBEDTLS_­X509_­BADCERT_­EXT_­KEY_­USAGE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>, 
+                        
+                            <a href="/openjdk#ext-key-usage-no-tls-server-link">EXT_­KEY_­USAGE_­NO_­TLS_­SERVER</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="policy-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#policy-error" role="button" aria-expanded="true" aria-controls="#policy-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="POLICY_ERROR">POLICY_­ERROR</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="policy-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate policy error
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="duplicate-cert-policy-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#duplicate-cert-policy" role="button" aria-expanded="true" aria-controls="#duplicate-cert-policy">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="DUPLICATE_CERT_POLICY">DUPLICATE_­CERT_­POLICY</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="duplicate-cert-policy">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate contains duplicate policy
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ca-cert-not-for-crl-issuer-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ca-cert-not-for-crl-issuer" role="button" aria-expanded="true" aria-controls="#ca-cert-not-for-crl-issuer">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CA_CERT_NOT_FOR_CRL_ISSUER">CA_­CERT_­NOT_­FOR_­CRL_­ISSUER</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ca-cert-not-for-crl-issuer">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>CA certificate not allowed to issue CRLs
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-response-missing-keyusage-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-response-missing-keyusage" role="button" aria-expanded="true" aria-controls="#ocsp-response-missing-keyusage">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_RESPONSE_MISSING_KEYUSAGE">OCSP_­RESPONSE_­MISSING_­KEYUSAGE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-response-missing-keyusage">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP issuer's keyusage prohibits OCSP
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="algorithm-related-errors">Algorithm related errors</h2>
+        <p>
+        Various errors signalizing usage of invalid or deprecated algorithms. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc7935" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Algorithm and Key Size Profile for PKI</a> (RFC 7935),  <a href="https://tools.ietf.org/html/rfc6460" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Suite B Profile for TLS</a> (RFC 6460)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="signature-method-too-weak-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#signature-method-too-weak" role="button" aria-expanded="true" aria-controls="#signature-method-too-weak">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="SIGNATURE_METHOD_TOO_WEAK">SIGNATURE_­METHOD_­TOO_­WEAK</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="signature-method-too-weak">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Signature method too weak
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing SIGNATURE_­METHOD_­TOO_­WEAK in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_RSA_KEY_1024.zip">ISSUER_RSA_KEY_1024 </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_RSA_KEY_1024/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing SIGNATURE_­METHOD_­TOO_­WEAK in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-ca-key-too-small-link">X509_­V_­ERR_­CA_­KEY_­TOO_­SMALL</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-insecure-algorithm-link">GNUTLS_­CERT_­INSECURE_­ALGORITHM</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-bad-key-link">MBEDTLS_­X509_­BADCERT_­BAD_­KEY</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="signature-algo-unknown-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#signature-algo-unknown" role="button" aria-expanded="true" aria-controls="#signature-algo-unknown">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="SIGNATURE_ALGO_UNKNOWN">SIGNATURE_­ALGO_­UNKNOWN</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="signature-algo-unknown">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate signed with unknown/unavailable algorithm
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="signature-algo-bad-params-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#signature-algo-bad-params" role="button" aria-expanded="true" aria-controls="#signature-algo-bad-params">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="SIGNATURE_ALGO_BAD_PARAMS">SIGNATURE_­ALGO_­BAD_­PARAMS</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="signature-algo-bad-params">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate signature has invalid parameters
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="untrusted-hash-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#untrusted-hash" role="button" aria-expanded="true" aria-controls="#untrusted-hash">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="UNTRUSTED_HASH">UNTRUSTED_­HASH</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="untrusted-hash">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Hash function used is considered too weak for security
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing UNTRUSTED_­HASH in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_HASH_MD5.zip">ISSUER_HASH_MD5 </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_HASH_MD5/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing UNTRUSTED_­HASH in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-ca-md-too-weak-link">X509_­V_­ERR_­CA_­MD_­TOO_­WEAK</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-insecure-algorithm-link">GNUTLS_­CERT_­INSECURE_­ALGORITHM</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-bad-md-link">MBEDTLS_­X509_­BADCERT_­BAD_­MD</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#failed-signature-algorithm-link">FAILED_­SIGNATURE_­ALGORITHM</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="formatting-errors">Formatting errors</h2>
+        <p>
+        These errors occur when a field of the certificate/CRL contains invalid values or is badly formatted. <br>
+        Relevant links: <a href="https://tools.ietf.org/html/rfc5280#section-4.1.1.3" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Signature</a> (RFC 5280),  <a href="https://tools.ietf.org/html/rfc5280#section-4.1.2.5.1" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Time formatting</a> (RFC 5280), <a href="https://tools.ietf.org/html/rfc5280#section-4.1.1.2" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Certificate Signature Algorithm</a> (RFC 5280)
+
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="signature-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#signature-error" role="button" aria-expanded="true" aria-controls="#signature-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="SIGNATURE_ERROR">SIGNATURE_­ERROR</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="signature-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Signature error
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing SIGNATURE_­ERROR in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/INVALID_SIGNATURE.zip">INVALID_SIGNATURE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/INVALID_SIGNATURE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing SIGNATURE_­ERROR in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-cert-signature-failure-link">X509_­V_­ERR_­CERT_­SIGNATURE_­FAILURE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-signature-failure-link">GNUTLS_­CERT_­SIGNATURE_­FAILURE</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-not-trusted-link">MBEDTLS_­X509_­BADCERT_­NOT_­TRUSTED</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#signature-check-failed-link">SIGNATURE_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="crl-bad-signature-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#crl-bad-signature" role="button" aria-expanded="true" aria-controls="#crl-bad-signature">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CRL_BAD_SIGNATURE">CRL_­BAD_­SIGNATURE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="crl-bad-signature">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>CRL bad signature
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="decoding-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#decoding-error" role="button" aria-expanded="true" aria-controls="#decoding-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="DECODING_ERROR">DECODING_­ERROR</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="decoding-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Botan::Decoding_error
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing DECODING_­ERROR in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/PUBKEY_INFO_INVALID_OID.zip">PUBKEY_INFO_INVALID_OID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/PUBKEY_INFO_INVALID_OID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/V4_CERT.zip">V4_CERT </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/V4_CERT/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/WRONG_SIGNATURE_ALGORITHM.zip">WRONG_SIGNATURE_ALGORITHM </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/WRONG_SIGNATURE_ALGORITHM/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing DECODING_­ERROR in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-ee-key-too-small-link">X509_­V_­ERR_­EE_­KEY_­TOO_­SMALL</a>, 
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>, 
+                        
+                            <a href="/#x509-v-err-cert-signature-failure-link">X509_­V_­ERR_­CERT_­SIGNATURE_­FAILURE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-certificate-error-link">GNUTLS_­E_­CERTIFICATE_­ERROR</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-err-x509-sig-mismatch-link">MBEDTLS_­ERR_­X509_­SIG_­MISMATCH</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#unsupported-signature-algorithm-link">UNSUPPORTED_­SIGNATURE_­ALGORITHM</a>, 
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="cert-serial-negative-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#cert-serial-negative" role="button" aria-expanded="true" aria-controls="#cert-serial-negative">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="CERT_SERIAL_NEGATIVE">CERT_­SERIAL_­NEGATIVE</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="cert-serial-negative">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Certificate serial number is negative
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="invalid-argument-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#invalid-argument" role="button" aria-expanded="true" aria-controls="#invalid-argument">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="INVALID_ARGUMENT">INVALID_­ARGUMENT</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="invalid-argument">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Botan::Invalid_Argument
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="encoding-error-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#encoding-error" role="button" aria-expanded="true" aria-controls="#encoding-error">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="ENCODING_ERROR">ENCODING_­ERROR</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="encoding-error">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Botan::Encoding_Error
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing ENCODING_­ERROR in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_EMPTY.zip">NC_EMPTY </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_EMPTY/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing ENCODING_­ERROR in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-err-x509-invalid-extensions-link">MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+    <div id="botan" class="section linked-anchor"><div class="container" markdown="1">
+        <h2 id="uncategorized-errors">Uncategorized errors</h2>
+        <p>
+        These errors are not yet categorized, deprecated or not used at all. <br>
+        
+        </p>
+
+        
+        <div class="error-box linked-anchor" id="no-matching-crldp-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#no-matching-crldp" role="button" aria-expanded="true" aria-controls="#no-matching-crldp">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="NO_MATCHING_CRLDP">NO_­MATCHING_­CRLDP</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="no-matching-crldp">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>No CRL with matching distribution point for certificate
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-cert-not-listed-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-cert-not-listed" role="button" aria-expanded="true" aria-controls="#ocsp-cert-not-listed">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_CERT_NOT_LISTED">OCSP_­CERT_­NOT_­LISTED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-cert-not-listed">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP cert not listed
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-no-http-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-no-http" role="button" aria-expanded="true" aria-controls="#ocsp-no-http">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_NO_HTTP">OCSP_­NO_­HTTP</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-no-http">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP requests not available
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-signature-ok-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-signature-ok" role="button" aria-expanded="true" aria-controls="#ocsp-signature-ok">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_SIGNATURE_OK">OCSP_­SIGNATURE_­OK</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-signature-ok">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Signature on OCSP response was found valid
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="ocsp-response-good-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#ocsp-response-good" role="button" aria-expanded="true" aria-controls="#ocsp-response-good">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="OCSP_RESPONSE_GOOD">OCSP_­RESPONSE_­GOOD</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="ocsp-response-good">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>OCSP response accepted as affirming unrevoked status for certificate
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="valid-crl-checked-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#valid-crl-checked" role="button" aria-expanded="true" aria-controls="#valid-crl-checked">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="VALID_CRL_CHECKED">VALID_­CRL_­CHECKED</span>
+    
+    
+
+    
+
+    
+    
+    
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+        
+    
+    
+
+</div>
+<div class="collapse show" id="valid-crl-checked">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Valid CRL examined
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+        
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="verified-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#verified" role="button" aria-expanded="true" aria-controls="#verified">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="VERIFIED">VERIFIED</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="verified">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Verified
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing VERIFIED in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_NOT_CRITICAL_CA.zip">BC_NOT_CRITICAL_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_NOT_CRITICAL_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/BC_PATH_LEN_IN_NON_CA.zip">BC_PATH_LEN_IN_NON_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/BC_PATH_LEN_IN_NON_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_EXT_KEY_USAGE.zip">EMPTY_EXT_KEY_USAGE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_EXT_KEY_USAGE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/EMPTY_KEY_USAGE_END_CERT.zip">EMPTY_KEY_USAGE_END_CERT </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/EMPTY_KEY_USAGE_END_CERT/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NC_EXCLUDED_VIOLATION.zip">NC_EXCLUDED_VIOLATION </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NC_EXCLUDED_VIOLATION/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NEGATIVE_SERIAL_NUMBER.zip">NEGATIVE_SERIAL_NUMBER </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NEGATIVE_SERIAL_NUMBER/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/NO_KEY_USAGE_IN_CA.zip">NO_KEY_USAGE_IN_CA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/NO_KEY_USAGE_IN_CA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SAN_EMPTY_EMAIL.zip">SAN_EMPTY_EMAIL </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SAN_EMPTY_EMAIL/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SAN_NULL_BYTE_IN_EMAIL.zip">SAN_NULL_BYTE_IN_EMAIL </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SAN_NULL_BYTE_IN_EMAIL/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/SIGNATURE_ALGORITHM_MISMATCH.zip">SIGNATURE_ALGORITHM_MISMATCH </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/SIGNATURE_ALGORITHM_MISMATCH/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID.zip">VALID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID_WITH_AIA.zip">VALID_WITH_AIA </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID_WITH_AIA/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/VALID_WITH_CRLDP.zip">VALID_WITH_CRLDP </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/VALID_WITH_CRLDP/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing VERIFIED in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-ok-link">X509_­V_­OK</a>, 
+                        
+                            <a href="/#x509-v-err-invalid-purpose-link">X509_­V_­ERR_­INVALID_­PURPOSE</a>, 
+                        
+                            <a href="/#x509-v-err-excluded-violation-link">X509_­V_­ERR_­EXCLUDED_­VIOLATION</a>, 
+                        
+                            <a href="/#x509-v-err-unsupported-name-syntax-link">X509_­V_­ERR_­UNSUPPORTED_­NAME_­SYNTAX</a>, 
+                        
+                            <a href="/#x509-v-err-ca-key-too-small-link">X509_­V_­ERR_­CA_­KEY_­TOO_­SMALL</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-e-success-link">GNUTLS_­E_­SUCCESS</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-signer-constraints-failure-link">GNUTLS_­CERT_­SIGNER_­CONSTRAINTS_­FAILURE</a>, 
+                        
+                            <a href="/gnutls#gnutls-cert-unexpected-owner-link">GNUTLS_­CERT_­UNEXPECTED_­OWNER</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-certificate-error-link">GNUTLS_­E_­CERTIFICATE_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-ok-link">MBEDTLS_­OK</a>, 
+                        
+                            <a href="/mbedtls#mbedtls-err-x509-invalid-extensions-link">MBEDTLS_­ERR_­X509_­INVALID_­EXTENSIONS</a>, 
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-key-usage-link">MBEDTLS_­X509_­BADCERT_­KEY_­USAGE</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>, 
+                        
+                            <a href="/openjdk#ext-key-usage-no-tls-server-link">EXT_­KEY_­USAGE_­NO_­TLS_­SERVER</a>, 
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#incorrect-key-usage-bits-link">INCORRECT_­KEY_­USAGE_­BITS</a>, 
+                        
+                            <a href="/openjdk#failed-to-parse-server-certificates-link">FAILED_­TO_­PARSE_­SERVER_­CERTIFICATES</a>, 
+                        
+                            <a href="/openjdk#signature-check-failed-link">SIGNATURE_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+        <div class="error-box linked-anchor" id="tls-exception-link">
+<div class="card-header clearfix" data-toggle="collapse" href="#tls-exception" role="button" aria-expanded="true" aria-controls="#tls-exception">
+    <span class="fa fa-fw fa-chevron-down"></span> <span class="fa fa-fw fa-chevron-right"></span>
+    <span class="openssl-code" title="TLS_EXCEPTION">TLS_­EXCEPTION</span>
+    
+    
+
+    
+        
+    <span class="fas fa-fw fa-certificate float-right color-verydarkgrey" title="Example certificate"></span>
+  
+
+    
+
+    
+    
+    
+    
+        
+            
+    <span class="fas fa-fw fa-link float-right color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+
+            
+                
+    
+    
+
+</div>
+<div class="collapse show" id="tls-exception">
+    <div class="card card-body">
+        
+            
+
+            <!-- new docs -->
+            
+
+            
+                <p class="color-mediumdarkgrey font-italic">(No detailed documentation provided by the library.)</p>
+            
+
+            
+                <h3>
+    <span class="fas fa-exclamation-triangle "></span>
+  
+Original error message:</h3>
+                <p>Botan::TLS_Exception
+<span class="text-muted">(<a class="ext-link ext-link color-reset" href="https://github.com/randombit/botan/blob/master/src/lib/x509/cert_status.cpp" target="_blank" rel="noopener noreferrer">source</a>)</span></p>
+            
+        
+
+        
+
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-certificate  color-verydarkgrey" title="Example certificate"></span>
+  
+Example certificates</h3>
+            <p>Below you can download one or more example malformed certificates causing TLS_­EXCEPTION in Botan. If you are interested in generating these certificates yourself, see the corresponding generating script for each case on the project Github.</p>
+            <ul class="mb-0">
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/END_ENTITY_RSA_KEY_1024.zip">END_ENTITY_RSA_KEY_1024 </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/END_ENTITY_RSA_KEY_1024/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_PUBKEY_INFO_INVALID_OID.zip">ISSUER_PUBKEY_INFO_INVALID_OID </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_PUBKEY_INFO_INVALID_OID/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+                <li>Case 
+    <span class="fas fa-file-archive  color-verydarkgrey"></span>
+  
+<a href="/assets/archives/ISSUER_PUBKEY_INVALID_OID_AND_SIGNATURE.zip">ISSUER_PUBKEY_INVALID_OID_AND_SIGNATURE </a>
+                    (see the 
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+<a href="https://github.com/crocs-muni/usable-cert-validation/tree/master/validation/certs/scripts/chains/ISSUER_PUBKEY_INVALID_OID_AND_SIGNATURE/generate.py" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">generation script</a>)</li>
+            
+            </ul>
+            <!--!-->
+        
+        
+        
+            <h3>
+    <span class="fas fa-fw fa-link  color-verydarkgrey" title="= Equal error
+&gt; Linked error covers a subset of cases
+&lt; Linked error covers a superset of cases"></span>
+  
+Corresponding errors</h3>
+            <p>What validation errors do other libraries give for certificates causing TLS_­EXCEPTION in Botan? Below, you can see the basic overview based on the example certificates from the previous section. <span class="font-italic">(The list may be incomplete.)</span></p>
+            <ul class="mb-0">
+            
+                
+                    <li>
+                    OpenSSL:
+                        
+                            <a href="/#x509-v-err-ee-key-too-small-link">X509_­V_­ERR_­EE_­KEY_­TOO_­SMALL</a>, 
+                        
+                            <a href="/#x509-v-err-ca-key-too-small-link">X509_­V_­ERR_­CA_­KEY_­TOO_­SMALL</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    GnuTLS:
+                        
+                            <a href="/gnutls#gnutls-cert-insecure-algorithm-link">GNUTLS_­CERT_­INSECURE_­ALGORITHM</a>, 
+                        
+                            <a href="/gnutls#gnutls-e-certificate-error-link">GNUTLS_­E_­CERTIFICATE_­ERROR</a>
+                        
+                    </li>
+                
+            
+                
+            
+                
+                    <li>
+                    Mbed TLS:
+                        
+                            <a href="/mbedtls#mbedtls-x509-badcert-bad-key-link">MBEDTLS_­X509_­BADCERT_­BAD_­KEY</a>
+                        
+                    </li>
+                
+            
+                
+                    <li>
+                    OpenJDK:
+                        
+                            <a href="/openjdk#no-message-link">NO_­MESSAGE</a>, 
+                        
+                            <a href="/openjdk#pkix-path-validation-failed-link">PKIX_­PATH_­VALIDATION_­FAILED</a>, 
+                        
+                            <a href="/openjdk#signature-check-failed-link">SIGNATURE_­CHECK_­FAILED</a>
+                        
+                    </li>
+                
+            
+            </ul>
+        
+  </div>
+</div>
+</div>
+
+        
+    </div></div>
+
+
+
+
+
+
+<div class="section"><div class="container clearfix">
+    <h2 id="about">About the project</h2>
+    <div class="col-lg-3 col-md-4 col-6 float-right">
+        <a class="ext-link ext-link no-ext-link-icon" href="https://crocs.fi.muni.cz" target="_blank" rel="noopener noreferrer">
+            <img class="crocs" src="/assets/img/crocs.png" alt="CRoCS FI MU" title="CRoCS FI MU">
+        </a>
+    </div>
+    <p>The project is developed at the <a href="https://www.fi.muni.cz/research/crocs/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Centre for Research on Cryptography and Security (CRoCS)</a> at <a href="http://www.muni.cz/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Masaryk University</a>, Brno, Czech Republic by <a href="https://crocs.fi.muni.cz/people/mukrop" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Martin Ukrop</a>, Pavol Žáčik, Eric Valčík with the help of Michaela Balážová and Matěj Grabovský. For more details, see the ReadMe file in <a href="https://github.com/crocs-muni/usable-cert-validation" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">
+    <span class="fab fa-github  color-verydarkgrey"></span>
+  
+the project repository</a> on GitHub.</p>
+    <p>The authors are grateful for the financial support by and <a href="https://research.redhat.com/" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Red Hat Czech</a> and <a href="https://www.kiwi.com" target="_blank" rel="noopener noreferrer" class="ext-link ext-link">Kiwi.com</a>.
+</p>
+</div></div>
+
+
+  </main>
+  <div id="feedback">
+    <div class="card card-body collapsed">
+        <h4>Feedback</h4>
+        <p>Something is not working? File a bug report to our repository, please.</p>
+        <a class="ext-link ext-link btn btn-primary d-block mb-3" href="https://github.com/crocs-muni/usable-cert-validation/issues/new?labels=bug&amp;title=Bug+report&amp;body=Please+describe+what+does+not+work..." target="_blank" rel="noopener noreferrer">
+    <span class="fas fa-fw fa-bug color-white"></span>
+  
+ Bug report</a>
+        <p>Other comments or ideas?</p>
+        <a class="btn btn-primary d-block" target="_blank" href="mailto:webmaster@x509errors.org?subject=Site+feedback">
+    <span class="fas fa-fw fa-envelope color-white"></span>
+  
+ Email us!</a>
+    </div>
+    <div class="btn btn-secondary">
+<span class="fas fa-fw fa-question-circle"></span> Feedback</div>
+</div>
+
+  <footer>
+    <div class="container clearfix">
+        <span class="footer-left">
+            <a class="no-ext-link-icon" href="mailto:webmaster@x509errors.org" title="Contact email">
+            <span class="fas fa-fw fa-envelope"></span> webmaster@x509errors.org</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation" title="GitHub repository" target="_blank" rel="noopener noreferrer">
+            <span class="fab fa-fw fa-github"></span> usable-cert-validation</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://github.com/crocs-muni/usable-cert-validation/commit/94ec4c4750960074dc9e4f0da226b7dd1ff8276a" title="Last modification" target="_blank" rel="noopener noreferrer">
+            <span class="fas fa-fw fa-clock"></span> 2021-07-13</a>
+        </span>
+        <span class="footer-right">
+            © 2020 <a class="ext-link ext-link no-ext-link-icon" href="https://muni.cz/" target="_blank" rel="noopener noreferrer">Masaryk University</a><br>
+            <a class="ext-link ext-link no-ext-link-icon" href="https://crocs.fi.muni.cz/" target="_blank" rel="noopener noreferrer">Centre for Research on Cryptography and Security</a>
+        </span>
+    </div>
+</footer>
+
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+</body>
+</html>
