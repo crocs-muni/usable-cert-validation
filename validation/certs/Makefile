@@ -44,6 +44,9 @@ VRESULTS_FILE=$(VDIR)/vresults.yml
 # port counter
 PORT_CTR_FILE=$(VDIR)/.port
 
+# Chain splitting script
+SPLIT_SCRIPT=$(UTILS_DIR)/split_chain.py
+
 # All individual chain script directories
 CHAINS_ALL=$(notdir $(wildcard $(CHAINS_DIR)/*))
 # All individual chain build folders
@@ -92,7 +95,10 @@ $(VRESULTS_DIR)/%.yml: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 $(ARCHIVE_DIR)/%.zip: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 	@mkdir -p $(ARCHIVE_DIR)
 	@printf "Creating a zip archive: %-50s" $(basename $(@F))
-	@cd $(BUILD_DIR) && zip --filesync --quiet ../$@ $(*F)/*.pem $(ROOT)/$(ROOT).pem
+	@mkdir -p ./tmp/
+	@python3 $(SPLIT_SCRIPT) $< ./tmp/
+	@cd $(BUILD_DIR) && zip -j --filesync --quiet ../$@ ../tmp/* ../$< $(*F)/crl*.pem $(ROOT)/$(ROOT).pem
+	@rm -rf ./tmp/
 	@printf "[ OK ]\n"
 
 clean:
