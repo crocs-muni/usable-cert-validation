@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <iostream>
 #include <cstring>
+#include <getopt.h>
 
 #include <botan/tls_client.h>
 #include <botan/certstor.h>
@@ -12,7 +13,17 @@
 #include <botan/ocsp.h>
 #include <botan/tls_exceptn.h>
 
-#include <boost/program_options.hpp>
+#include "client.hpp"
+
+/* Default values of all command line options */
+struct tls_options opts = {
+      .check_crl = false,
+      .check_ocsp = false,
+      .check_ocsp_staple = false,
+      .host = {0},
+      .port = {0},
+      .trust_anchor = {0},
+};
 
 class ClientCB : public Botan::TLS::Callbacks {
 private:
@@ -172,33 +183,18 @@ private:
 };
 
 int main(int argc, char **argv) {
-    boost::program_options::options_description desc("Allowed options");
-    desc.add_options()
-            ("host", boost::program_options::value<std::string>(), "Hostname")
-            ("port", boost::program_options::value<std::string>(), "Port")
-            ("trust_anchor", boost::program_options::value<std::string>(), "Trusted CA")
-            ("check_crl", boost::program_options::value<bool>(), "Check CRLs")
-            ("check_ocsp", boost::program_options::value<bool>(), "Check OCSP")
-            ("check_ocsp_staple", boost::program_options::value<bool>(), "Check OCSP staple")
-    ;
-    boost::program_options::variables_map vm;
-    boost::program_options::store(boost::program_options::parse_command_line(argc, argv, desc), vm);
-    boost::program_options::notify(vm);
-
-    std::string host = vm["host"].as<std::string>();
-    std::string port = vm["port"].as<std::string>();
-    std::string trust_anchor = vm["trust_anchor"].as<std::string>();
-    // bool check_crl = vm["check_crl"].as<bool>();
-    // bool check_ocsp = vm["check_ocsp"].as<bool>();
-    // bool check_ocsp_staple = vm["check_ocsp_staple"].as<bool>();
-
+    // parse command line options
+    if (parse_opts(argc, argv, &opts) != PARSING_SUCCESS) {
+        fprintf(stderr, "Application error: Parsing command line arguments failed"); 
+        return 1;
+    }
 
     // prepare rng
     Botan::AutoSeeded_RNG rng;
 
     // prepare all the parameters
     Botan::TLS::Session_Manager_In_Memory session_mgr(rng);
-    Client_Credentials creds(trust_anchor);
+    Client_Credentials creds(opts.trust_anchor);
 
     class Policy : public Botan::TLS::Strict_Policy
     {
@@ -212,7 +208,7 @@ int main(int argc, char **argv) {
 
     ClientCB clientCB;
 
-    clientCB.tcp_connect(host, port);
+    clientCB.tcp_connect(opts.host, opts.port);
 
     // open the tls connection
     Botan::TLS::Client client(clientCB,
@@ -220,7 +216,7 @@ int main(int argc, char **argv) {
                               creds,
                               policy,
                               rng,
-                              Botan::TLS::Server_Information(host, port),
+                              Botan::TLS::Server_Information(opts.host, opts.port),
                               Botan::TLS::Protocol_Version::TLS_V12);
 
     // move this into specific function do_handshake, check for errors, refactor
@@ -258,4 +254,49 @@ int main(int argc, char **argv) {
         client.close();
     }
     close(clientCB.sockfd);
+}
+
+int parse_opts(int argc, char **argv, struct tls_options *opts) {
+  int c;
+  while (1) {
+    static struct option long_options[] = {
+        {"check_crl", no_argument, NULL, 'c'},
+        {"check_ocsp", no_argument, NULL, 'o'},
+        {"check_ocsp_staple", no_argument, NULL, 's'},
+        {"host", required_argument, NULL, 'h'},
+        {"port", required_argument, NULL, 'p'},
+        {"trust_anchor", required_argument, NULL, 't'},
+        {NULL, 0, NULL, 0},
+    };
+
+    c = getopt_long(argc, argv, "", long_options, NULL);
+    if (c == -1) {
+      break;
+    }
+
+    switch (c) {
+    case 'c':
+      opts->check_crl = true;
+      break;
+    case 'o':
+      opts->check_ocsp = true;
+      break;
+    case 's':
+      opts->check_ocsp_staple = true;
+      break;
+    case 'h':
+      strncpy(opts->host, optarg, HOST_BUFFER_LENGTH);
+      break;
+    case 'p':
+      strncpy(opts->port, optarg, PORT_BUFFER_LENGTH);
+      break;
+    case 't':
+      strncpy(opts->trust_anchor, optarg, PATH_BUFFER_LENGTH);
+      break;
+    default:
+      return PARSING_ERROR;
+    }
+  }
+
+  return PARSING_SUCCESS;
 }
