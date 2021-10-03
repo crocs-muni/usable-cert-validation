@@ -9,7 +9,6 @@ addons:
     - libgnutls28-dev
     - libbotan-2-dev
     - libmbedtls-dev
-    - libboost-program-options-dev
     - botan
 
 jdk:
