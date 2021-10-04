@@ -1,16 +1,18 @@
 servers:
-  main:
-    which: python
+  main: {}
 
 verify:
   openssl:
     options:
       flags: "--strict"
+    cli: openssl verify -x509_strict -CAfile root.pem -untrusted intermediate1.pem endpoint.pem
   gnutls:
     options: {}
+    cli: certtool --verify --load-ca-certificate root.pem --infile chain.pem
   mbedtls:
     options: {}
   botan:
     options: {}
+    cli: botan cert_verify endpoint.pem intermediate1.pem root.pem 
   openjdk:
     options: {}

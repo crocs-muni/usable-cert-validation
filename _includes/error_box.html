@@ -63,12 +63,12 @@
             {% for chain in mapping.chains %}
                 <li>Case&nbsp;{% include icon.html icon="zip" %}<a href="/assets/archives/{{ chain }}.zip">{{ chain }} </a>
                     (see the&nbsp;{% include icon.html icon="github" %}<a href="{{ site.repo-url }}/tree/master/validation/certs/scripts/chains/{{ chain }}/generate.py">generation script</a>)</li>
+                {% if site.data.certs[chain][page.library] %}
+                <p>Validate manually with: <code class="highlighter-rouge">{{ site.data.certs[chain][page.library] }}</code></p>
+                {% endif %}
             {% endfor %}
             </ul>
-            <!--{% if include.page.verify-command %}
-                {% assign library=site.data.libraries | where: "name", page.library | first %}
-                <p>Validate with: <code class="highlighter-rouge">{{ include.page.verify-command }}</code></p>
-            {% endif %}!-->
+
         {% endunless %}
         
         {% if mapping-present == true %}

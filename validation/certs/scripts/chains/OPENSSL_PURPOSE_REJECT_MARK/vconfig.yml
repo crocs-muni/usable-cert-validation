@@ -6,3 +6,4 @@ verify:
     options:
       purpose: SSL_SERVER
       trust_anchor: marked_root.pem
+    cli: openssl verify -CAfile marked_root.pem -untrusted intermediate1.pem -purpose sslserver endpoint.pem

@@ -5,15 +5,18 @@ verify:
   openssl:
     options:
       trust_anchor: intermediate.pem
+    cli: openssl verify -CAfile intermediate1.pem endpoint.pem
   gnutls:
     options:
       trust_anchor: intermediate.pem
+    cli: certtool --verify --load-ca-certificate intermediate1.pem --infile chain.pem
   mbedtls:
     options:
       trust_anchor: intermediate.pem
   botan:
     options:
       trust_anchor: intermediate.pem
+    cli: botan cert_verify endpoint.pem intermediate1.pem
   openjdk:
     options:
       trust_anchor: intermediate.pem

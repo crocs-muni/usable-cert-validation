@@ -4,3 +4,4 @@ servers:
 verify:
   openssl:
     options: {}
+    cli: openssl verify -CAfile root.pem -untrusted intermediate1.pem -untrusted intermediate2.pem endpoint.pem 

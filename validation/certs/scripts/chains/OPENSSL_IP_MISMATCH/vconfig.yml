@@ -5,3 +5,4 @@ verify:
   openssl:
     options:
       ip: '127.0.0.0'
+    cli: openssl verify -CAfile root.pem -untrusted intermediate1.pem -verify_ip 127.0.0.0 endpoint.pem

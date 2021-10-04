@@ -23,8 +23,12 @@ ROOT=root
 CHAINS=chains
 # Filename of all generating scripts
 GENERATE=generate
-# Variable to specify wheter to print debug info
+# Variable to specify whether to print debug info
 DEBUG=""
+# Directory to copy CLI validation commands into
+CLI_FILE=../../_data/certs.yml
+# Script that copies CLI validation data to web
+CLI_SCRIPT=$(UTILS_DIR)/cli-validation.py
 
 # Directory with scripts for all chains
 CHAINS_DIR=$(SCRIPTS_DIR)/$(CHAINS)
@@ -54,8 +58,8 @@ VRESULTS_FILES_ALL=$(addprefix $(VRESULTS_DIR)/, $(addsuffix .yml, $(CHAINS_ALL)
 ARCHIVES_ALL=$(addprefix $(ARCHIVE_DIR)/, $(addsuffix .zip, $(CHAINS_ALL)))
 
 
-# Build everyhing, validate and concat all results into a single YAML file
-all: $(ROOT_KEY_FILE) $(CHAINS_BUILD_ALL) $(VRESULTS_FILES_ALL) $(ARCHIVES_ALL)
+# Build everything, validate and concat all results into a single YAML file
+all: $(ROOT_KEY_FILE) $(CHAINS_BUILD_ALL) $(VRESULTS_FILES_ALL) $(ARCHIVES_ALL) $(CLI_FILE)
 	@cat $(VRESULTS_DIR)/*.yml > $(VRESULTS_FILE)
 
 # First we build the root key target, this creates the root cert as well
@@ -95,9 +99,14 @@ $(ARCHIVE_DIR)/%.zip: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 	@cd $(BUILD_DIR) && zip --filesync --quiet ../$@ $(*F)/*.pem $(ROOT)/$(ROOT).pem
 	@printf "[ OK ]\n"
 
+# Make CLI validation data accessible to web
+$(CLI_FILE): $(wildcard $(SCRIPTS_DIR)/$(CHAINS)/*/vconfig.yml)
+	@python3 $(CLI_SCRIPT) $(SCRIPTS_DIR)/$(CHAINS)/ $(CLI_FILE)
+
 clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(VRESULTS_DIR)
 	rm -rf $(ARCHIVE_DIR)
+	rm -f $(CLI_FILE)
 
 .PHONY: all clean

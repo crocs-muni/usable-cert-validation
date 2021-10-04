@@ -5,3 +5,4 @@ verify:
   openssl:
     options:
       max_depth: 0
+    cli: openssl verify -CAfile root.pem -untrusted intermediate1.pem -verify_depth 0 endpoint.pem

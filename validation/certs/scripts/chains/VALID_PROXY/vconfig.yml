@@ -5,6 +5,7 @@ verify:
   openssl:
     options:
       flags: "--allow_proxy"
+    cli: openssl verify -CAfile root.pem -untrusted intermediate1.pem -allow_proxy_certs endpoint.pem
   gnutls:
     options: {}
   mbedtls:
