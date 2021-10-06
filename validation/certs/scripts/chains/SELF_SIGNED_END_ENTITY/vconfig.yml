@@ -4,11 +4,14 @@ servers:
 verify:
   openssl:
     options: {}
+    cli: openssl verify -CAfile root.pem endpoint.pem
   gnutls:
     options: {}
+    cli: certtool --verify --load-ca-certificate root.pem --infile chain.pem
   mbedtls:
     options: {}
   botan:
     options: {}
+    cli: botan cert_verify endpoint.pem root.pem
   openjdk:
     options: {}

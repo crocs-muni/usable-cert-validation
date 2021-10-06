@@ -21,6 +21,9 @@ validation/certs/utils/setup.py
 # Automatically generated linking files
 _data/mapping
 
+# Automatically generated CLI validation commands
+_data/certs.yml
+
 # Build web page
 _site
 

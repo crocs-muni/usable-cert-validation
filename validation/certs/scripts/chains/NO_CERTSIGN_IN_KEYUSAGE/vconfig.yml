@@ -5,11 +5,14 @@ verify:
   openssl:
     options:
       flags: "--strict"
+    cli: openssl verify -CAfile root.pem -untrusted intermediate1.pem -x509_strict endpoint.pem
   gnutls:
     options: {}
+    cli: certtool --verify --load-ca-certificate root.pem --infile chain.pem
   mbedtls:
     options: {}
   botan:
     options: {}
+    cli: botan cert_verify endpoint.pem intermediate1.pem root.pem
   openjdk:
     options: {}
