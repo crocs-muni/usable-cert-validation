@@ -15,8 +15,56 @@
 #include <openssl/ssl.h>
 #include <openssl/x509.h>
 #include <openssl/x509_vfy.h>
+#include <openssl/ocsp.h>
 
 #include "client.h"
+
+/* Taken from "OpenSSL_1_1_1-stable/apps/apps.c" with minor changes. */
+static int load_cert_crl_http(const char *url, X509 **pcert, X509_CRL **pcrl)
+{
+  BIO *bio_err = BIO_new_fp(stderr, BIO_NOCLOSE | BIO_FP_TEXT);
+  
+  char *host = NULL, *port = NULL, *path = NULL;
+  BIO *bio = NULL;
+  OCSP_REQ_CTX *rctx = NULL;
+  int use_ssl, rv = 0;
+  if (!OCSP_parse_url(url, &host, &port, &path, &use_ssl))
+    goto err;
+  if (use_ssl) {
+    BIO_puts(bio_err, "https not supported\n");
+    goto err;
+  }
+  bio = BIO_new_connect(host);
+  if (!bio || !BIO_set_conn_port(bio, port))
+    goto err;
+  rctx = OCSP_REQ_CTX_new(bio, 1024);
+  if (rctx == NULL)
+    goto err;
+  if (!OCSP_REQ_CTX_http(rctx, "GET", path))
+    goto err;
+  if (!OCSP_REQ_CTX_add1_header(rctx, "Host", host))
+    goto err;
+  if (pcert) {
+    do {
+      rv = X509_http_nbio(rctx, pcert);
+    } while (rv == -1);
+  } else {
+    do {
+      rv = X509_CRL_http_nbio(rctx, pcrl);
+    } while (rv == -1);
+  }
+
+ err:
+  OPENSSL_free(host);
+  OPENSSL_free(path);
+  OPENSSL_free(port);
+  if (bio)
+    BIO_free_all(bio);
+  OCSP_REQ_CTX_free(rctx);
+
+  return rv;
+}
+
 
 int main(int argc, char **argv) {
   /* Final return value of the program */
@@ -108,6 +156,22 @@ int main(int argc, char **argv) {
 
   /* Set hostname for verification */
   OPENSSL_CHECK(SSL_set1_host(ssl, opts.host));
+
+  if (opts.check_crl) {
+    X509_STORE *store = SSL_CTX_get_cert_store(ctx);
+    X509_CRL *crl;
+
+    /* 
+     * Use a hardcoded address since at this point we don't have access
+     * to the CRL distribution point extension.
+     */
+    load_cert_crl_http("http://localhost:49999/crl.der", NULL, &crl);
+    if (crl) {
+      OPENSSL_CHECK(X509_STORE_add_crl(store, crl));
+    }
+
+    X509_CRL_free(crl);
+  }
 
   /* Perform the TLS handshake but don't fail immediately */
   int r = SSL_connect(ssl);
@@ -370,6 +434,7 @@ int set_verify_params(X509_VERIFY_PARAM *vpm, struct tls_options *opts) {
 
   if (opts->check_crl) {
     flags |= X509_V_FLAG_CRL_CHECK;
+    flags |= X509_V_FLAG_EXTENDED_CRL_SUPPORT;
   }
 
   if (opts->allow_proxy) {

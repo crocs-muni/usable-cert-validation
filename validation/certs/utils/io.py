@@ -24,9 +24,8 @@ def export_chain(chain, filename):
 
 def export_crl(crl_der, filename):
     os.makedirs(os.path.dirname(filename), exist_ok=True)
-    crl_pem = _der_to_pem(crl_der, CRL_LABEL)
-    with open(filename, "w") as file:
-        file.write(crl_pem)
+    with open(filename , "bw") as file:
+        file.write(crl_der)
 
 
 def _der_to_pem(bytes_der, label):

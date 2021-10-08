@@ -92,7 +92,7 @@ $(VRESULTS_DIR)/%.yml: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 $(ARCHIVE_DIR)/%.zip: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
 	@mkdir -p $(ARCHIVE_DIR)
 	@printf "Creating a zip archive: %-50s" $(basename $(@F))
-	@cd $(BUILD_DIR) && zip --filesync --quiet ../$@ $(*F)/*.pem $(ROOT)/$(ROOT).pem
+	@cd $(BUILD_DIR) && zip --filesync --quiet ../$@ $(*F)/*.{der,pem} $(ROOT)/$(ROOT).pem
 	@printf "[ OK ]\n"
 
 clean:
