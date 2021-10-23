@@ -447,7 +447,7 @@ def default_tbs_crl(issuer_public_key,
     issuer_cn = attribute_type_and_value('commonName', issuer_cn)
     issuer = name([issuer_cn])
     akid = authority_key_identifier(issuer_public_key, asn)
-    crlnumber = crl_number(number)
+    crlnumber = crl_number(number, asn)
 
     extensions = [
         akid,
@@ -458,9 +458,9 @@ def default_tbs_crl(issuer_public_key,
         'version': 1,
         'signature': sigalg,
         'issuer': issuer,
-        'thisUpdate': misc.current_time(),
-        'nextUpdate': misc.current_time_offset(365),
+        'thisUpdate': ('generalTime', misc.current_time()),
+        'nextUpdate': ('generalTime', misc.current_time_offset(365)),
         'revokedCertificates': revoked,
-        'extensions': extensions
+        'crlExtensions': extensions
     }
     return tbs
