@@ -202,7 +202,7 @@
     Different CRL scope.
   weight: 209
   message: |
-    different CRL scope
+    Different CRL scope
 
 - code: X509_V_ERR_EE_KEY_TOO_SMALL
   slug: x509-v-err-ee-key-too-small
