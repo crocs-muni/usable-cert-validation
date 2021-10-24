@@ -71,7 +71,6 @@ main() {
     increment_port
     
     MAIN_PID=-1
-    CRL_PID=-1
     run_servers
     sleep 0.3
 
@@ -113,10 +112,6 @@ main() {
 
     # close the servers
     kill "${MAIN_PID}"
-    if [ "${CRL_PID}" != "-1" ]
-    then
-        kill "${CRL_PID}"
-    fi
 
     # output the results into a YAML file
     echo ${OUT} | yq --yaml-output '.' - > ${OUT_FILE}
@@ -161,17 +156,10 @@ run_servers() {
     fi
     MAIN_PID=$!
 
-    CRL_PORT=$(cat "${PORT_CTR_FILE}")
-    increment_port
-    CRL=$(echo "${SERVER_CONFIG}" | shyaml get-value crl.which null)
-    if [ "${CRL}" != \'null\' ]
-    then
-        python -m http.server --bind "${HOST}" \
-                              --directory "${CHAIN_BUILD_DIR}" \
-                              "${CRL_PORT}" \
-                              > /dev/null 2>&1 &
-    CRL_PID=$!
-    fi
+    # update server with the correct CRL file
+    rm -rf "${CERTS_DIR}/build/static"
+    mkdir -p "${CERTS_DIR}/build/static"
+    cp "${CHAIN_BUILD_DIR}"/* "${CERTS_DIR}/build/static"
 }
 
 

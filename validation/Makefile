@@ -18,7 +18,12 @@ $(CLIENTS_DIR):
 
 # build all cert chains
 $(CERTS_DIR): $(CLIENTS_DIR)
-	@make --no-print-directory \
+	@python -m http.server --bind "localhost" \
+	                       --directory "$(CURDIR)/$(CERTS_DIR)/build/static" \
+	                       "49999" \
+	                       > /dev/null 2>&1 & \
+	trap "kill $$!" EXIT TERM INT ; \
+	make --no-print-directory \
 	      --directory=$@ \
 	      DEBUG=$(DEBUG)
 
