@@ -291,6 +291,31 @@ def crl_distribution_points(uris, asn):
     }
 
 
+def issuing_distribution_point(asn,
+                               distribution_point=None,
+                               only_contains_user_certs=False, 
+                               only_contains_ca_certs=False, 
+                               only_some_reasons=None,
+                               indirect_crl=False, 
+                               only_contains_attribute_certs=False):
+    idp = {
+        'onlyContainsUserCerts': only_contains_user_certs,
+        'onlyContainsCACerts': only_contains_ca_certs,
+        'indirectCRL': indirect_crl,
+        'onlyContainsAttributeCerts': only_contains_attribute_certs,
+    }
+    if distribution_point is not None:
+        idp['distributionPoint'] = distribution_point
+    if only_some_reasons is not None:
+        idp['onlySomeReasons'] = only_some_reasons
+    idp_der = asn.encode('IssuingDistributionPoint', idp)
+    return {
+        'extnID': oid_map['issuingDistributionPoint'],
+        'critical': True,
+        'extnValue': idp_der
+    }
+
+
 def freshest_crl(uris, asn):
     dp_names = [('fullName', [('uniformResourceIdentifier', uri)])
                 for uri in uris]
