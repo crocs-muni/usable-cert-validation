@@ -1,0 +1,15 @@
+servers:
+  main: {}
+
+verify:
+  openssl:
+    options: 
+      flags: "--check_crl"
+  gnutls:
+    options: {}
+  mbedtls:
+    options: {}
+  botan:
+    options: {}
+  openjdk:
+    options: {}
