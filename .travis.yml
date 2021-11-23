@@ -10,6 +10,7 @@ addons:
     - libbotan-2-dev
     - libmbedtls-dev
     - botan
+    - python3-pip
 
 jdk:
   - openjdk16
