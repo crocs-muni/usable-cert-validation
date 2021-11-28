@@ -60,13 +60,3 @@ deploy:
       condition: $TRAVIS_BRANCH = preview-*
     skip_cleanup: true
     script: make deploy-preview
-  # Old version: GitHub pages
-  - provider: pages
-    on:
-      branch: master
-    skip_cleanup: true
-    local_dir: _site
-    target_branch: gh-pages
-    keep_history: false
-    verbose: false
-    github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
