@@ -1,0 +1,10 @@
+---
+# This file should contain only @imports from assets/_scss.
+# The folder _scss is not exported, only used to compile the CSS file.
+---
+
+@import "colors.scss";
+@import "main.scss";
+@import "dev-warning.scss";
+
+@import "friendly.scss";

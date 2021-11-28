@@ -1,0 +1,38 @@
+/* Developer version warning box */
+
+#dev-warning {
+    --dev-space: 0.6rem;
+    position: fixed;
+    bottom: var(--dev-space);
+    left: var(--dev-space);
+    right: var(--dev-space);
+    padding: var(--dev-space);
+    border-radius: var(--dev-space);
+    margin-inline: auto;
+    width: 300px;
+    z-index: 1070;
+
+    p {
+        text-align: center;
+        margin-bottom: 0rem;
+    }
+
+    a#devWarningToggle {
+        text-decoration: none;
+        color: $c-secondary;
+
+        i.fas {
+            margin-inline: 0.3rem;
+        }
+    }
+
+    p#devWarningDetails {
+        padding-top: 0.5rem;
+    }
+}
+
+@media (min-width: 576px) {
+    #dev-warning {
+        left: auto;
+    }
+}
