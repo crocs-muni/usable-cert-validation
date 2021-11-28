@@ -126,7 +126,7 @@
 
 - code: UNSUPPORTED_SIGNATURE_ALGORITHM
   slug: unsupported-signature-algorithm
-  tags: [ algoritm ]
+  tags: [ algorithm ]
   weight: 603
   message: |
     javax.net.ssl.SSLException: Unsupported signature algorithm
