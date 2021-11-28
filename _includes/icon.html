@@ -14,7 +14,7 @@
   {% when 'link' %}
     <a class="fas fa-external-link-alt {{ include.float }} color-darkgrey"  href="{{ include.href }}" style="font-size: 0.65em;" title="Link to source"></a>
   {% when 'error-link' %}
-    <span class="fas fa-fw fa-link {{ include.float }} color-verydarkgrey" title="= Equal error&#10;> Linked error covers a subset of cases&#10;< Linked error covers a superset of cases"></span>
+    <span class="fas fa-fw fa-link {{ include.float }} color-verydarkgrey" title="Corresponding errors"></span>
   {% when 'button-bug' %}
     <span class="fas fa-fw fa-bug color-white"></span>
   {% when 'button-email' %}
