@@ -6,7 +6,7 @@ VALIDATION_FOLDER=validation
 VERBOSITY=">/dev/null 2>&1"
 
 # Set branch name (from Travis or locally)
-BRANCH:=$(or $(TRAVIS_BRANCH),`cd .. && git branch --show-current`)
+BRANCH:=$(or $(TRAVIS_BRANCH),`git branch --show-current`)
 
 all: build
 

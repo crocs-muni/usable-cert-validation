@@ -22,15 +22,16 @@ validation/certs/utils/setup.py
 _data/mapping
 humans.txt
 
-# Build web page
-_site
+# Build web page + deployment
+_site/
+.firebase/
 
 # Temporary files
-.cache
+.cache/
 *~
 
 # VS Code project files
-.vscode
+.vscode/
 
 # Local bundle configuration and gems
-vendor
+vendor/

@@ -2,6 +2,10 @@ dist: focal    # Ubuntu 20.04 LTS
 language: ruby
 gemfile: Gemfile
 
+# Clone full git history for git-restore-mtime to work
+git:
+  depth: false
+
 addons:
   apt:
     update: true
@@ -15,6 +19,7 @@ addons:
 jdk:
   - openjdk16
 
+# Restore file times for better GNU Make optimizations
 before_install: 
   - git clone https://github.com/MestreLion/git-tools # Distro version is currently broken
   - ./git-tools/git-restore-mtime
@@ -37,13 +42,31 @@ cache:
   - $TRAVIS_BUILD_DIR/validation/certs/build # Enable caching of generated certificates
   - $TRAVIS_BUILD_DIR/validation/certs/results/vresults # Enable caching of chain validation results
 
+before_deploy: 
+  - wget -q --output-document=web-core/firebase https://firebase.tools/bin/linux/latest
+  - chmod +x web-core/firebase
+
 deploy:
-  provider: pages
-  skip_cleanup: true
-  local_dir: _site
-  target_branch: gh-pages
-  keep_history: false
-  verbose: false
-  github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
-  on:
-    branch: master
+  # Firebase production deployment
+  - provider: script # uses FIREBASE_TOKEN
+    on:
+      branch: master
+    skip_cleanup: true
+    script: make deploy-production
+  # Firebase preview deployment
+  - provider: script # uses FIREBASE_TOKEN
+    on:
+      all_branches: true
+      condition: $TRAVIS_BRANCH = preview-*
+    skip_cleanup: true
+    script: make deploy-preview
+  # Old version: GitHub pages
+  - provider: pages
+    on:
+      branch: master
+    skip_cleanup: true
+    local_dir: _site
+    target_branch: gh-pages
+    keep_history: false
+    verbose: false
+    github_token: $GITHUB_TOKEN  # Set in the settings page of your repository, as a secure variable
