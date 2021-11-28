@@ -18,8 +18,9 @@ validation/certs/scripts/__pycache__/
 validation/certs/scripts/chains/*/__pycache__/
 validation/certs/utils/setup.py
 
-# Automatically generated linking files
+# Automatically generated files
 _data/mapping
+humans.txt
 
 # Build web page
 _site

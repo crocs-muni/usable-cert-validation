@@ -38,8 +38,12 @@ test: all
 #		else utils/test-cert-validation.sh $(CERTS_BUILD_FOLDER) $@ && printf "[ OK ]\n"; fi
 
 # Web targets
-local: all
+local: all humans.txt
 	bundle exec jekyll serve
+
+humans.txt: CONTRIBUTORS.md
+	@echo "Creating humans.txt file ..."
+	cp CONTRIBUTORS.md humans.txt
 
 # Utility targets
 clean:
