@@ -1,0 +1,17 @@
+{
+  "projects": {
+    "default": "x509errors-org"
+  },
+  "targets": {
+    "x509errors-org": {
+      "hosting": {
+        "production": [
+          "x509errors-org"
+        ],
+        "preview": [
+          "x509errors-org"
+        ]
+      }
+    }
+  }
+}
