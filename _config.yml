@@ -27,14 +27,18 @@ cache_dir: .cache
 
 cdn:
   # See https://www.srihash.org for info on how to generate the hashes
-  css:              "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-  css_hash:         "sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
-  js:               "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
-  js_hash:          "sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
-  jquery:           "https://code.jquery.com/jquery-3.2.1.slim.min.js"
-  jquery_hash:      "sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
-  popper:           "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
-  popper_hash:      "sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  bootstrap_css:      "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css"
+  bootstrap_css_hash: "sha512-P5MgMn1jBN01asBgU0z60Qk4QxiXo86+wlFahKrsQf37c9cro517WzVSPPV1tDKzhku2iJ2FVgL67wG03SGnNA=="
+  fonts:              "https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,400i,700&display=swap&subset=latin-ext"
+  fonts_hash:         "sha512-/FcYZbaK+1wuPWfE/VRhr/Tr2uiQ0dcRjKxDxMTq8EbQcyJwu+134pJA9K1QEayG6KdfpPE5Z0Bk5DescYuXVQ=="
+  jquery:             "https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+  jquery_hash:        "sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+  bootstrap_js:       "https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.bundle.min.js"
+  bootstrap_js_hash:  "sha512-wV7Yj1alIZDqZFCUQJy85VN+qvEIly93fIQAN7iqDFCPEucLCeNFz4r35FCo9s6WrpdDQPi80xbljXB8Bjtvcg=="
+  popper:             "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+  popper_hash:        "sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+  fa:                 "https://kit.fontawesome.com/036c3720fc.js"
+  fa_hash:            "sha512-gBU8kk0/Ze7QTxvTLckf/fIIJAAde3+F1DzX7N32ROcO4Kw5t6yMWnARPIJNbBkF/WsnrLzVnisGwIVmXSU1dA=="
 
 target-blank:
   add_css_classes: ext-link
