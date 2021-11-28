@@ -67,7 +67,7 @@ deploy-production: build
 
 clean:
 	rm -rf _site
-	mr -rf humans.txt
+	rm -rf humans.txt
 	rm -rf $(MAPPING_FOLDER)
 	make --directory=$(VALIDATION_FOLDER) clean
 
