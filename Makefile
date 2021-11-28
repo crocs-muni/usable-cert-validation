@@ -5,7 +5,10 @@ VALIDATION_FOLDER=validation
 
 VERBOSITY=">/dev/null 2>&1"
 
-all: validation
+# Set branch name (from Travis or locally)
+BRANCH:=$(or $(TRAVIS_BRANCH),`cd .. && git branch --show-current`)
+
+all: build
 
 install:
 	pip3 install --user -r requirements.txt
@@ -24,31 +27,50 @@ debug:
 		  ERRORS_DIR=$(CURDIR)/$(ERRORS_FOLDER) \
 		  DEBUG="--debug"
 
-# Test web consistency
-test: all
-	@echo "Building the website using Jekyll ..."
-	@bundle exec jekyll build
-	@echo "Running tests on the generated sites using html-proofer ..."
-	-@bundle exec ruby utils/web-test.rb
-
 # Test generated certificates for assigned errors
 #$(ERRORS_FOLDER)/*/*.yml:
 #	@printf "Testing certificates for %-70s" $(@D)/$(@F)
 #	@if RES=`grep verify-expected $@ | wc -l` && [ $$RES -eq 0 ]; then printf "[ -- ]\n"; \
 #		else utils/test-cert-validation.sh $(CERTS_BUILD_FOLDER) $@ && printf "[ OK ]\n"; fi
 
-# Web targets
-local: all humans.txt
-	bundle exec jekyll serve
+# === Targets for generating files  ===
+
+generated-files: humans.txt
 
 humans.txt: CONTRIBUTORS.md
 	@echo "Creating humans.txt file ..."
 	cp CONTRIBUTORS.md humans.txt
 
-# Utility targets
+# === Web build, test and deploy targets  ===
+
+build: validation generated-files
+	@echo "Building the website using Jekyll ..."
+	@if [ "$(BRANCH)" = "master" ]; then echo "=== Production build ($(BRANCH)) ==="; else echo "=== Development build ($(BRANCH)) ==="; fi
+	@if [ "$(BRANCH)" = "master" ]; then JEKYLL_ENV=production bundle exec jekyll build; else bundle exec jekyll build; fi
+
+local: validation generated-files
+	bundle exec jekyll serve
+
+test: build
+	@echo "Running internal tests on the generated site using html-proofer ..."
+	bundle exec ruby utils/web-test.rb
+	@echo "Running tests on the external content using html-proofer ..."
+	-bundle exec ruby utils/web-test.rb external
+
+deploy-preview: build
+	./firebase hosting:channel:deploy $(BRANCH) --only preview
+
+deploy-production: build
+	./firebase deploy --only hosting:production
+
+# === Cleaning targets  ===
+
 clean:
 	rm -rf _site
+	mr -rf humans.txt
 	rm -rf $(MAPPING_FOLDER)
 	make --directory=$(VALIDATION_FOLDER) clean
 
-.PHONY: all install clean test local validation
+# === Target flags  ===
+
+.PHONY: all install validation debug generated-files build local test deploy-preview deploy-production clean
