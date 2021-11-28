@@ -154,7 +154,7 @@
     The certificate contains an unknown critical extension.
 
 - code: GNUTLS_E_CERTIFICATE_ERROR
-  slug: gnutls-e--certificate-error
+  slug: gnutls-e-certificate-error
   tags: [ format ]
   weight: 702
   message: |
