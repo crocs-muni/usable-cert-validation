@@ -43,7 +43,7 @@
           "value": "{\"report_to\": \"default\", \"max_age\": 2592000, \"include_subdomains\": true, \"failure_fraction\": 1.0}"
         }, {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; img-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com; script-src-elem 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com; connect-src 'self' https://ka-f.fontawesome.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-elem 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-attr 'self'; report-uri https://nkas07xe.uriports.com/reports/report; report-to default"
+          "value": "default-src 'self'; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; img-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com; script-src-elem 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com https://fadmin.fi.muni.cz; connect-src 'self' https://ka-f.fontawesome.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-attr 'self'; report-uri https://nkas07xe.uriports.com/reports/report; report-to default"
         }, {
           "key": "Expect-CT",
           "value": "max-age=86400"
@@ -90,7 +90,7 @@
           "value": "{\"report_to\": \"default\", \"max_age\": 2592000, \"include_subdomains\": true, \"failure_fraction\": 1.0}"
         }, {
           "key": "Content-Security-Policy-Report-Only",
-          "value": "default-src 'self'; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; img-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com; script-src-elem 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com; connect-src 'self' https://ka-f.fontawesome.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-elem 'self' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-attr 'self';"
+          "value": "default-src 'self'; font-src 'self' https://cdnjs.cloudflare.com https://fonts.gstatic.com https://ka-f.fontawesome.com; img-src 'self'; script-src 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com; script-src-elem 'self' https://cdnjs.cloudflare.com https://kit.fontawesome.com https://fadmin.fi.muni.cz; connect-src 'self' https://ka-f.fontawesome.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-elem 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://fonts.googleapis.com; style-src-attr 'self';"
         }, {
           "key": "Expect-CT",
           "value": "max-age=86400"
