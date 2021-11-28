@@ -44,6 +44,11 @@ cdn:
 target-blank:
   add_css_classes: ext-link
 
+html-beautify:
+  include:
+    - "*.html"
+    - "*.md"
+
 plugins:
   - jekyll-sitemap
 
