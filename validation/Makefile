@@ -18,10 +18,10 @@ $(CLIENTS_DIR):
 
 # build all cert chains
 $(CERTS_DIR): $(CLIENTS_DIR)
-	@python -m http.server --bind "localhost" \
-	                       --directory "$(CURDIR)/$(CERTS_DIR)/build/static" \
-	                       "49999" \
-	                       > /dev/null 2>&1 & \
+	@python3 -m http.server --bind "localhost" \
+	                        --directory "$(CURDIR)/$(CERTS_DIR)/build/static" \
+	                        "49999" \
+	                        > /dev/null 2>&1 & \
 	trap "kill $$!" EXIT TERM INT ; \
 	make --no-print-directory \
 	      --directory=$@ \
