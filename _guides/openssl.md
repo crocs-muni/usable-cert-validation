@@ -146,7 +146,7 @@ if (SSL_CTX_load_verify_locations(ctx, "trusted_ca.pem", "trusted_dir") != 1) {
 {:.text-success}
 ## Optional: Custom certificate validation settings
 
-Optionally, you may want to put additional constraints on certificate validation. OpenSSL allows for this by modifying the `verify params` structure. In this example, we enforce strict certificate validation and put requirements on the IP address contained in the _Subject Alternative Name_ extension of the server certificate. All possible settings and flags can be found in the original [documentation](https://www.openssl.org/docs/man1.1.0/man3/X509_VERIFY_PARAM_set_flags.html)
+Optionally, you may want to put additional constraints on certificate validation. OpenSSL allows for this by modifying the `verify params` structure. In this example, we enforce strict certificate validation and put requirements on the IP address contained in the _Subject Alternative Name_ extension of the server certificate. All possible settings and flags can be found in the original [documentation](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html)
 
 ```c
 #include <openssl/x509.h>
