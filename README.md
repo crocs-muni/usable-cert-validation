@@ -40,7 +40,7 @@ apt install libssl-dev libgnutls28-dev botan libbotan-2-dev libmbedtls-dev openj
 dnf install openssl-devel gnutls-devel botan2-devel mbedtls-devel java-latest-openjdk-devel libcurl-devel
 ```
 
-The necessary Python packages are locally installed by running `make install`. Building the certificate chains requires the following Python packages: [setuptools](https://pypi.org/project/setuptools/), [asn1tools](https://github.com/eerimoq/asn1tools) and [pycryptodomex](https://pypi.org/project/pycryptodomex/). Running certificate validation further requires [shyaml](https://github.com/0k/shyaml), [yq](https://github.com/mikefarah/yq), [jq](https://stedolan.github.io/jq/) and [pyYAML](https://github.com/yaml/pyyaml) for parsing and manipulating YAML files.
+The necessary Python packages are locally installed by running `make install`. Building the certificate chains requires the following Python packages: [setuptools](https://pypi.org/project/setuptools/), [asn1tools](https://github.com/eerimoq/asn1tools) and [pycryptodomex](https://pypi.org/project/pycryptodomex/). Running certificate validation further requires [shyaml](https://github.com/0k/shyaml), [yq](https://kislyuk.github.io/yq/), [jq](https://stedolan.github.io/jq/) and [pyYAML](https://github.com/yaml/pyyaml) for parsing and manipulating YAML files.
 
 The website is build using [Jekyll](https://jekyllrb.com/). To develop locally, install Jekyll (e.g. according to [this guide](https://help.github.com/en/articles/setting-up-your-github-pages-site-locally-with-jekyll). Then run `make local` and see the website served at `localhost:4000`.
 
