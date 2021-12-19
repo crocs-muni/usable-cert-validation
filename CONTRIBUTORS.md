@@ -9,4 +9,4 @@ The project is developed at the [Centre for Research on Cryptography and Securit
 * Matěj Grabovský, 2019–2020, feedback, TLS clients, bug fixes
 * Michaela balážová, 2019–2020, improved error messages
 
-The authors are grateful for the financial support by and [Red Hat Czech](https://research.redhat.com/) and [Kiwi.com](https://www.kiwi.com/).
+The authors are grateful for the financial support by [Red Hat Czech](https://research.redhat.com/) and [Kiwi.com](https://www.kiwi.com/).
