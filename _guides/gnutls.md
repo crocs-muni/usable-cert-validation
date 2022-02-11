@@ -266,7 +266,7 @@ If certificate validation fails, `gnutls_handshake()` will always fail with the 
 unsigned status = gnutls_session_get_verify_cert_status(session);
 
 /* Retrieve the certificate type. */
-gnutls_certificate_type_t cert_type = gnutls_certificate_type_get2(session);
+gnutls_certificate_type_t cert_type = gnutls_certificate_type_get(session);
 
 /* Prepare a buffer for the error message, fill it, and print the message to the standard error output. */
 gnutls_datum_t out = {0};
