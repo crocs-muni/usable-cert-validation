@@ -1,12 +1,36 @@
 
 This guide covers the implementation of certificate revocation status checking using the Certificate Revocation List (CRL) revocation scheme. Official documentation of GnuTLS dealing with this topic can be found [here](https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html#Verifying-X_002e509-certificate-paths) and similar example from GnuTLS can be found [here](https://www.gnutls.org/manual/html_node/Advanced-certificate-verification-example.html#Advanced-certificate-verification-example).
 
-We assume that the TLS client-server connection has already been established, that is, the client has access to the server's certificate. In other words, we assume that the variable `gnutls_session_t session` represents an already established connection.
+**Short description of revocation scheme:**
+A Certificate Revocation List (CRL) is a list of revoked certificates previously issued by a CA. The CA can have multiple CRLs, each of which is signed with the private key of the corresponding CA. The CA authority then publishes its CRLs to HTTP or LDAP servers. Each X.509v3 certificate, that supports CRL, contains an extension called CRL distribution point, which stores a link to servers containing CRLs in which the certificate should be located. When verifying the TLS server’s certificate with this scheme, the TLS client must look at the required extension of the server’s certificate, obtain the address where the CRLs of the CA are located, and then download these lists and check their signatures. After the signature is validated, the TLS client can search the server’s certificate against the CRL.  
+
+CRLs are defined in [RFC 5280](https://www.rfc-editor.org/info/rfc5280).  
+CRLs on [Wikipedia](https://en.wikipedia.org/wiki/Certificate_revocation_list).
+
+**Summary of this guide:**
+1. Retrieve the server's certificate chain with its size
+   - from the chain, we will parse the TLS server's certificate with the certificate of its issuer
+2. Initialize empty trusted list
+   - `gnutls_x509_trust_list_t` structure is used to represent the trusted list
+   - general structure, which should be filled with **trusted** CA certificates and **trusted** CRLs and its main task is to validate the given certificate and verify it against the provided trusted CRLs
+3. Fill trusted list with trusted CA's certificates
+   - default system trusted CA's certificates are used
+4. Fill trusted list with trusted CRLs
+   - we will download all CRLs found in the CRL distribution point extension from the TLS server's certificate
+   - we will validate their signature and thus, they can be considered trusted and added to the trusted list
+5. Verify the TLS server's certificate against the filled trusted list
+6. Deinitialize
 
 
-## 1.) Retrieve the server's certificate chain with its size
+---
+   
 
-First, we need to obtain a server's certificate chain and then parse the TLS server's certificate from the chain.
+We assume that the TLS client-server connection has already been established, that is, the client has access to the TLS server's certificate. In other words, we assume that the variable `gnutls_session_t session` represents an already established connection. TLS client-server initialization guide can be found [here](https://x509errors.org/guides/gnutls).
+
+
+## 1.) Retrieve the TLS server's certificate chain with its size
+
+First, we need to obtain a server's certificate chain and then parse the TLS server's certificate together with the issuer's certificate from this chain. Issuer is the entity, who signed the TLS server's certificate.
 
 ```c
 #include <gnutls/gnutls.h>
@@ -40,6 +64,9 @@ for (int i=0; i < server_chain_size; i++)
 
 /* Get the server's certificate from the chain */
 gnutls_x509_crt_t server_certificate_crt = server_chain_crt[0];
+
+/* Get the issuer's certificate from the chain */
+gnutls_x509_crt_t issuer_certificate_crt = server_chain_crt[1];
 ```
 
 ### Relevant links
@@ -99,9 +126,11 @@ if (gnutls_x509_trust_list_add_system_trust(trusted_list, 0, 0) <= 0)
 * [gnutls_x509_trust_list_add_system_trust](https://gnutls.org/manual/gnutls.html#index-gnutls_005fx509_005ftrust_005flist_005fadd_005fsystem_005ftrust-1) (GnuTLS docs)
 
 
-## 4.) Retrieve issuer's Certificate Revocation List (CRL) and add it to the trusted list
+## 4.) Fill trusted list with trusted CRLs
 
-Fill the trusted list with CRLs that a TLS server's certificate has in the crl distribution point extension. One certificate can easily have multiple entries in the crl distribution point extension. 
+Fill the trusted list with CRLs that a TLS server's certificate has in the crl distribution point extension. The CRL's signature is verified against the issuer's certificate. 
+
+One certificate can easily have multiple entries in the crl distribution point extension. 
 
 In this step, an out-of-band connection is always made to a different CRL server for each crl distribution point. From the CRL server, the CRL file is downloaded and stored into the program's memory. 
 
@@ -118,7 +147,7 @@ static size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp)
     ud->data = realloc(ud->data, ud->size + size);
     if (ud->data == NULL)
     {
-        errx(EXIT_FAILURE, "realloc failed!\n");
+        exit(EXIT_FAILURE);
     }
 
     memcpy(&ud->data[ud->size], buffer, size);
@@ -127,6 +156,8 @@ static size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp)
     return size;
 }
 ```
+
+Function which will be used while downloading the CRLs. This function is assigned to the cURL handler with option called `CURLOPT_WRITEFUNCTION`. Description can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
 
 ```c
 #include <curl/curl.h>
@@ -141,6 +172,13 @@ if (buffer_crl_dist_point == NULL)
 
 /* Prepare gnutls_datum_t structure, where the downloaded CRL in DER format will be stored */
 gnutls_datum_t actual_one_CRL = { 0 };
+
+/* Prepare the native gnutls_x509_crl_t structure where the downloaded CRL from DER format will be imported */
+gnutls_x509_crl_t actual_one_CRL_crl;
+if (gnutls_x509_crl_init(&actual_one_CRL_crl) != 0)
+{
+    exit(EXIT_FAILURE);
+}
 
 /* Prepare the curl for making out-of-band connection and downloading CRLs from distribution point */
 curl_global_init(CURL_GLOBAL_ALL);
@@ -175,7 +213,8 @@ while (1)
         continue;
     }
     if (ret_error_val == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE)
-    {
+    {   
+        /* No more crl distribution point entries */
         free(buffer_crl_dist_point);
         break;
     }
@@ -183,6 +222,17 @@ while (1)
     curl_easy_setopt(handle, CURLOPT_URL, buffer_crl_dist_point);
     ret_error_val = curl_easy_perform(handle);        // HTTP GET Request
     if (ret_error_val != 0)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    /* Check whether the downloaded CRL was issued by the issuer of the TLS server's certificate */
+    if (gnutls_x509_crl_import(actual_one_CRL_crl, &actual_one_CRL, GNUTLS_X509_FMT_DER) != 0)
+    {
+        exit(EXIT_FAILURE);
+    }
+
+    if (gnutls_x509_crl_check_issuer(actual_one_CRL_crl, issuer_certificate_crt) != 1)
     {
         exit(EXIT_FAILURE);
     }
@@ -202,7 +252,7 @@ while (1)
     dist_points_index++;
 }
 
-/* Server's certificate hos not a single CRL distribution point entry */
+/* Server's certificate has not a single CRL distribution point entry */
 if (dist_points_index == 0)
 {
     fprintf(stderr, "Cannot use CRL revocation, no CRLs defined in CRL distribution points in server's certificate!\n");
@@ -218,10 +268,13 @@ After this step, our trusted list should be filled with certification authority 
 ### Relevant links
 
 * [cURL](https://curl.se/libcurl/c/libcurl-tutorial.html) (libcurl programming tutorial)
+* [gnutls_x509_crl_init](https://gnutls.org/manual/gnutls.html#index-gnutls_005fx509_005fcrl_005finit) (GnuTLS docs)
 * [gnutls_x509_crt_get_crl_dist_points](https://gnutls.org/manual/gnutls.html#index-gnutls_005fx509_005fcrt_005fget_005fcrl_005fdist_005fpoints) (GnuTLS docs)
+* [gnutls_x509_crl_import](https://gnutls.org/manual/gnutls.html#index-gnutls_005fx509_005fcrl_005fimport) (GnuTLS docs)
+* [gnutls_x509_crl_check_issuer](https://gnutls.org/manual/gnutls.html#index-gnutls_005fx509_005fcrl_005fcheck_005fissuer) (GnuTLS docs)
 * [gnutls_x509_trust_list_add_trust_mem](https://gnutls.org/manual/gnutls.html#index-gnutls_005fx509_005ftrust_005flist_005fadd_005ftrust_005fmem-1) (GnuTLS docs)
 
-## 5.) Verify the server's certificate against the filled trusted list
+## 5.) Verify the TLS server's certificate against the filled trusted list
 
 Verify the received TLS server's certificate and the whole chain against the filled trusted list.
 
@@ -266,16 +319,18 @@ Free the previously allocated structures, which are no longer required.
 
 ```c
 for (int i=0; i < server_chain_size; i++)
-    {
+{
         gnutls_x509_crt_deinit(server_chain_crt[i]);
-    }
+}
 gnutls_free(server_chain_crt);
+gnutls_x509_crl_deinit(actual_one_CRL_crl);
 gnutls_x509_trust_list_deinit(trusted_list, 1);
 ```
 
 ### Relevant links
 
 * [gnutls_x509_crt_deinit](https://gnutls.org/manual/gnutls.html#gnutls_005fx509_005fcrt_005fdeinit) (GnuTLS docs)
+* [gnutls_x509_crl_deinit](https://gnutls.org/manual/gnutls.html#index-gnutls_005fx509_005fcrl_005fdeinit) (GnuTLS docs)
 
 ---
 

@@ -1,12 +1,39 @@
 
 This guide covers the implementation of certificate revocation status checking using the Online Certificate Status Protocol (OCSP) revocation scheme. Official documentation of GnuTLS dealing with this topic can be found [here](https://www.gnutls.org/manual/gnutls.html#OCSP-certificate-status-checking) and similar example from GnuTLS can be found [here](https://www.gnutls.org/manual/gnutls.html#OCSP-example).
 
-We assume that the TLS client-server connection has already been established, that is, the client has access to the server's certificate. In other words, we assume that the variable `gnutls_session_t session` represents an already established connection.
+
+**Short description of revocation scheme:**
+A separate protocol with which the TLS client and OCSP server called OCSP responder communicate. The TLS client contacts the OCSP responder, trusted third party, to provide him with the revocation status of the TLS server’s certificate with which the TLS client communicates. 
+
+OCSP protocol is defined in [RFC 6960](https://www.rfc-editor.org/info/rfc6960).  
+OCSP on [Wikipedia](https://en.wikipedia.org/wiki/Online_Certificate_Status_Protocol).
+
+**Summary of this guide:**
+1. Retrieve the server's certificate chain
+   - from the chain, we will parse the TLS server's certificate with the certificate of its issuer
+2. Extract the URL Adress of OCSP Responder
+   - extract the URL adress of the OCSP Responder from the TLS server's certificate from step 1. The X.509v3 extension `authority information access` stores these URLs.
+3. Generate the OCSP Request
+   - in the OCSP request, we will include certificates whose revocation status we are interested in  
+   - also, we will include nonce into the OCSP request extension as a protection against replay attacks
+4. Send the OCSP Request and retrieve the OCSP Response
+   - cURL library is used for sending the OCSP Request to the specified URL from step 2
+   - the OCSP response is immidiately retrieved 
+5. Verify the signature of the OCSP Response
+6. Extract the revocation status from the OCSP Response
+   - if signature verification of the OCSP response from step 5 passed, we can extract the revocation status of the certificates we have included into the OCSP request
+7. Deinitialize
 
 
-## 1.) Retrieve the server's certificate chain along with it's size
+---
+   
 
-First, we need to obtain a server's certificate chain and then parse the TLS server's certificate together with the issuer's certificate from the chain. Issuer is the entity, who signed the TLS server's certificate.
+We assume that the TLS client-server connection has already been established, that is, the client has access to the server's certificate. In other words, we assume that the variable `gnutls_session_t session` represents an already established connection. TLS client-server initialization guide can be found [here](https://x509errors.org/guides/gnutls).
+
+
+## 1.) Retrieve the TLS server's certificate chain along with it's size
+
+First, we need to obtain a server's certificate chain and then parse the TLS server's certificate together with the issuer's certificate from this chain. Issuer is the entity, who signed the TLS server's certificate.
 
 ```c
 #include <gnutls/gnutls.h>
@@ -122,7 +149,7 @@ ocsp_responder_uri[ocsp_responder_uri_datum.size] = 0;
 
 ## 3.) Generate the OCSP Request
 
-Generate the OCSP Request for the certificate we want to verify. In this case, it is the TLS server's certificate.
+Generate the OCSP Request for the certificates we want to verify. In this case, it is just the TLS server's certificate.
 
 ```c
 /* Initialize empty native OCSP Request structure */
@@ -132,8 +159,21 @@ if (gnutls_ocsp_req_init(&ocsp_req) < 0)
     exit(EXIT_FAILURE);
 }
 
-/* Add the certificate, which revocation status we want to get with his issuer's certificate to the OCSP Request structure */
+/* Add the certificate, which revocation status we want to get with its issuer's certificate to the OCSP Request structure */
 if (gnutls_ocsp_req_add_cert(ocsp_req, GNUTLS_DIG_SHA1, issuer_certificate_crt, server_certificate_crt) < 0)
+{
+    exit(EXIT_FAILURE);
+}
+
+/* Add or update a nonce extension to the OCSP request with newly generated random value */
+if (gnutls_ocsp_req_randomize_nonce(ocsp_req) != 0)
+{
+    exit(EXIT_FAILURE);
+}
+
+/* Retrieve the added or updated nonce */
+gnutls_datum_t nonce_req = { 0 };
+if (gnutls_ocsp_req_get_nonce(ocsp_req, NULL, &nonce_req) != 0)
 {
     exit(EXIT_FAILURE);
 }
@@ -151,6 +191,8 @@ if (gnutls_ocsp_req_export(ocsp_req, &ocsp_req_datum_DER) != 0)
 * [gnutls_ocsp_req_init](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005freq_005finit) (GnuTLS docs)
 * [gnutls_ocsp_req_add_cert](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005freq_005fadd_005fcert) (GnuTLS docs)
 * [gnutls_ocsp_req_export](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005freq_005fexport) (GnuTLS docs)
+* [gnutls_ocsp_req_randomize_nonce](https://gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005freq_005frandomize_005fnonce) (GnuTLS docs)
+* [gnutls_ocsp_req_get_nonce](https://gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005freq_005fget_005fnonce) (GnuTLS docs)
 
 
 ## Optional: Pretty print information about the OCSP Request
@@ -175,7 +217,7 @@ gnutls_free(ocsp_req_pretty_print.data);
 
 ## 4.) Send the OCSP Request and retrieve the OCSP Response
 
-Send the generated OCSP Request to the OCSP Responder's URL. Subsequently, we will also receive an OCSP Response from the OCSP Responder. The response is stored in the program's memory.
+Send the generated OCSP Request to the OCSP Responder's URL. Subsequently, we will also receive the OCSP Response from the OCSP Responder. The response is stored in the program's memory.
 
 This step establishes an out-of-band connection with the OCSP Responder.
 
@@ -192,7 +234,7 @@ static size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp)
     ud->data = realloc(ud->data, ud->size + size);
     if (ud->data == NULL)
     {
-        errx(EXIT_FAILURE, "realloc failed!\n");
+        exit(EXIT_FAILURE);
     }
 
     memcpy(&ud->data[ud->size], buffer, size);
@@ -201,6 +243,9 @@ static size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp)
     return size;
 }
 ```
+
+Function which will be used while downloading the CRLs. This function is assigned to the cURL handler with option called `CURLOPT_WRITEFUNCTION`. Description can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
+
 
 ```c
 #include <curl/curl.h>
@@ -217,14 +262,14 @@ curl_global_init(CURL_GLOBAL_ALL);
 CURL *handle = curl_easy_init();
 if (handle == NULL)
 {
-    errx(EXIT_FAILURE, "initialization of easy curl failed!\n");
+    exit(EXIT_FAILURE);
 }
 
 struct curl_slist *headers = NULL;
 headers = curl_slist_append(headers, "Content-Type: application/ocsp-request");
 if (headers == NULL)
 {
-    errx(EXIT_FAILURE, "curl_slist_append failed!\n");
+    exit(EXIT_FAILURE);
 }
 
 /* post binary data */
@@ -310,6 +355,19 @@ if (gnutls_ocsp_resp_check_crt(ocsp_response, 0, server_certificate_crt) < 0)
     exit(EXIT_FAILURE);
 }
 
+/* Extract the nonce from the OCSP response */
+gnutls_datum_t nonce_resp = { 0 };
+if (gnutls_ocsp_resp_get_nonce(ocsp_response, NULL, &nonce_resp) != 0)
+{
+    /* Nonce extension is not present in the OCSP response */
+}
+
+/* Check that the nonces from the OCSP request and response are the same */
+if (nonce_req.size != nonce_resp.size || memcmp(nonce_req.data, nonce_resp.data, nonce_resp.size) != 0)
+{
+    exit(EXIT_FAILURE);
+}
+
 /* Check whether OCSP Response is signed by given signer */
 unsigned int verify_result;   // gnutls_ocsp_verify_reason_t enum
 if (gnutls_ocsp_resp_verify_direct(ocsp_response, issuer_certificate_crt, &verify_result, 0) != GNUTLS_E_SUCCESS)
@@ -354,6 +412,7 @@ else
 ### Relevant links
 
 * [gnutls_ocsp_resp_check_crt](index-gnutls_005focsp_005fresp_005fcheck_005fcrt) (GnuTLS docs)
+* [gnutls_ocsp_resp_get_nonce](https://gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fget_005fnonce) (GnuTLS docs)
 * [gnutls_ocsp_resp_verify_direct](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fverify_005fdirect) (GnuTLS docs)
 
 
@@ -415,6 +474,8 @@ gnutls_free(ocsp_req_datum_DER.data);
 gnutls_ocsp_req_deinit(ocsp_req);
 gnutls_free(ocsp_response_datum_DER.data);
 gnutls_ocsp_resp_deinit(ocsp_response);
+gnutls_free(nonce_req.data)
+gnutls_free(nonce_resp.data)
 ```
 
 ### Relevant links

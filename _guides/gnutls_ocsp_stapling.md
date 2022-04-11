@@ -1,6 +1,23 @@
 
 This guide covers the implementation of certificate revocation status checking using the Online Certificate Status Protocol (OCSP) Stapling revocation scheme. Official documentation of GnuTLS dealing with this topic can be found [here](https://www.gnutls.org/manual/gnutls.html#OCSP-stapling).
 
+**Short description of revocation scheme:**
+Online Certificate Status Protocol Stapling, better known as OCSP Stapling is a modification of the OCSP protocol, where the TLS server contacts the OCSP responder at regular intervals to provide him with the revocation status of its certificate. After receiving the OCSP response from the OCP Responder, TLS server stores this response for a defined fix period during which the OCSP response is considered valid. Subsequently, when establishing a connection with the TLS client, the TLS server sends its certificate along with stapled cached response from the OCSP responder. Thus, the TLS server contacts the OCSP responder instead of the TLS client.
+
+OCSP-Stapling is defined in [RFC 6066](https://www.rfc-editor.org/info/rfc6066).  
+OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
+
+**Summary of this guide:**
+1. Enable OCSP-Stapling
+   - call API function to request OCSP response from the TLS server, must be performed **before** the TLS handshake
+2. Retrieve the stapled OCSP Response
+   - **after** the TLS handshake
+3. Deinitialize
+
+
+---
+   
+
 ## 1.) Enable OCSP-Stapling
 
 This step must be performed before the TLS Handshake. With this API function, client will request OCSP response from the server during the TLS handshake. Status request TLS extension is used.
