@@ -247,7 +247,7 @@ gnutls_free(ocsp_req_pretty_print.data);
 
 ### Relevant links
 
-* [gnutls_ocsp_req_print](index-gnutls_005focsp_005freq_005fprint) (GnuTLS docs)
+* [gnutls_ocsp_req_print](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005freq_005fprint) (GnuTLS docs)
 
 
 </div></div>
@@ -459,7 +459,7 @@ else
 
 ### Relevant links
 
-* [gnutls_ocsp_resp_check_crt](index-gnutls_005focsp_005fresp_005fcheck_005fcrt) (GnuTLS docs)
+* [gnutls_ocsp_resp_check_crt](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fcheck_005fcrt) (GnuTLS docs)
 * [gnutls_ocsp_resp_get_nonce](https://gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fget_005fnonce) (GnuTLS docs)
 * [gnutls_ocsp_resp_verify_direct](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fverify_005fdirect) (GnuTLS docs)
 
