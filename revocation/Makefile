@@ -1,29 +1,14 @@
-# Zip archive directory
-ARCHIVE_DIR=../assets/clients
-# Licence file
-LICENSE_FILE=../LICENSE.md
+all: gnutls_client
 
-# All individual client directories
-CLIENTS_ALL=$(notdir $(wildcard $(CURDIR)/*-client))
-ARCHIVES_ALL=$(addprefix $(ARCHIVE_DIR)/, $(addsuffix .zip, $(CLIENTS_ALL)))
+# Format all .c files according to the .clang-format config file
+# If .clang-format file is not present, format according to the default Google style
+format:
+	clang-format --style=file --fallback-style=Google -i *.c *.h
 
-# Generate revocation client archives
-all: $(ARCHIVES_ALL)
-
-# Create zip archive of a revocation client
-$(ARCHIVE_DIR)/%.zip: %/* $(LICENSE_FILE)
-	@mkdir -p $(ARCHIVE_DIR)
-	@printf "Creating a client zip archive: %-50s" $(basename $(@F))
-	@cp $(LICENSE_FILE) $(<D)
-	@cd $(<D) && zip --filesync --quiet ../$@ *
-	@printf "[ OK ]\n"
-
-# === Cleaning targets  ===
+gnutls_client: main.c crl_revoc.c ocsp_revoc.c ocsp_stapling_revoc.c ct_check.c utils.c
+	gcc -o gnutls_client main.c crl_revoc.c ocsp_revoc.c ocsp_stapling_revoc.c ct_check.c utils.c -lgnutls -lcurl
 
 clean:
-	rm -rf */$(notdir $(LICENSE_FILE))
-	rm -rf $(ARCHIVE_DIR)
+	$(RM) gnutls_client
 
-# === Target flags  ===
-
-.PHONY: all clean
+.PHONY: all format clean
