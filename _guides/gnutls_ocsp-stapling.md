@@ -7,117 +7,131 @@ slug:       gnutls-ocsp-stapling
 <div class="section"><div class="container" markdown="1">
 
 {:#{{ page.slug }}}
+
 # {{ page.title }}
 
 {:.lead}
 This guide covers the implementation of certificate revocation status checking using the Online Certificate Status Protocol (OCSP) Stapling revocation scheme. Official documentation of GnuTLS dealing with this topic can be found [here](https://www.gnutls.org/manual/gnutls.html#OCSP-stapling).
 
-
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-
-**Short description of revocation scheme:**
-Online Certificate Status Protocol Stapling, better known as OCSP Stapling is a modification of the OCSP protocol, where the TLS server contacts the OCSP responder at regular intervals to provide him with the revocation status of its certificate. After receiving the OCSP response from the OCP Responder, TLS server stores this response for a defined fix period during which the OCSP response is considered valid. Subsequently, when establishing a connection with the TLS client, the TLS server sends its certificate along with stapled cached response from the OCSP responder. Thus, the TLS server contacts the OCSP responder instead of the TLS client.
+**Short description of revocation scheme**: Online Certificate Status Protocol Stapling, better known as OCSP Stapling, is a modification of the OCSP protocol, where the TLS server (instead of the TLS client) contacts the OCSP responder at regular intervals to provide him with the revocation status of its certificate. After receiving the OCSP response from the OCP Responder, the TLS server stores this response for a defined fixed period during which the OCSP response is considered valid. Subsequently, when establishing a connection with the TLS client, the TLS server sends its certificate together with the stapled and cached response.
 
 OCSP-Stapling is defined in [RFC 6066](https://www.rfc-editor.org/info/rfc6066).
 OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
 
 **Summary of this guide:**
-1. Enable OCSP-Stapling
-   - call API function to request OCSP response from the TLS server, must be performed **before** the TLS handshake
-2. Retrieve the stapled OCSP Response
-   - **after** the TLS handshake
-3. Deinitialize
 
+1. Enable OCSP-Stapling
+   - enable OCSP stapling by calling the appropriate API call. It must be called during the session configuration and **before** the TLS handshake is performed.
+   - after enabling, the TLS client should request the stapled OCSP response from the TLS server.
+2. Verify that the stapled OCSP Response was sent together with the certificates
+3. Retrieve the stapled OCSP Response
+   - **during or after** the TLS handshake
+4. Deinitialize
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-
 ## 1.) Enable OCSP-Stapling
 
-This step must be performed before the TLS Handshake. With this API function, client will request OCSP response from the server during the TLS handshake. Status request TLS extension is used.
+This step must be performed before the TLS Handshake. With this API call, client will request OCSP response from the server during the TLS handshake. Status request TLS extension is used.
 
 ```c
-/* Enable OCSP-Stapling, using TLS extension */
+/* Enable OCSP-Stapling, using TLS extension. */
 #include <gnutls/gnutls.h>
 
-if (gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) != 0)
-{
+/* Send the status request extension to the server during the TLS handshake. */
+if (gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
     exit(EXIT_FAILURE);
 }
 ```
 
 ### Relevant links
 
-* [gnutls_ocsp_status_request_enable_client](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fenable_005fclient) (GnuTLS docs)
-
+- [gnutls_ocsp_status_request_enable_client](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fenable_005fclient) (GnuTLS docs)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
+## 2.) Verify that the stapled OCSP Response was sent together with the certificates
 
-## 2.) Retrieve the stapled OCSP Response
-
-This step must be performed after the TLS Handshake. This means that the TLS client-server communication has already been established and the server has sent its certificate along with the stapled OCSP response.
-
-The variable `gnutls_session_t session` represents an already established connection.
-
+This step can be performed after the certificate chain was received by the client. It is important to check that the stapled OCSP response was sent together with the certificate chain.
 
 ```c
 #include <gnutls/ocsp.h>
 
-/* Helper function on the client side to decide whether the valid stapled OCSP Response was included in the TLS handshake! */
-if (gnutls_ocsp_status_request_is_checked(session, 0) != 0)
-{
-    /* Valid stapled OCSP Response was included in the TLS Handshake */
+/* Obtain information whether a valid stapled OCSP Response was included during the TLS handshake. */
+/* Should be called after verification of the certificate chain. */
+if (gnutls_ocsp_status_request_is_checked(session, 0) != 0) {
+    /* Valid stapled OCSP response was included in the TLS handshake. */
 }
-else
-{
-    /* Stapled OCSP Response is invalid or was not included in the TLS Handshake */
-    /* Invalid OCSP Response status == old, superseded or revoked */
+else {
+    /* None or invalid OCSP Response found. */
     exit(EXIT_FAILURE)
-}
-
-/* Retrieve the stapled OCSP Response in DER format into a new gnutls_datum_t structure */
-gnutls_datum_t ocsp_response_datum = { 0 };
-if (gnutls_ocsp_status_request_get(session, &ocsp_response_datum) != 0)
-{
-    /* Failed to retrieve the stapled OCSP Response */
-    exit(EXIT_FAILURE);
-}
-
-/* Convert the stapled OCSP Response in DER format from gnutls_datum_t structure into native gnutls_ocsp_resp_t structure */
-gnutls_ocsp_resp_t ocsp_response;
-if (gnutls_ocsp_resp_init(&ocsp_response) != 0)
-{
-    exit(EXIT_FAILURE);
-}
-if (gnutls_ocsp_resp_import(ocsp_response, &ocsp_response_datum) != 0)
-{
-    exit(EXIT_FAILURE);
 }
 ```
 
-After this step, we should have a valid OCSP response stored in a native variable of type `gnutls_ocsp_resp_t`. For a response printing, signature verification and revocation status parsing, see the chapter here.
-
-
 ### Relevant links
 
-* [gnutls_ocsp_status_request_is_checked](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fis_005fchecked) (GnuTLS docs)
-* [gnutls_ocsp_status_request_get](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fget) (GnuTLS docs)
-* [gnutls_ocsp_resp_init](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005finit) (GnuTLS docs)
-* [gnutls_ocsp_resp_import](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fimport) (GnuTLS docs)
-
+- [gnutls_ocsp_status_request_is_checked](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fis_005fchecked) (GnuTLS docs)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
+## 3.) Retrieve the stapled OCSP Responses
 
-## 3.) Deinitialize
+It is recommended to verify every stapled OCSP Response sent by the TLS server to the TLS client. In case of any invalid OCSP response, the connection should be immediately terminated.
 
-After work, dont forget to deinitialize the stapled OCSP response.
+The single OCSP Response can be verified, for example, according to our [OCSP guide](https://x509errors.org/guides/gnutls-ocsp).
+
+```c
+/* Retrieve the stapled OCSP Response in DER format for each certificate from the chain. */
+gnutls_datum_t ocsp_response_datum = { 0 };
+
+/* Convert the stapled OCSP Response from gnutls_datum_t structure into gnutls_ocsp_resp_t structure. */
+gnutls_ocsp_resp_t ocsp_response;
+if (gnutls_ocsp_resp_init(&ocsp_response) <0) {
+    exit(EXIT_FAILURE);
+}
+
+unsigned int index = 0;
+int ret;
+while (1) {
+    ret = gnutls_ocsp_status_request_get2(session, index, &ocsp_response_datum);
+
+    if (ret < 0) {
+        /* Error occured! */
+        exit(EXIT_FAILURE);
+    }
+
+    if (ret == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) {
+        /* No more stapled OCSP Responses. */
+        break;
+    }
+
+    /* Import the stapled OCSP Response from DER format to the gnutls_ocsp_resp_t structure. */
+    if (gnutls_ocsp_resp_import(ocsp_response, &ocsp_response_datum) <0) {
+        exit(EXIT_FAILURE);
+    }
+
+    /* Verify this single stapled OCSP Response according to the OCSP guide we have covered. */
+}
+```
+
+### Relevant links
+
+- [gnutls_ocsp_status_request_get](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fstatus_005frequest_005fget) (GnuTLS docs)
+- [gnutls_ocsp_resp_init](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005finit) (GnuTLS docs)
+- [gnutls_ocsp_resp_import](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fimport) (GnuTLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
+
+## 4.) Deinitialize
+
+Deinitialize variables and structures, which are no longer required.
 
 ```c
 gnutls_ocsp_resp_deinit(ocsp_response);
@@ -125,4 +139,4 @@ gnutls_ocsp_resp_deinit(ocsp_response);
 
 ### Relevant links
 
-* [gnutls_ocsp_resp_deinit](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fdeinit) (GnuTLS docs)
+- [gnutls_ocsp_resp_deinit](https://www.gnutls.org/manual/gnutls.html#index-gnutls_005focsp_005fresp_005fdeinit) (GnuTLS docs)
