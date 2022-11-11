@@ -37,7 +37,7 @@ CRLs on [Wikipedia](https://en.wikipedia.org/wiki/Certificate_revocation_list).
 5. Verify the TLS server's certificate chain against the filled trusted list
 6. Deinitialize
 
-The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](https://x509errors.org/guides/gnutls) on how to initiate a secure TLS connection.
+The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](/guides/gnutls) on how to initiate a secure TLS connection.
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -167,17 +167,17 @@ To download the CRL, it is necessary to establish an out-of-band connection with
 
 void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnutls_x509_crt_t certificate, gnutls_x509_crt_t issuer_certificate) {
 
-    /* Prepare buffer for storing the URL adress for one CRL distribution point */
+    /* Prepare buffer for storing the URL adress for one CRL distribution point. */
     size_t buffer_crl_dist_point_size = 1024;
     char *buffer_crl_dist_point = (char *) calloc(buffer_crl_dist_point_size, sizeof(char));
     if (buffer_crl_dist_point == NULL) {
         exit(EXIT_FAILURE);
     }
 
-    /* Prepare gnutls_datum_t structure, where the downloaded CRL in DER format will be stored */
+    /* Prepare gnutls_datum_t structure, where the downloaded CRL in DER format will be stored. */
     gnutls_datum_t downloaded_crl_DER = { 0 };
 
-    /* Prepare the native gnutls_x509_crl_t structure where the downloaded CRL will be imported */
+    /* Prepare the native gnutls_x509_crl_t structure where the downloaded CRL will be imported. */
     gnutls_x509_crl_t downloaded_crl = { 0 };
     if (gnutls_x509_crl_init(&downloaded_crl) < 0) {
         exit(EXIT_FAILURE);
@@ -190,13 +190,13 @@ void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnu
         exit(EXIT_FAILURE);
     }
 
-    /* Tell curl to write each chunk of data (our CRL list during downloading) with this function callback */
+    /* Tell curl to write each chunk of data (our CRL list during downloading) with this function callback. */
     curl_easy_setopt(handle, CURLOPT_WRITEFUNCTION, get_data);
-    /* Tell curl to write each chunk of data to the given location, in our case, to the variable in the memory */
+    /* Tell curl to write each chunk of data to the given location, in our case, to the variable in the memory. */
     curl_easy_setopt(handle, CURLOPT_WRITEDATA, &downloaded_crl_DER);
 
-    /* Each certificate can have more than one CRL distribution point entry */
-    /* This cycle will iterate through every distribution point, until GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE will be returned */
+    /* Each certificate can have more than one CRL distribution point entry. */
+    /* This cycle will iterate through every distribution point, until GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE will be returned. */
     unsigned int revocation_reasons;
     int dist_points_index= 0;
     int ret;
@@ -204,7 +204,7 @@ void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnu
         ret = gnutls_x509_crt_get_crl_dist_points(certificate, dist_points_index, buffer_crl_dist_point, &buffer_crl_dist_point_size, &revocation_reasons, NULL);
 
         if (ret == GNUTLS_E_SHORT_MEMORY_BUFFER) {
-            /* If buffer for storing URL of Distribution point is not big enough, reallocate it with returned required size */
+            /* If buffer for storing URL of Distribution point is not big enough, reallocate it with returned required size. */
             buffer_crl_dist_point = (char *) realloc(buffer_crl_dist_point, buffer_crl_dist_point_size);
             if (buffer_crl_dist_point == NULL)
             {
@@ -217,40 +217,40 @@ void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnu
             break;
         }
 
-        /* Other error occured */
+        /* Other error occured. */
         if (ret < 0) {
             exit(EXIT_FAILURE);
         }
 
-        /* Successfully parsed the distribution point (at actual index) */
+        /* Successfully parsed the distribution point (at actual index). */
 
-        /* Tell curl to download CRL from the retrieved distribution point URL */
+        /* Tell curl to download CRL from the retrieved distribution point URL. */
         curl_easy_setopt(handle, CURLOPT_URL, buffer_crl_dist_point);
 
-        /* Start downloading */
+        /* Start downloading. */
         if (curl_easy_perform(handle) != 0) {
             exit(EXIT_FAILURE);
         }
 
-        /* Download finished and successful */
+         /* The download has successfully finished. */
 
-        /* Convert the downloaded CRL from structure gnutls_datum_t to structure gnutls_crl_t */
+        /* Convert the downloaded CRL from structure gnutls_datum_t to structure gnutls_crl_t. */
         if (gnutls_x509_crl_import(downloaded_crl, &downloaded_crl_DER, GNUTLS_X509_FMT_DER) < 0) {
             exit(EXIT_FAILURE);
         }
 
-        /* Verify the signature of the downloaded CRL against issuer's certificate */
+        /* Verify the signature of the downloaded CRL against issuer's certificate. */
         if (gnutls_x509_crl_check_issuer(downloaded_crl, issuer_certificate) != 1) {
             exit(EXIT_FAILURE);
         }
 
-        /* Add downloaded DER encoded CRL to the trusted list */
-        /* Function returns the number of added elements */
+        /* Add downloaded DER encoded CRL to the trusted list. */
+        /* Function returns the number of added elements. */
         if (gnutls_x509_trust_list_add_trust_mem(trusted_list, NULL, &downloaded_crl_DER, GNUTLS_X509_FMT_DER, 0, 0) <= 0 {
             exit(EXIT_FAILURE);
         }
 
-        /* Deinitialize and set variables after each loop */
+        /* Deinitialize and set variables after each loop. */
         gnutls_free(downloaded_crl_DER.data);
         downloaded_crl_DER.data = NULL;
         downloaded_crl_DER.size = 0;
@@ -259,14 +259,14 @@ void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnu
         dist_points_index++;
     }
 
-    /* If the current certificate has no CRL distribution point entry in its extensions, CRL revocation check could not be performed */
-    /* If server's certificate has not a single CRL distribution point, we can not provide CRL revocation check */
+    /* If the current certificate has no CRL distribution point entry in its extensions, CRL revocation check could not be performed. */
+    /* If server's certificate has not a single CRL distribution point, we can not provide CRL revocation check. */
     if (dist_points_index == 0) {
         fprintf(stderr, "No distribution point has been found\n");
         exit(EXIT_SUCCESS);
     }
 
-    /* Deinitialize before leaving function */
+    /* Deinitialize before leaving function. */
     free(buffer_crl_dist_point);
     gnutls_x509_crl_deinit(downloaded_crl);
     curl_easy_cleanup(handle);
@@ -277,19 +277,19 @@ We provide a simple example of a callback function used by curl (assigned to cur
 
 ```c
 size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
-    /* Already processed data from previous transfers */
+    /* Already processed data from previous transfers. */
     gnutls_datum_t *ud = (gnutls_datum_t *) userp;
 
     /* nmemb bytes of new data */
     size *= nmemb;
 
-    /* Reallocate the buffer containing the previous data so that it can also accommodate nmemb of new data */
+    /* Reallocate the buffer containing the previous data so that it can also accommodate nmemb of new data. */
     ud->data = realloc(ud->data, ud->size + size);
     if (ud->data == NULL) {
         exit(EXIT_FAILURE);
     }
 
-    /* Append nmemb new bytes to the previous data */
+    /* Append nmemb new bytes to the previous data. */
     memcpy(&ud->data[ud->size], buffer, size);
     ud->size += size;
 
@@ -316,24 +316,24 @@ After this step, our trusted list should be filled with trusted CA certificates 
 Verify the certificate chain against the filled trusted list. When a certificate chain with more than one certificate is provided, and the verification fails, the verification result is applied to the first certificate in the chain that failed verification.
 
 ```c
-/* Verify the server's chain against filled trusted list */
+/* Verify the server's chain against filled trusted list. */
 unsigned int verify_output;
 if (gnutls_x509_trust_list_verify_crt(trusted_list, server_chain_crt, server_chain_size, 0, &verify_output, NULL) != 0) {
     exit(EXIT_FAILURE);
 }
 
-/* The GNUTLS_CERT_INVALID flag is always set on a verification error */
-/* More detailed flags (gnutls_certificate_status_t) will also be set when appropriate */
+/* The GNUTLS_CERT_INVALID flag is always set on a verification error. */
+/* More detailed flags (gnutls_certificate_status_t) will also be set when appropriate. */
 if (verify_output & GNUTLS_CERT_INVALID) {
     if (verify_output & GNUTLS_CERT_REVOKED) {
-        /* Certificate chain is revoked */
+        /* Certificate chain is revoked. */
     }
     else {
-        /* Other verification error */
+        /* Other verification error. */
     }
 }
 else {
-    /* No verification error */
+    /* No verification error. */
 }
 ```
 

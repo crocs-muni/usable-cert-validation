@@ -11,7 +11,7 @@ slug:       gnutls-cert-transparency
 # {{ page.title }}
 
 {:.lead}
-This guide describes how to obtain a Signed Certificate Timestamp (SCT) from a certificate and its subsequent verification. The SCT serves as proof that the certificate was appended to the public log
+This guide describes how to obtain a Signed Certificate Timestamp (SCT) from a certificate and its subsequent verification. The SCT serves as proof that the certificate was appended to the public log.
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -34,7 +34,7 @@ Certificate Transparency on [Wikipedia](https://en.wikipedia.org/wiki/Certificat
    - the signature is verified against the public key of the public log when we know the id of this log and the signature algorithm which was used
 5. Deinitialize
 
-The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](https://x509errors.org/guides/gnutls) on how to initiate a secure TLS connection.
+The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](/guides/gnutls) on how to initiate a secure TLS connection.
 
 </div></div>
 <div class="section"><div class="container" markdown="1">

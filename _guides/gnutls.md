@@ -18,9 +18,15 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 * We work with the API in C of GnuTLS, version 3.7.1.
 * We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
 
-{% include alert.html type="warning"
-    content="Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption."
-%}
+{:.lead}
+In addition to this guide, we have also implemented GnuTLS guides for the following topics:
+
+<div class="guides-div">
+<a class="btn btn-primary" href="/guides/gnutls-crl"><span class="fas fa-fw fa-file-code"></span> See CRL developer guide</a>
+<a class="btn btn-primary" href="/guides/gnutls-ocsp"><span class="fas fa-fw fa-file-code"></span> See OCSP developer guide</a>
+<a class="btn btn-primary" href="/guides/gnutls-ocsp-stapling"><span class="fas fa-fw fa-file-code"></span> See OCSP-Stapling developer guide</a>
+<a class="btn btn-primary" href="/guides/gnutls-cert-transparency"><span class="fas fa-fw fa-file-code"></span> See CT developer guide</a>
+</div>
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -258,15 +264,15 @@ The prototype of this callback function is `int (*callback)(gnutls_session_t)`. 
 /* Set the hostname to the session structure, so it will be accessible during our custom verification callback. */
 gnutls_session_set_ptr(session, (void *) hostname);
 
-/* Set our custom verification function */
-/* Callback be executed right after the certificate chain has been received, during the TLS handshake. */
+/* Set our custom verification function. */
+/* Callback will be executed right after the certificate chain has been received, during the TLS handshake. */
 int (*f)(gnutls_session_t) = &custom_callback_function;
 gnutls_session_set_verify_function(session, f);
 ```
 
 We also provide a simple example of such a function. When using a custom verification callback, it is always necessary to validate the certificates manually. After successful validation, the revocation check of all certificates in the chain should be performed.
 
-We have covered guides for checking the revocation status for all certificates in the chain using [CRL](https://x509errors.org/guides/gnutls-crl), [OCSP](https://x509errors.org/guides/gnutls-ocsp) and [OCSP-Stapling](https://x509errors.org/guides/gnutls-ocsp-stapling) schemes. We have also covered a partial guide for checking the [Certificate Transparency](https://x509errors.org/guides/gnutls-cert-transparency) criteria for each certificate in the chain.
+We have covered guides for checking the revocation status for all certificates in the chain using [CRL](/guides/gnutls-crl), [OCSP](/guides/gnutls-ocsp) and [OCSP-Stapling](/guides/gnutls-ocsp-stapling) schemes. We have also covered a partial guide for checking the [Certificate Transparency](/guides/gnutls-cert-transparency) criteria for each certificate in the chain.
 
 ```c
 int custom_callback_function(gnutls_session_t session) {

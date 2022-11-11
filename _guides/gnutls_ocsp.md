@@ -16,7 +16,8 @@ This guide covers the implementation of certificate revocation status checking u
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description of revocation scheme**: OCSP is a separate protocol with which the TLS client and OCSP server called OCSP responder communicate. The TLS client contacts the OCSP responder, a trusted third party, to provide him with the revocation status of the certificates which the TLS client included in the OCSP request.
+**Short description of revocation scheme**:
+OCSP is a separate protocol with which the TLS client and OCSP server called OCSP responder communicate. The TLS client contacts the OCSP responder, a trusted third party, to provide him with the revocation status of the certificates which the TLS client included in the OCSP request.
 
 OCSP protocol is defined in [RFC 6960](https://www.rfc-editor.org/info/rfc6960).
 OCSP on [Wikipedia](https://en.wikipedia.org/wiki/Online_Certificate_Status_Protocol).
@@ -40,7 +41,7 @@ OCSP on [Wikipedia](https://en.wikipedia.org/wiki/Online_Certificate_Status_Prot
    - if signature verification of the OCSP response from the previous step has successfully passed, we can extract the revocation status of the certificates we have included into the OCSP request
 8. Deinitialize
 
-The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](https://x509errors.org/guides/gnutls) on how to initiate a secure TLS connection.
+The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](/guides/gnutls) on how to initiate a secure TLS connection.
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -119,7 +120,7 @@ Verification of each certificate from TLS server's certificate chain should be p
 
 ```c
 /* For each certificate in certificate chain (except the root one), perform OCSP revocation check. */
-/* That includes finding the URL of OCSP Responder for each certificate, generating and sending OCSP Request,
+/* That includes finding the URL address of OCSP Responder for each certificate, generating and sending OCSP Request,
 * retrieving and processing OCSP Response, verifying the signature of OCSP Response and finally checking the
 * revocation status for each certificate.
 */
@@ -127,7 +128,7 @@ gnutls_x509_crt_t certificate;
 gnutls_x509_crt_t issuer_certificate;
 for (int index = 0; index < chain_size - 1; index++) {
     certificate = server_chain_crt[index];
-    issuer_certificate = server)chain_crt[index + 1];
+    issuer_certificate = server_chain_crt[index + 1];
 
     /* Perform verification of a single certificate according to the following steps. */
 }
@@ -138,7 +139,7 @@ for (int index = 0; index < chain_size - 1; index++) {
 
 ## 3.) Extract the URL Adress of OCSP Responder
 
-After obtaining a single certificate with the certificate of its issuer, extract the URL address of OCSP Responder from the certificate from the authority information access extension.
+After obtaining a single certificate with the certificate of its issuer, extract the URL address of OCSP Responder from the certificate's authority information access extension.
 
 ```c
 /* The received OCSP Responder URL will be stored in this variable. */
@@ -148,8 +149,7 @@ gnutls_datum_t ocsp_responder_uri_datum = { 0 };
 int act_index = 0;
 int ret;
 
-while (1)
-{
+while (1) {
     /* Parse the URL adress from the certificate's extension called authority information access. */
     ret = gnutls_x509_crt_get_authority_info_access(certificate, act_index, GNUTLS_IA_OCSP_URI, &ocsp_responder_uri_datum, NULL);
 
