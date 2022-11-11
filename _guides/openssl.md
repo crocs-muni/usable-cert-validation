@@ -178,7 +178,7 @@ Enable the processing of Signed Certificate Timestamps, which is performed by de
 
 ```c
 /* Enables OCSP stapling as well because SCTs could be delivered through OCSP Stapling, TLS Extensions or X509 Extensions. */
-if (SSL_CTX_enable_ct(context, SSL_CT_VALIDATION_PERMISSIVE) != 1) {
+if (SSL_CTX_enable_ct(context, SSL_CT_VALIDATION_STRICT) != 1) {
     exit(EXIT_FAILURE);
 }
 ```
