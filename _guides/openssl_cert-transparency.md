@@ -125,7 +125,7 @@ rm all_logs_list.json log_list.json log_list.sig log_list_pubkey.pem log_list_sc
 rm *.py
 ```
 
-The script shown above serves only as a demonstration example. The official list of public logs from Google can be found [here](www.certificate-transparency.org/known-logs) and the python program that converts the log list to OpenSSL format can be found [here](https://github.com/google/certificate-transparency/blob/master/python/utilities/log_list/print_log_list.py).
+The script shown above serves only as a demonstration example. The official list of public logs from Google can be found [here](https://github.com/google/certificate-transparency-community-site/blob/master/docs/google/known-logs.md) and the python program that converts the log list to OpenSSL format can be found [here](https://github.com/google/certificate-transparency/blob/master/python/utilities/log_list/print_log_list.py).
 
 ### Relevant links
 
