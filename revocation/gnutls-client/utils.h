@@ -5,6 +5,10 @@
 #include <gnutls/ocsp.h>
 #include <stdbool.h>
 
+#define REVOC_CHECK_SUCCESS 0
+#define REVOC_CHECK_FAILURE 1
+#define REVOC_CHECK_INTERNAL_ERROR 2
+
 void check_result_of_cert_validation(gnutls_session_t session);
 
 gnutls_x509_crt_t *retrieve_server_certificate_chain(gnutls_session_t session,
@@ -12,8 +16,8 @@ gnutls_x509_crt_t *retrieve_server_certificate_chain(gnutls_session_t session,
 void deinitialize_certificate_chain(gnutls_x509_crt_t *certificate_chain,
                                     size_t chain_size);
 
-bool print_certificate_chain_info(gnutls_session_t session);
-bool print_x509_certificate_info(gnutls_x509_crt_t certificate);
+int print_certificate_chain_info(gnutls_session_t session);
+int print_x509_certificate_info(gnutls_x509_crt_t certificate);
 
 size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp);
 

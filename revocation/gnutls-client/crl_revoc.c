@@ -11,7 +11,7 @@
 
 #include "utils.h"
 
-static bool add_trusted_CAs_into_trusted_list(
+static int add_trusted_CAs_into_trusted_list(
     gnutls_x509_trust_list_t trusted_list) {
   int ret_err_val;
   /* Another options: 'gnutls_x509_trust_list_add_cas',
@@ -22,15 +22,17 @@ static bool add_trusted_CAs_into_trusted_list(
         stderr,
         "Function 'gnutls_x509_trust_list_add_system_trust' has failed: %s\n",
         gnutls_strerror(ret_err_val));
-    exit(EXIT_FAILURE);
+    return REVOC_CHECK_FAILURE;
   }
 
-  return true;
+  return REVOC_CHECK_SUCCESS;
 }
 
-static bool add_trusted_CRLs_into_trusted_list(
+static int add_trusted_CRLs_into_trusted_list(
     gnutls_x509_trust_list_t trusted_list, gnutls_x509_crt_t certificate,
     gnutls_x509_crt_t issuer_certificate) {
+  int status = REVOC_CHECK_SUCCESS;
+
   int ret_error_val;
   CURL *handle = NULL;
   /* Prepare gnutls_datum_t structure, where the downloaded CRL in DER format
@@ -43,8 +45,8 @@ static bool add_trusted_CRLs_into_trusted_list(
   char *buffer_crl_dist_point =
       (char *)calloc(buffer_crl_dist_point_size, sizeof(char));
   if (buffer_crl_dist_point == NULL) {
-    fprintf(stderr, "Function 'calloc' has failed\n");
-    exit(EXIT_FAILURE);
+    fprintf(stderr, "Function 'calloc' has failed!\n");
+    return REVOC_CHECK_INTERNAL_ERROR;
   }
 
   /* Prepare the native gnutls_x509_crl_t structure where the downloaded CRL
@@ -53,6 +55,7 @@ static bool add_trusted_CRLs_into_trusted_list(
       GNUTLS_E_SUCCESS) {
     fprintf(stderr, "Function 'gnutls_x509_crl_init' has failed: %s\n",
             gnutls_strerror(ret_error_val));
+    status = REVOC_CHECK_INTERNAL_ERROR;
     goto cleanup;
   }
 
@@ -61,7 +64,8 @@ static bool add_trusted_CRLs_into_trusted_list(
   curl_global_init(CURL_GLOBAL_ALL);
   handle = curl_easy_init();
   if (handle == NULL) {
-    fprintf(stderr, "Function 'curl_easy_init' has failed");
+    fprintf(stderr, "Function 'curl_easy_init' has failed!\n");
+    status = REVOC_CHECK_INTERNAL_ERROR;
     goto cleanup;
   }
 
@@ -76,23 +80,24 @@ static bool add_trusted_CRLs_into_trusted_list(
   unsigned int revocation_reasons;
   int dist_points_index = 0;
 
-  /* Each certificate can have more than one CRL distribution point entry */
+  /* Each certificate can have more than one CRL distribution point entry. */
   /* This cycle will iterate through every distribution point, until
-   * GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE will be returned */
+   * GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE will be returned. */
   while (1) {
-    /* Store the CRL distribution point at given index into the prepared buffer
+    /* Store the CRL distribution point at given index into the prepared buffer.
      */
     ret_error_val = gnutls_x509_crt_get_crl_dist_points(
         certificate, dist_points_index, buffer_crl_dist_point,
         &buffer_crl_dist_point_size, &revocation_reasons, NULL);
 
     /* If buffer for storing URL of Distribution point is not big enough,
-     * reallocate it with returned required size */
+     * reallocate it with returned required size. */
     if (ret_error_val == GNUTLS_E_SHORT_MEMORY_BUFFER) {
       buffer_crl_dist_point =
           (char *)realloc(buffer_crl_dist_point, buffer_crl_dist_point_size);
       if (buffer_crl_dist_point == NULL) {
         fprintf(stderr, "Function 'realloc' has failed\n");
+        status = REVOC_CHECK_INTERNAL_ERROR;
         goto cleanup;
       }
       continue;
@@ -104,33 +109,36 @@ static bool add_trusted_CRLs_into_trusted_list(
 
     printf("\n- distribution point: %s\n", buffer_crl_dist_point);
 
-    /* Tell curl to download from retrieved URL */
+    /* Tell curl to download from retrieved URL. */
     curl_easy_setopt(handle, CURLOPT_URL, buffer_crl_dist_point);
 
-    /* Start downloading */
+    /* Start downloading. */
     ret_error_val = curl_easy_perform(handle);
     if (ret_error_val != 0) {
-      fprintf(stderr, "Function curl_easy_perform has failed\n");
+      fprintf(stderr, "Function curl_easy_perform has failed!\n");
+      status = REVOC_CHECK_INTERNAL_ERROR;
       goto cleanup;
     }
 
     printf("- download successful\n");
 
     /* Convert the downloaded CRL from structure gnutls_datum_t to structure
-     * gnutls_crl_t */
+     * gnutls_crl_t. */
     if ((ret_error_val = gnutls_x509_crl_import(
              downloaded_crl, &downloaded_crl_DER, GNUTLS_X509_FMT_DER)) != 0) {
       fprintf(stderr, "Function 'gnutls_x509_crl_import' has failed: %s\n",
               gnutls_strerror(ret_error_val));
       gnutls_free(downloaded_crl_DER.data);
+      status = REVOC_CHECK_INTERNAL_ERROR;
       goto cleanup;
     }
 
     /* After downloading, check the signature of the downloaded CRL (if CRL was
-     * signed by the CA which signed the certificate) */
+     * signed by the CA which signed the certificate). */
     if (gnutls_x509_crl_check_issuer(downloaded_crl, issuer_certificate) != 1) {
       fprintf(stderr, "- signature of the downloaded CRL does not match! \n");
       gnutls_free(downloaded_crl_DER.data);
+      status = REVOC_CHECK_FAILURE;
       goto cleanup;
     } else {
       printf("- signature of downloaded CRL matches!\n");
@@ -144,10 +152,11 @@ static bool add_trusted_CRLs_into_trusted_list(
               "Function 'gnutls_x509_trust_list_add_trust_mem' added nothing "
               "to the trusted list!\n");
       gnutls_free(downloaded_crl_DER.data);
+      status = REVOC_CHECK_INTERNAL_ERROR;
       goto cleanup;
     }
 
-    /* Deinitialize after each loop */
+    /* Deinitialize after each loop. */
     gnutls_free(downloaded_crl_DER.data);
     downloaded_crl_DER.data = NULL;
     downloaded_crl_DER.size = 0;
@@ -157,7 +166,7 @@ static bool add_trusted_CRLs_into_trusted_list(
   }
 
   /* If server's certificate has not a single CRL distribution point, we can not
-   * provide CRL revocation check */
+   * provide CRL revocation check. */
   if (dist_points_index == 0) {
     fprintf(stderr, "- no distribution point found\n");
   }
@@ -165,7 +174,7 @@ static bool add_trusted_CRLs_into_trusted_list(
   free(buffer_crl_dist_point);
   gnutls_x509_crl_deinit(downloaded_crl);
   curl_easy_cleanup(handle);
-  return true;
+  return REVOC_CHECK_SUCCESS;
 
 cleanup:
   if (buffer_crl_dist_point != NULL) {
@@ -177,18 +186,18 @@ cleanup:
   if (handle != NULL) {
     curl_easy_cleanup(handle);
   }
-  exit(EXIT_FAILURE);
+  return status;
 }
 
-static bool verify_server_chain_against_trusted_list(
+static int verify_server_chain_against_trusted_list(
     gnutls_x509_trust_list_t trusted_list, gnutls_x509_crt_t *server_chain_crt,
     size_t server_chain_size) {
   int ret_error_val;
 
-  /* Verify the server's chain against filled trusted list */
+  /* Verify the server's chain against filled trusted list. */
   /* Possible to modify behaviour with 4th argument which is enum of
    * gnutls_certicate_cerify_flags (GNUTLS_VERIFY_*). */
-  /* ORed sequence of gnutls_certificate_status_t enum */
+  /* ORed sequence of gnutls_certificate_status_t enum. */
   unsigned int verify_output;
   if ((ret_error_val = gnutls_x509_trust_list_verify_crt(
            trusted_list, server_chain_crt, server_chain_size, 0, &verify_output,
@@ -196,7 +205,7 @@ static bool verify_server_chain_against_trusted_list(
     fprintf(stderr,
             "Function 'gnutls_x509_trust_list_verify_crt' has failed: %s\n",
             gnutls_strerror(ret_error_val));
-    exit(EXIT_FAILURE);
+    return REVOC_CHECK_INTERNAL_ERROR;
   }
 
   if (verify_output & GNUTLS_CERT_INVALID) {
@@ -216,64 +225,68 @@ static bool verify_server_chain_against_trusted_list(
     else {
       printf("- other verification problem\n");
     }
-    return false;
+    return REVOC_CHECK_FAILURE;
   }
 
   /* No verification error */
   printf("Result of verification: [OK]\n");
-  return true;
+  return REVOC_CHECK_SUCCESS;
 }
 
-bool crl_revoc_check(gnutls_session_t session) {
+int crl_revoc_check(gnutls_session_t session) {
+  int status = REVOC_CHECK_SUCCESS;
+
   printf(
       "\n--- Performing Certificate Revocation List (CRL) verification! ---\n");
 
-  /* Retrieve the whole server certificate chain */
+  /* Retrieve the whole server certificate chain. */
   size_t server_chain_size;
   gnutls_x509_crt_t *server_chain_crt =
       retrieve_server_certificate_chain(session, &server_chain_size);
   if (server_chain_crt == NULL) {
-    exit(EXIT_FAILURE);
+    return REVOC_CHECK_INTERNAL_ERROR;
   }
 
-  /* Prepare the trust list structure */
+  /* Prepare the trust list structure. */
   /* This structure is gonna be filled with system's default trusted CAs and
-   * trusted verified CRLs which we gonna download in next steps */
+   * trusted verified CRLs which we gonna download during the following steps.
+   */
   gnutls_x509_trust_list_t trusted_list = {0};
   gnutls_x509_trust_list_init(&trusted_list, 0);
 
   /* a) Fill the trust list with system's default trusted CAs */
-  if (!add_trusted_CAs_into_trusted_list(trusted_list)) {
+  if ((status = add_trusted_CAs_into_trusted_list(trusted_list)) !=
+      REVOC_CHECK_SUCCESS) {
     goto cleanup;
   }
 
   /* b) Download all CRLs from CRL Distribution Point extension, verify them and
-   * then add to the trusted list */
+   * then add to the trusted list. */
   for (int index = 0; index < server_chain_size - 1; index++) {
-    printf("Downloading CRLs of certificate at index %d\n", index);
-    if (!add_trusted_CRLs_into_trusted_list(trusted_list,
-                                            server_chain_crt[index],
-                                            server_chain_crt[index + 1])) {
+    printf("\nDownloading CRLs of certificate at index %d\n", index);
+    if ((status = add_trusted_CRLs_into_trusted_list(
+             trusted_list, server_chain_crt[index],
+             server_chain_crt[index + 1])) != REVOC_CHECK_SUCCESS) {
       goto cleanup;
     }
-    printf("\n");
   }
 
-  /* Verify the whole chain with the filled trusted list */
-  if (!verify_server_chain_against_trusted_list(trusted_list, server_chain_crt,
-                                                server_chain_size)) {
+  /* Verify the whole chain with the filled trusted list. */
+  if ((status = verify_server_chain_against_trusted_list(
+           trusted_list, server_chain_crt, server_chain_size)) !=
+      REVOC_CHECK_SUCCESS) {
     goto cleanup;
   }
 
-  /* Deinitialize */
+  /* Deinitialize. */
   deinitialize_certificate_chain(server_chain_crt, server_chain_size);
   gnutls_x509_trust_list_deinit(trusted_list, 1);
-  return true;
+  return status;
 
 cleanup:
   deinitialize_certificate_chain(server_chain_crt, server_chain_size);
   if (trusted_list != NULL) {
     gnutls_x509_trust_list_deinit(trusted_list, 1);
   }
-  return false;
+  return status;
 }

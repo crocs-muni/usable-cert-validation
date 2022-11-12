@@ -19,6 +19,8 @@
 /*
  * GNUTLS_E_* - macros for error codes, returned value of gnutls_* functions
  * (e.g GNUTLS_E_SUCCESS = 0 )
+ * - possible to examine or print through gnutls_strerror or
+ * gnutls_strerror_name
  *
  * gnutls_certificate_type_t -- GNUTLS_CRT_* (e.g GNUTLS_CRT_X509 )
  * gnutls_certificate_verify_flags -- GNUTLS_VERIFY_* (e.g
@@ -145,38 +147,41 @@ int revocation_check_callback(gnutls_session_t session) {
   char *hostname;
   gnutls_certificate_type_t cert_type;
   /* ORed flags of enum gnutls_certificate_status_t (0 if trusted, non-zero if
-   * problem) */
+   * problem). */
   unsigned int certificate_verification_status;
   gnutls_datum_t certificate_verification_status_pretty = {0};
 
   printf(
-      "\nPerforming certificate verification during TLS handshake calback "
+      "\nPerforming certificate verification during TLS handshake callback "
       "... ");
 
   /* Retrieve the hostname from the user pointer from the session, set
-   * previously */
+   * previously. */
   hostname = gnutls_session_get_ptr(session);
 
   /* Verify the peer's certificate and the hostname */
   if (gnutls_certificate_verify_peers3(session, hostname,
                                        &certificate_verification_status) !=
       GNUTLS_E_SUCCESS) {
-    errx(EXIT_FAILURE,
-         "Function 'gnutls_certificate_verify_peers3' has failed during "
-         "callback\n");
+    /* Internal error occured, function has failed. */
+    fprintf(stderr,
+            "Function 'gnutls_certificate_verify_peers3' has failed during "
+            "callback!\n");
+    return GNUTLS_E_INTERNAL_ERROR;
   }
 
   if ((cert_type = gnutls_certificate_type_get(session)) != GNUTLS_CRT_X509) {
-    fprintf(stderr, "Certificate type used is not X509\n");
-    exit(EXIT_FAILURE);
+    fprintf(stderr, "Certificate type used is not X509!\n");
+    return GNUTLS_E_UNSUPPORTED_CERTIFICATE_TYPE;
   }
 
   if ((gnutls_certificate_verification_status_print(
           certificate_verification_status, cert_type,
           &certificate_verification_status_pretty, 0)) != GNUTLS_E_SUCCESS) {
-    errx(
-        EXIT_FAILURE,
-        "Function 'gnutls_certificate_verification_status_print has failed\n'");
+    fprintf(stderr,
+            "Function 'gnutls_certificate_verification_status_print has "
+            "failed!\n'");
+    return GNUTLS_E_INTERNAL_ERROR;
   }
 
   if (certificate_verification_status == 0) {
@@ -185,40 +190,45 @@ int revocation_check_callback(gnutls_session_t session) {
     printf(" [NOK] \n");
   }
   printf("- %s\n", certificate_verification_status_pretty.data);
-
   gnutls_free(certificate_verification_status_pretty.data);
 
   if (certificate_verification_status != 0) {
-    return GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR;
+    return certificate_verification_status;
+    // return GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR;
   }
 
-  /* After performing certificate verification check, perform revocation check
+  /* After performing certificate verification check, perform revocation check!
    */
 
-  /* Uncomment in order to print defails about every certificate from the chain
+  /* Uncomment in order to print defails about every certificate from the chain.
    */
-  if (!print_certificate_chain_info(session)) {
+  if (print_certificate_chain_info(session) != REVOC_CHECK_SUCCESS) {
     return GNUTLS_E_CERTIFICATE_ERROR;
   }
 
-  /* Perform Certificate Transparency (SCT) check */
-  ct_check_result = ct_check(session);
-
-  /* Perform CRL revocation check (with usage of trusted list) */
+  /* Perform CRL revocation check (with usage of trusted list)! */
   crl_check_result = crl_revoc_check(session);
 
-  /* Perform OCSP revocation check */
+  /* Perform OCSP revocation check! */
   ocsp_check_result = ocsp_revoc_check(session);
 
-  /* Perform OCSP-Stapling revocation check */
+  /* Perform OCSP-Stapling revocation check! */
   ocsp_stapling_check_result = ocsp_stapling_check(session);
 
-  if (!ct_check_result || !crl_check_result || !ocsp_check_result ||
-      !ocsp_stapling_check_result) {
+  /* Perform Certificate Transparency (SCT) check! */
+  ct_check_result = ct_check(session);
+
+  if (crl_check_result != REVOC_CHECK_SUCCESS ||
+      ocsp_check_result != REVOC_CHECK_SUCCESS ||
+      ocsp_stapling_check_result != REVOC_CHECK_SUCCESS) {
     return GNUTLS_E_CERTIFICATE_ERROR;
   }
 
-  /* notify gnutls to continue handshake normally */
+  /* Return value of this callback function: */
+  /* returned value 0 means to continue with current TLS handshake. */
+  /* returned value non-zero would mean to terminate current TLS handshake. */
+
+  /* notify gnutls to continue handshake normally. */
   return 0;
 }
 
@@ -268,7 +278,7 @@ gnutls_session_t make_secure_connection(
   }
 
   /* Set the hostname to the session structure, so it can be available during
-   * verification callback during TLS handshake */
+   * verification callback during TLS handshake. */
   gnutls_session_set_ptr(session, (void *)hostname);
 
   /* Set default cipher suite priorities. These are the recommended option. */
@@ -295,9 +305,9 @@ gnutls_session_t make_secure_connection(
     goto cleanup;
   }
 
-  /* Enable OCSP-Stapling, using 'status_request' TLS extension */
+  /* Enable OCSP-Stapling, using 'status_request' TLS extension. */
   /* If no OCSP staple is found, certificate verification during handshake will
-   * fail */
+   * fail. */
   if ((ret_val = gnutls_ocsp_status_request_enable_client(session, NULL, 0,
                                                           NULL)) != 0) {
     fprintf(stderr, "Failed to enable OCSP-Stapling through TLS extension!");
@@ -322,8 +332,8 @@ gnutls_session_t make_secure_connection(
   /* Set default timeout for the handshake. */
   gnutls_handshake_set_timeout(session, GNUTLS_DEFAULT_HANDSHAKE_TIMEOUT);
 
-  //    /* Set custom verification function, which will run immidiately after
-  //    certificate chain has been received */
+  /* Set custom verification function, which will run immidiately after
+   * certificate chain has been received. */
   int (*revocation_callback)(gnutls_session_t) = &revocation_check_callback;
   gnutls_session_set_verify_function(session, revocation_callback);
 
@@ -353,13 +363,16 @@ gnutls_session_t make_secure_connection(
 
   if (ret_handshake < 0) {
     printf("\n[NOK] - failed to establish TLS connection\n");
-    fprintf(stderr, "Fatal error occured during TLS handshake\n");
+    fprintf(stderr, "Fatal error occured during TLS handshake, terminating.\n");
+
     /* Examine the returned code from function (GNUTLS_E_* code) */
     fprintf(stderr, "%s\n", gnutls_strerror(ret_handshake));
+
     /* Examine the gnutls_certificate_status_t enum, set up by verification
      * function (during handshake) */
     // check_result_of_cert_validation(session);
-    printf("\n");
+
+    goto cleanup;
   }
 
   *handshake_result = ret_handshake;
@@ -367,6 +380,7 @@ gnutls_session_t make_secure_connection(
   return session;
 
 cleanup:
+  close(client_fd);
   if (creds != NULL) {
     gnutls_certificate_free_credentials(creds);
   }
@@ -382,14 +396,17 @@ void close_connection(int client_fd, gnutls_session_t session,
 
   /* Send the "close notify" message to the server, alerting it that we are
    * closing the connection. */
-  int bye_return = gnutls_bye(session, GNUTLS_SHUT_RDWR);
+  int bye_return;
+  do {
+    bye_return = gnutls_bye(session, GNUTLS_SHUT_RDWR);
+  } while (bye_return < 0 && gnutls_error_is_fatal(bye_return) == 0);
 
-  if (bye_return != GNUTLS_E_SUCCESS) {
+  if (bye_return == GNUTLS_E_SUCCESS) {
+    printf(" [OK] \n");
+  } else {
     printf(" [NOK] \n");
     fprintf(stderr, "Function 'gnutls_bye' has failed: %s\n",
             gnutls_strerror(bye_return));
-  } else {
-    printf(" [OK] \n");
   }
 
   /* Free the credentials structure! */
@@ -411,7 +428,7 @@ void close_connection(int client_fd, gnutls_session_t session,
 
 int main(int argc, char **argv) {
   if (argc != 2) {
-    printf("Usage: gnutls_client [hostname]\n\n");
+    printf("\nUsage: gnutls_client [hostname]\n\n");
     exit(EXIT_FAILURE);
   }
 
@@ -425,8 +442,6 @@ int main(int argc, char **argv) {
   gnutls_certificate_credentials_t creds;
   gnutls_session_t session =
       make_secure_connection(client_fd, &handshake_result, &creds, hostname);
-
-  // revocation_check_callback(session);
 
   close_connection(client_fd, session, creds);
 }
