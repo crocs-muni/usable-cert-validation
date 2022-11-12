@@ -25,20 +25,20 @@
  * @return the number of bytes that were processed successfully
  */
 size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
-  /* Already processed data from previous transfers */
+  /* Already processed data from previous transfers. */
   gnutls_datum_t *ud = (gnutls_datum_t *)userp;
 
   /* nmemb bytes of new data */
   size *= nmemb;
 
   /* Reallocate the buffer containing the previous data so that it can also
-   * accommodate nmemb of new data */
+   * accommodate nmemb of new data. */
   ud->data = realloc(ud->data, ud->size + size);
   if (ud->data == NULL) {
     errx(EXIT_FAILURE, "Function 'realloc' has failed");
   }
 
-  /* Append nmemb new bytes to the previous data */
+  /* Append nmemb new bytes to the previous data. */
   memcpy(&ud->data[ud->size], buffer, size);
   ud->size += size;
 
@@ -83,7 +83,7 @@ gnutls_x509_crt_t *retrieve_server_certificate_chain(gnutls_session_t session,
   const gnutls_datum_t *server_chain_der =
       gnutls_certificate_get_peers(session, &server_chain_size);
   if (server_chain_der == NULL) {
-    fprintf(stderr, "Function 'gnutls_certificate_get_peers' has failed");
+    fprintf(stderr, "Function 'gnutls_certificate_get_peers' has failed!\n");
     return NULL;
   }
 
@@ -92,7 +92,8 @@ gnutls_x509_crt_t *retrieve_server_certificate_chain(gnutls_session_t session,
   gnutls_x509_crt_t *server_chain_crt =
       gnutls_calloc(server_chain_size, sizeof(gnutls_x509_crt_t));
   if (server_chain_crt == NULL) {
-    fprintf(stderr, "Function 'gnutls_calloc' has failed");
+    fprintf(stderr, "Function 'gnutls_calloc' has failed!\n");
+    deinitialize_certificate_chain(server_chain_crt, server_chain_size);
     return NULL;
   }
 
@@ -107,6 +108,7 @@ gnutls_x509_crt_t *retrieve_server_certificate_chain(gnutls_session_t session,
       for (int index = 0; index < i; index++) {
         gnutls_x509_crt_deinit(server_chain_crt[index]);
         gnutls_free(server_chain_crt);
+        deinitialize_certificate_chain(server_chain_crt, server_chain_size);
       }
       return NULL;
     }
@@ -118,13 +120,17 @@ gnutls_x509_crt_t *retrieve_server_certificate_chain(gnutls_session_t session,
 
 void deinitialize_certificate_chain(gnutls_x509_crt_t *certificate_chain,
                                     size_t chain_size) {
+  if (certificate_chain == NULL) {
+    return;
+  }
+
   for (int i = 0; i < chain_size; i++) {
     gnutls_x509_crt_deinit(certificate_chain[i]);
   }
   gnutls_free(certificate_chain);
 }
 
-bool print_x509_certificate_info(gnutls_x509_crt_t certificate) {
+int print_x509_certificate_info(gnutls_x509_crt_t certificate) {
   int ret_err_code;
 
   /* Information about the X509 certificate will be stored in the gnutls_datum_t
@@ -173,16 +179,16 @@ bool print_x509_certificate_info(gnutls_x509_crt_t certificate) {
   printf("- dn: %s\n", dn);
   printf("- issuer dn: %s\n", issuer_dn);
 
-  return true;
+  return REVOC_CHECK_SUCCESS;
 }
 
-bool print_certificate_chain_info(gnutls_session_t session) {
+int print_certificate_chain_info(gnutls_session_t session) {
   int ret_err_code;
 
-  /* Check that the server is really using X509 certificate */
+  /* Check that the server is really using X509 certificate. */
   if (gnutls_certificate_type_get(session) != GNUTLS_CRT_X509) {
-    fprintf(stderr, "Server is not using X509 certificate!");
-    return false;
+    fprintf(stderr, "Server is not using X509 certificate!\n");
+    return REVOC_CHECK_FAILURE;
   }
 
   printf("\nCerticate chain details: \n");
@@ -198,7 +204,7 @@ bool print_certificate_chain_info(gnutls_session_t session) {
   printf("- chain size: %u\n", cert_list_size);
   if (cert_list_size < 1) {
     fprintf(stderr, "Certificate chain size is < 1!\n");
-    return false;
+    return REVOC_CHECK_FAILURE;
   }
 
   gnutls_x509_crt_t certificate;
@@ -209,17 +215,22 @@ bool print_certificate_chain_info(gnutls_session_t session) {
                                 GNUTLS_X509_FMT_DER)) == GNUTLS_E_SUCCESS) {
       printf(" [OK] \n");
       print_x509_certificate_info(certificate);
+    } else {
+      printf(" [NOK] \n");
+      gnutls_x509_crt_deinit(certificate);
+      return REVOC_CHECK_INTERNAL_ERROR;
     }
   }
   gnutls_x509_crt_deinit(certificate);
-  return true;
+  return REVOC_CHECK_SUCCESS;
 }
 
 void print_ocsp_request_info(gnutls_ocsp_req_t ocsp_req) {
   gnutls_datum_t ocsp_req_pretty_print = {0};
   if (gnutls_ocsp_req_print(ocsp_req, GNUTLS_OCSP_PRINT_FULL,
-                            &ocsp_req_pretty_print) != 0) {
-    errx(EXIT_FAILURE, "Function 'gnutls_ocsp_req_print' has failed");
+                            &ocsp_req_pretty_print) != GNUTLS_E_SUCCESS) {
+    fprintf(stderr, "Function 'gnutls_ocsp_req_print' has failed!\n");
+    return;
   }
   printf("- %s\n", ocsp_req_pretty_print.data);
   gnutls_free(ocsp_req_pretty_print.data);
@@ -228,8 +239,9 @@ void print_ocsp_request_info(gnutls_ocsp_req_t ocsp_req) {
 void print_ocsp_response_info(gnutls_ocsp_resp_t ocsp_response) {
   gnutls_datum_t ocsp_response_pretty_print;
   if (gnutls_ocsp_resp_print(ocsp_response, GNUTLS_OCSP_PRINT_COMPACT,
-                             &ocsp_response_pretty_print) != 0) {
-    errx(EXIT_FAILURE, "Function 'gnutls_ocsp_resp_print' has failed");
+                             &ocsp_response_pretty_print) != GNUTLS_E_SUCCESS) {
+    fprintf(stderr, "Function 'gnutls_ocsp_resp_print' has failed!\n");
+    return;
   }
   printf("- %s\n", ocsp_response_pretty_print.data);
   gnutls_free(ocsp_response_pretty_print.data);
