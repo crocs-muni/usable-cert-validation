@@ -243,7 +243,7 @@ if (SSL_CTX_set1_param(context, verify_param_struct) != 1) {
 
 ## Alternative: Setting custom verification callback
 
-It is possible to set a custom verification callback by calling the `SSL_CTX_set_tlsext_status_cb` API call. This callback function will be invoked during the TLS handshake after the certificate chain has been successfully validated. The prototype of this callback function is `int (*callback)(SSL *, void *)`. The first argument is the SSL session instance, and the second argument is a value previously set by calling the `SSL_CTX_set_tlsext_status_arg` API call.
+It is possible to set a custom verification callback by calling the `SSL_CTX_set_tlsext_status_cb` API call. This callback function will be invoked during the TLS handshake after the certificate chain has been successfully validated. The prototype of this callback function is `int (*callback)(SSL *, void *)`. The first argument is the SSL session instance, and the second argument is a value previously set by calling the `SSL_CTX_set_tlsext_status_arg` API call. The return value of this callback function should be positive when it is required for the TLS handshake to continue. Otherwise, the TLS handshake will fail, and the connection should be terminated immediately.
 
 ```c
 /* Function callback called during the TLS handshake after the certificate chain has been verified. */

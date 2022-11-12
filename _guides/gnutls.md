@@ -258,7 +258,7 @@ if (gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
 ## Alternative: Setting custom verification callback
 
 By default, GnuTLS validates the peer's certificate but does not check the revocation status. If a custom certificate validation logic or checking the revocation status of the certificates during the TLS handshake is required, it is possible to set a custom verification function.
-The prototype of this callback function is `int (*callback)(gnutls_session_t)`. An official example can also be found [here](https://gnutls.org/manual/gnutls.html#Legacy-client-example-with-X_002e509-certificate-support).
+The prototype of this callback function is `int (*callback)(gnutls_session_t)`. The  callback  function should return 0 for the handshake to continue or non-zero to terminate. An official example can also be found [here](https://gnutls.org/manual/gnutls.html#Legacy-client-example-with-X_002e509-certificate-support).
 
 ```c
 /* Set the hostname to the session structure, so it will be accessible during our custom verification callback. */
