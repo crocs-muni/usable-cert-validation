@@ -3,6 +3,10 @@ _debug
 # Built TLS clients
 validation/clients/*/build/
 
+# Revocation clients (binary, temporary files)
+revocation/openssl-client/openssl_client
+revocation/*/*.der
+
 # Built certificates and validation files 
 validation/certs/build/
 validation/certs/results/.port
