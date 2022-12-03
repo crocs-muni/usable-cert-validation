@@ -1,6 +1,5 @@
 servers:
-  main:
-    which: "python"
+  main: {}
 
 verify:
   openssl:
