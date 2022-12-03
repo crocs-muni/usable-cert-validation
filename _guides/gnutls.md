@@ -21,12 +21,14 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 {:.lead}
 In addition to this guide, we have also implemented GnuTLS guides for the following topics:
 
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
 <div class="guides-div">
-<a class="btn btn-primary" href="/guides/gnutls-crl"><span class="fas fa-fw fa-file-code"></span> See CRL developer guide</a>
-<a class="btn btn-primary" href="/guides/gnutls-ocsp"><span class="fas fa-fw fa-file-code"></span> See OCSP developer guide</a>
-<a class="btn btn-primary" href="/guides/gnutls-ocsp-stapling"><span class="fas fa-fw fa-file-code"></span> See OCSP-Stapling developer guide</a>
-<a class="btn btn-primary" href="/guides/gnutls-cert-transparency"><span class="fas fa-fw fa-file-code"></span> See CT developer guide</a>
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+{% endfor %}
 </div>
+{% endif %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -273,6 +275,15 @@ gnutls_session_set_verify_function(session, f);
 We also provide a simple example of such a function. When using a custom verification callback, it is always necessary to validate the certificates manually. After successful validation, the revocation check of all certificates in the chain should be performed.
 
 We have covered guides for checking the revocation status for all certificates in the chain using [CRL](/guides/gnutls-crl), [OCSP](/guides/gnutls-ocsp) and [OCSP-Stapling](/guides/gnutls-ocsp-stapling) schemes. We have also covered a partial guide for checking the [Certificate Transparency](/guides/gnutls-cert-transparency) criteria for each certificate in the chain.
+
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div mb-3">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+{% endfor %}
+</div>
+{% endif %}
 
 ```c
 int custom_callback_function(gnutls_session_t session) {

@@ -25,6 +25,15 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
     content="Note: Mbed TLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement."
 %}
 
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+{% endfor %}
+</div>
+{% endif %}
+
 </div></div>
 <div class="section"><div class="container" markdown="1">
 

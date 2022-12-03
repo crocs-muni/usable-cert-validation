@@ -21,12 +21,14 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 {:.lead}
 In addition to this guide, we have also implemented OpenSSL guides for the following topics:
 
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
 <div class="guides-div">
-<a class="btn btn-primary" href="/guides/openssl-crl"><span class="fas fa-fw fa-file-code"></span> See CRL developer guide</a>
-<a class="btn btn-primary" href="/guides/openssl-ocsp"><span class="fas fa-fw fa-file-code"></span> See OCSP developer guide</a>
-<a class="btn btn-primary" href="/guides/openssl-ocsp-stapling"><span class="fas fa-fw fa-file-code"></span> See OCSP-Stapling developer guide</a>
-<a class="btn btn-primary" href="/guides/openssl-cert-transparency"><span class="fas fa-fw fa-file-code"></span> See CT developer guide</a>
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+{% endfor %}
 </div>
+{% endif %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -263,6 +265,15 @@ int custom_callback(SSL *s_connection, void *arg) {
 According to the official OpenSSL documentation, the primary purpose of this callback function is to validate and process a stapled OCSP response. However, since this function is called during the TLS handshake, after successful validation of the certificate chain, it can also be used for checking the revocation status of the certificates from the certificate chain.
 
 In addition to the [OCSP-Stapling](/guides/openssl-ocsp-stapling) scheme, we have also covered guides for checking the revocation status for all certificates in the chain using [CRL](/guides/openssl-crl) or [OCSP](/guides/openssl-ocsp) revocation schemes. We have also covered a guide for checking the [Certificate Transparency](/guides/openssl-cert-transparency) criteria for each certificate in the chain.
+
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div mb-3">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+{% endfor %}
+</div>
+{% endif %}
 
 ### Relevant links
 
