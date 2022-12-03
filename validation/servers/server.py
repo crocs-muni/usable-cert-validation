@@ -14,13 +14,13 @@ class Server:
         cert_path -- path to the corresponding server certificate
 
         """
-        self.context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+        self.context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
         self.context.load_cert_chain(cert_path, key_path)
 
-    def handle_connection(reader, writer, third):
+    def handle_connection(self, reader, writer):
         pass
 
-    def listen(self, addr: str, port: int):
+    async def listen(self, addr: str, port: int):
         """Wait for a single connection, perform a handshake, then terminate.
 
         Keyword arguments:
@@ -28,17 +28,16 @@ class Server:
         port -- port to listen on
 
         """
-        loop = asyncio.get_event_loop()
-        coroutine = asyncio.start_server(self.handle_connection,
-                                         addr,
-                                         port,
-                                         ssl=self.context,
-                                         loop=loop)
-        loop.run_until_complete(coroutine)
-        loop.run_forever()
+        server = await asyncio.start_server(self.handle_connection,
+                                            addr,
+                                            port,
+                                            ssl=self.context)
+
+        async with server:
+            await server.serve_forever()
 
 
-def main():
+async def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--host')
     parser.add_argument('--port')
@@ -47,8 +46,8 @@ def main():
     args = parser.parse_args()
 
     server = Server(args.key_file, args.chain_file)
-    server.listen(args.host, int(args.port))
+    await server.listen(args.host, int(args.port))
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
