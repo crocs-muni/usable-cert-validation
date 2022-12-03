@@ -20,7 +20,8 @@ This guide describes how to obtain a Signed Certificate Timestamp (SCT) from a c
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description:**
+## Introduction
+
 Certificate Transparency is a project initiated by Google in 2013. The main goal of this project was to make all certificates on the Internet publicly visible and, therefore, accessible and verifiable by anyone. Publicly available log servers are used to achieve this goal. Anyone can upload their certificates to these log servers and view the certificates from there. Every certificate that wants to support Certificate Transparency must be added to one of the publicly available log servers. However, one such certificate is often added to several log servers. That is also because Google requires such a certificate to be added to multiple public log servers. After the public log is asked to add a certificate, it responds with the Signed Certificate Timestamp (SCT). This SCT serves as a promise that the certificate will be inserted into the log. If a TLS client wants to verify that the certificate has been inserted into the public log, it must verify the validity of the certificate's SCT. During the verification of the SCT, its signature and timestamp are verified. The signature is verified against the log's public key that signed the SCT. The timestamp is then verified against the current time to prevent the SCT from being issued in the future.
 
 Certificate Transparency is defined in [RFC 6962](https://www.rfc-editor.org/info/rfc6962).
@@ -43,7 +44,7 @@ The only prerequisite for this guide is that the `gnutls_session_t session` vari
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Retrieve the TLS server's certificate chain with its size
+## 1. Retrieve the TLS server's certificate chain with its size
 
 First, we need to obtain the certificate chain from the TLS connection.
 
@@ -111,7 +112,7 @@ gnutls_free(server_cert_pretty.data);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Verify each certificate in the certificate chain
+## 2. Verify each certificate in the certificate chain
 
 Verification of each certificate from TLS server's certificate chain should be performed (except the root one).
 
@@ -129,7 +130,7 @@ for (int index = 0; index < chain_size; index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Retrieve the list of Signed Certificate Timestamps (SCTs) from the certificate
+## 3. Retrieve the list of Signed Certificate Timestamps (SCTs) from the certificate
 
 After a single certificate was obtained, the SCT list is parsed from one of the certificate extensions.
 
@@ -182,7 +183,7 @@ if (gnutls_x509_ext_ct_import_scts(&sct_list_DER, sct_list, 0) < 0) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Verify each SCT from the SCT list
+## 4. Verify each SCT from the SCT list
 
 Parse the information for every Signed Certificate Timestamp (SCT) from the list of SCTS. Information such as the ID of the public log, the signature algorithm used when signing the SCT and the resulting signature.
 
@@ -231,7 +232,7 @@ During this step, all information required to successfully verify the signature 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 5.) Deinitialize
+## 5. Deinitialize
 
 Free the previously allocated structures, which are no longer required.
 

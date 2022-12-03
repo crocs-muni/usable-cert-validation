@@ -20,7 +20,8 @@ This guide covers the implementation of certificate revocation status checking u
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description of revocation scheme:**
+## Introduction
+
 A Certificate Revocation List (CRL) is a list of revoked certificates issued by a certification authority (CA). The CA can have multiple CRLs, each of which is signed with the private key of the corresponding CA. The CA then publishes its CRLs to HTTP or LDAP servers. Each X.509v3 certificate that supports CRL contains an extension called CRL distribution point, which stores a link to servers containing these CRLs in which the certificate should be located if it was previously revoked. When verifying the certificate with this scheme, the TLS client must look at the required extension of the certificate, obtain the address where the CRLs of the CA are located, download these lists and check their signatures. After the signature is validated, the TLS client can search the certificate against the CRL.
 
 CRLs are defined in [RFC 5280](https://www.rfc-editor.org/info/rfc5280).
@@ -45,7 +46,7 @@ The only prerequisite for this guide is that the `SSL *s_connection` variable ha
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Retrieve the TLS server's certificate chain with its size
+## 1. Retrieve the TLS server's certificate chain with its size
 
 First, we need to obtain the certificate chain from the TLS connection. After that, iterate through every certificate from the retrieved certificate chain (except the root one) and perform a revocation check for each certificate.
 
@@ -87,7 +88,7 @@ for (int index = 0; index < cert_chain_stack_size - 1; index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Initialize the structures and variables required to download the CRL
+## 2. Initialize the structures and variables required to download the CRL
 
 Before it is possible to start downloading CRL lists from crl distribution points, it is necessary to prepare some variables.
 
@@ -160,7 +161,7 @@ size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Download the CRL lists from all possible URL links found
+## 3. Download the CRL lists from all possible URL links found
 
 After receiving a list containing URL links to crl distribution points (in the form of STACK_OF structure), iteration through this list is performed in order to download all the CRLs.
 
@@ -224,7 +225,7 @@ for (int index = 0; index < sk_DIST_POINT_num(dist_points_stack); index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Verify the signature of single downloaded CRL
+## 4. Verify the signature of single downloaded CRL
 
 After successfully downloading each CRL list, it is necessary to validate its signature. This signature is validated using the issuer's public key, which issued the certificate currently checking and, thus, signed the current CRL list.
 
@@ -252,7 +253,7 @@ else {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 5.) Check the revocation status of a single certificate
+## 5. Check the revocation status of a single certificate
 
 After successfully validating the signature of the currently downloaded CRL list, it is possible to receive the certificate's revocation status.
 
@@ -276,7 +277,7 @@ else {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 6.) Deinitialize
+## 6. Deinitialize
 
 Deinitialize the previously allocated structures, which are no longer required.
 

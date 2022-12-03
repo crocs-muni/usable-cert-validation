@@ -20,7 +20,8 @@ This guide covers the implementation of certificate revocation status checking u
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description of revocation scheme**:
+## Introduction
+
 OCSP is a separate protocol with which the TLS client and OCSP server called OCSP responder communicate. The TLS client contacts the OCSP responder, a trusted third party, to provide him with the revocation status of the certificates which the TLS client included in the OCSP request.
 
 OCSP protocol is defined in [RFC 6960](https://www.rfc-editor.org/info/rfc6960).
@@ -50,7 +51,7 @@ The only prerequisite for this guide is that the `gnutls_session_t session` vari
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Retrieve the TLS server's certificate chain with its size
+## 1. Retrieve the TLS server's certificate chain with its size
 
 First, we need to obtain the certificate chain from the TLS connection.
 
@@ -118,7 +119,7 @@ gnutls_free(server_cert_pretty.data);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Verify each certificate in the certificate chain
+## 2. Verify each certificate in the certificate chain
 
 Verification of each certificate from TLS server's certificate chain should be performed (except the root one).
 
@@ -141,7 +142,7 @@ for (int index = 0; index < chain_size - 1; index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Extract the URL Adress of OCSP Responder
+## 3. Extract the URL Adress of OCSP Responder
 
 After obtaining a single certificate with the certificate of its issuer, extract the URL address of OCSP Responder from the certificate's authority information access extension.
 
@@ -201,7 +202,7 @@ ocsp_responder_uri[ocsp_responder_uri_datum.size] = 0;
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Generate the OCSP Request
+## 4. Generate the OCSP Request
 
 Generate the OCSP Request for the certificates we want to verify. In this case, it is the single certificate retrieved from the certificate chain.
 
@@ -265,7 +266,7 @@ gnutls_free(ocsp_req_pretty_print.data);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 5.) Send the OCSP Request and retrieve the OCSP Response
+## 5. Send the OCSP Request and retrieve the OCSP Response
 
 Send the generated OCSP Request to the OCSP Responder's URL. Subsequently, the OCSP Response sent from the OCSP Responder will be received. The response is stored in the program's memory.
 
@@ -380,7 +381,7 @@ gnutls_free(ocsp_response_pretty_print.data);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 6.) Verify the signature of the OCSP Response
+## 6. Verify the signature of the OCSP Response
 
 The OCSP Response needs to be verified against some set of trust anchors before it can be relied upon.
 It is also important to check whether the received OCSP Response corresponds to the certificate being checked.
@@ -464,7 +465,7 @@ if (verify_result & GNUTLS_OCSP_VERIFY_CERT_EXPIRED) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 7.) Extract the revocation status from the OCSP Response
+## 7. Extract the revocation status from the OCSP Response
 
 After the signature of the OCSP Response has been verified, the revocation status of the certificates included in the response can be safely examined. Except for the revocation status of the certificates, the OCSP Response also contains some other useful information.
 
@@ -515,7 +516,7 @@ if (cert_status & GNUTLS_OCSP_CERT_REVOKED) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 8.) Deinitialize
+## 8. Deinitialize
 
 Free the previously allocated structures, which are no longer required.
 

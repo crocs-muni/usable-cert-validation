@@ -20,7 +20,8 @@ This guide covers the implementation of certificate revocation status checking u
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description of revocation scheme:**
+## Introduction
+
 Online Certificate Status Protocol Stapling, better known as OCSP Stapling, is a modification of the OCSP protocol, where the TLS server (instead of the TLS client) contacts the OCSP responder at regular intervals to provide him with the revocation status of its certificate. After receiving the OCSP response from the OCP Responder, the TLS server stores this response for a defined fixed period during which the OCSP response is considered valid. Subsequently, when establishing a connection with the TLS client, the TLS server sends its certificate together with the stapled and cached response.
 
 OCSP-Stapling is defined in [RFC 6066](https://www.rfc-editor.org/info/rfc6066).
@@ -40,7 +41,7 @@ OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Enable OCSP-Stapling
+## 1. Enable OCSP-Stapling
 
 A TLS client application can request a TLS server to send it an OCSP response (known as OCSP-Stapling) during the TLS handshake. Status request TLS extension is used.
 
@@ -61,7 +62,7 @@ if (SSL_set_tlsext_status_type(s_connection, TLSEXT_STATUSTYPE_ocsp) != 1) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Verify that the stapled OCSP Response was sent together with the certificates
+## 2. Verify that the stapled OCSP Response was sent together with the certificates
 
 This step should be performed during the TLS handshake. It is possible to verify it after the TLS handshake, however, it is not recommended. The OpenSSL also recommends that an additional callback function should be provided to process the returned stapled OCSP response. This callback function is set by calling the `SSL_CTX_set_tlsext_status_cb` API call and will be called during the TLS handshake after the certificate chain has been validated. More information can be found in our guide on how to initiate a secure connection [here](/guides/openssl) or in [official documentation](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_tlsext_status_cb.html) from OpenSSL.
 
@@ -88,7 +89,7 @@ if (ocsp_response_stapled_size == -1) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Process the retrieved stapled OCSP Response
+## 3. Process the retrieved stapled OCSP Response
 
 After the stapled OCSP Response has been retrieved, validate the certificates included in this response by performing standard OCSP revocation check. Our guide on how to perform OCSP revocation check can be found [here](/guides/openssl-ocsp).
 
@@ -113,7 +114,7 @@ if (stapled_ocsp_response == NULL) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Deinitialize
+## 4. Deinitialize
 
 After work, don't forget to free the structure holding the stapled OCSP response.
 

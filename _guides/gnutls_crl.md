@@ -20,7 +20,8 @@ This guide covers the implementation of certificate revocation status checking u
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description of revocation scheme:**
+## Introduction
+
 A Certificate Revocation List (CRL) is a list of revoked certificates issued by a certification authority (CA). The CA can have multiple CRLs, each of which is signed with the private key of the corresponding CA. The CA then publishes its CRLs to HTTP or LDAP servers. Each X.509v3 certificate that supports CRL contains an extension called CRL distribution point, which stores a link to servers containing these CRLs in which the certificate should be located if it was previously revoked. When verifying the certificate with this scheme, the TLS client must look at the required extension of the certificate, obtain the address where the CRLs of the CA are located, download these lists and check their signatures. After the signature is validated, the TLS client can search the certificate against the CRL.
 
 CRLs are defined in [RFC 5280](https://www.rfc-editor.org/info/rfc5280).
@@ -46,7 +47,7 @@ The only prerequisite for this guide is that the `gnutls_session_t session` vari
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Retrieve the TLS server's certificate chain with its size
+## 1. Retrieve the TLS server's certificate chain with its size
 
 First, we need to obtain the certificate chain from the TLS connection.
 
@@ -112,7 +113,7 @@ gnutls_free(server_cert_pretty.data);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Initialize an empty trusted list
+## 2. Initialize an empty trusted list
 
 We initialize an empty structure called a trusted list. During the next steps, this trusted list will be filled with the trusted certificates of Certificate Authorities (CAs) and with the CRLs issued by these authorities. The certificate chain is subsequently verified by this filled trusted list. This will perform a CRL revocation check.
 
@@ -129,7 +130,7 @@ gnutls_x509_trust_list_init(&trusted_list, 0);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Fill the trusted list with trusted CA's certificates
+## 3. Fill the trusted list with trusted CA's certificates
 
 Fill the trusted list with the certificates of trusted certificate authorities (CAs). For this purpose, the default system certificates are used.
 
@@ -148,7 +149,7 @@ if (gnutls_x509_trust_list_add_system_trust(trusted_list, 0, 0) <= 0) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Fill the trusted list with trusted CRLs
+## 4. Fill the trusted list with trusted CRLs
 
 During this step, the trusted list should be filled with trusted CRLs. These trusted CRLs are downloaded from URLs that are stored in the crl distribution point extension of X509 certificate. Downloading takes place through all certificates in the certification chain (excluding the root one), where each certificate could contain multiple distribution points. After downloading each CRL, it is necessary to verify its signature.
 
@@ -315,7 +316,7 @@ After this step, our trusted list should be filled with trusted CA certificates 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 5.) Verify the certificate chain against the filled trusted list
+## 5. Verify the certificate chain against the filled trusted list
 
 Verify the certificate chain against the filled trusted list. When a certificate chain with more than one certificate is provided, and the verification fails, the verification result is applied to the first certificate in the chain that failed verification.
 
@@ -349,7 +350,7 @@ else {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 6.) Deinitialize
+## 6. Deinitialize
 
 Free the previously allocated structures, which are no longer required.
 

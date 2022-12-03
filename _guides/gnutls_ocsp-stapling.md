@@ -20,7 +20,9 @@ This guide covers the implementation of certificate revocation status checking u
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description of revocation scheme**: Online Certificate Status Protocol Stapling, better known as OCSP Stapling, is a modification of the OCSP protocol, where the TLS server (instead of the TLS client) contacts the OCSP responder at regular intervals to provide him with the revocation status of its certificate. After receiving the OCSP response from the OCP Responder, the TLS server stores this response for a defined fixed period during which the OCSP response is considered valid. Subsequently, when establishing a connection with the TLS client, the TLS server sends its certificate together with the stapled and cached response.
+## Introduction
+
+Online Certificate Status Protocol Stapling, better known as OCSP Stapling, is a modification of the OCSP protocol, where the TLS server (instead of the TLS client) contacts the OCSP responder at regular intervals to provide him with the revocation status of its certificate. After receiving the OCSP response from the OCP Responder, the TLS server stores this response for a defined fixed period during which the OCSP response is considered valid. Subsequently, when establishing a connection with the TLS client, the TLS server sends its certificate together with the stapled and cached response.
 
 OCSP-Stapling is defined in [RFC 6066](https://www.rfc-editor.org/info/rfc6066).
 OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
@@ -38,7 +40,7 @@ OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Enable OCSP-Stapling
+## 1. Enable OCSP-Stapling
 
 This step must be performed before the TLS Handshake. With this API call, client will request OCSP response from the server during the TLS handshake. Status request TLS extension is used.
 
@@ -59,7 +61,7 @@ if (gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Verify that the stapled OCSP Response was sent together with the certificates
+## 2. Verify that the stapled OCSP Response was sent together with the certificates
 
 This step can be performed after the certificate chain was received by the client. It is important to check that the stapled OCSP response was sent together with the certificate chain.
 
@@ -84,7 +86,7 @@ else {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Retrieve the stapled OCSP Responses
+## 3. Retrieve the stapled OCSP Responses
 
 It is recommended to verify every stapled OCSP Response sent by the TLS server to the TLS client. In case of any invalid OCSP response, the connection should be immediately terminated.
 
@@ -133,7 +135,7 @@ while (1) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Deinitialize
+## 4. Deinitialize
 
 Deinitialize variables and structures, which are no longer required.
 

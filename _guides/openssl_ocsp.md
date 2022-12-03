@@ -20,7 +20,8 @@ This guide covers the implementation of certificate revocation status checking u
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description of revocation scheme:**
+## Introduction
+
 OCSP is a separate protocol with which the TLS client and OCSP server called OCSP responder communicate. The TLS client contacts the OCSP responder, a trusted third party, to provide him with the revocation status of the certificates which the TLS client included in the OCSP request.
 
 OCSP protocol is defined in [RFC 6960](https://www.rfc-editor.org/info/rfc6960).
@@ -49,7 +50,7 @@ The only prerequisite for this guide is that the `SSL *s_connection` variable ha
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Retrieve the TLS server's certificate chain with its size
+## 1. Retrieve the TLS server's certificate chain with its size
 
 First, we need to obtain the certificate chain from the TLS connection. After that, iterate through every certificate from the retrieved certificate chain (except the root one) and perform a revocation check for each certificate.
 
@@ -93,7 +94,7 @@ for (int index = 0; index < cert_chain_stack_size - 1; index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Extract the URL Address of OCSP Responder
+## 2. Extract the URL Address of OCSP Responder
 
 After obtaining a single certificate with the certificate of its issuer, extract the URL address of OCSP Responder from the certificate's authority information access extension.
 
@@ -123,7 +124,7 @@ char *ocsp_uri = sk_OPENSSL_STRING_value(ocsp_uris_stack, 0);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Generate the OCSP Request
+## 3. Generate the OCSP Request
 
 Generate the OCSP Request for the certificates we want to verify. In this case, it is the single certificate retrieved from the certificate chain.
 
@@ -187,7 +188,7 @@ BIO_free(file);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Send the OCSP Request and retrieve the OCSP Response
+## 4. Send the OCSP Request and retrieve the OCSP Response
 
 Send the generated OCSP Request to the OCSP Responder's URL. Subsequently, the OCSP Response sent from the OCSP Responder will be received. The response is stored in the program's memory.
 
@@ -315,7 +316,7 @@ BIO_free(file);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 5.) Verify the status and signature of the OCSP Response
+## 5. Verify the status and signature of the OCSP Response
 
 The OCSP Response needs to be verified against some set of trust anchors before it can be relied upon.
 It is also important to check whether the received OCSP Response corresponds to the certificate being checked.
@@ -379,7 +380,7 @@ if (OCSP_basic_verify(ocsp_response_basic, cert_chain_stack, store, 0) != 1) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 6.) Extract the revocation status from the OCSP Response
+## 6. Extract the revocation status from the OCSP Response
 
 After the signature of the OCSP Response has been verified, the revocation status of the certificates included in the response can be safely examined. Except for the revocation status of the certificates, the OCSP Response also contains some other useful information.
 
@@ -471,7 +472,7 @@ for (int index = 0; index < number_of_single_responses; index ++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 7.) Deinitialize
+## 7. Deinitialize
 
 Free the previously allocated structures and variables, which are no longer required.
 

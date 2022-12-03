@@ -20,7 +20,8 @@ This guide describes how to obtain a Signed Certificate Timestamp (SCT) from a c
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-**Short description:**
+## Introduction
+
 Certificate Transparency is a project initiated by Google in 2013. The main goal of this project was to make all certificates on the Internet publicly visible and, therefore, accessible and verifiable by anyone. Publicly available log servers are used to achieve this goal. Anyone can upload their certificates to these log servers and view the certificates from there. Every certificate that wants to support Certificate Transparency must be added to one of the publicly available log servers. However, one such certificate is often added to several log servers. That is also because Google requires such a certificate to be added to multiple public log servers. After the public log is asked to add a certificate, it responds with the Signed Certificate Timestamp (SCT). This SCT serves as a promise that the certificate will be inserted into the log. If a TLS client wants to verify that the certificate has been inserted into the public log, it must verify the validity of the certificate's SCT. During the verification of the SCT, its signature and timestamp are verified. The signature is verified against the log's public key that signed the SCT. The timestamp is then verified against the current time to prevent the SCT from being issued in the future.
 
 Certificate Transparency is defined in [RFC 6962](https://www.rfc-editor.org/info/rfc6962).
@@ -39,7 +40,7 @@ The only prerequisite for this guide is that the `SSL *s_connection` variable ha
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 1.) Retrieve the Signed Certificate Timestamp (SCT) List from the session instance
+## 1. Retrieve the Signed Certificate Timestamp (SCT) List from the session instance
 
 The first step is to retrieve all available signed certificate timestamps (SCTs) that are obtained from the SSL session instance.
 
@@ -59,7 +60,7 @@ if (sct_stack == NULL) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2.) Create and initialize a structure containing records about public log servers
+## 2. Create and initialize a structure containing records about public log servers
 
 Before validation of individual SCTs can be performed, it is first necessary to obtain cryptographic information about publicly available log servers which issued the SCTs mentioned above. Such information includes, for example, the ID of the public log or its public key. To represent and store this kind of information, OpenSSL uses the `CTLOG_STORE` structure, which must be first initialized and then filled with individual records of public log servers. To fill this structure, we will use the default configuration file, which contains a list of some publicly available log servers and was shipped together with the OpenSSL library during the installation.
 
@@ -167,7 +168,7 @@ BIO_free(out);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3.) Create and initialize a structure containg CT policy
+## 3. Create and initialize a structure containg CT policy
 
 The last step before SCTs can be validated is the creation of a policy evaluation context structure called `CT_POLICY_EVAL_CTX`. OpenSSL uses this structure to evaluate whether individual SCT fulfils a Certificate Transparency (CT) policy.
 
@@ -206,7 +207,7 @@ CT_POLICY_EVAL_CTX_set_time(ct_policy_eval, (time(NULL) + 300) * 1000);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4.) Validate the entire SCT list
+## 4. Validate the entire SCT list
 
 After filling all the necessary structures, it is possible to validate the entire SCT list.
 
@@ -292,7 +293,7 @@ for (int index = 0; index < sct_list_stack_size; index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 5.) Deinitialize
+## 5. Deinitialize
 
 Free the previously allocated structures, which are no longer required.
 
