@@ -75,7 +75,8 @@ for (int index = 0; index < cert_chain_stack_size - 1; index++) {
     certificate = sk_X509_value(cert_chain_stack, index);
     issuer_certificate = sk_X509_value(cert_chain_stack, index+1);
 
-    /* Download all the possible CRL lists for each certificate in the chain and verify that the certificate is not included in one of the downloaded CRLs. */
+    /* Download all the possible CRL lists for each certificate in the chain */
+    /* and verify that the certificate is not included in one of the downloaded CRLs. */
     /* This procedure is demonstrated in the following steps. */
 }
 ```

@@ -169,7 +169,8 @@ To download the CRL, it is necessary to establish an out-of-band connection with
 ```c
 #include <curl/curl.h>
 
-void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnutls_x509_crt_t certificate, gnutls_x509_crt_t issuer_certificate) {
+void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnutls_x509_crt_t certificate, 
+                                      gnutls_x509_crt_t issuer_certificate) {
 
     /* Prepare buffer for storing the URL adress for one CRL distribution point. */
     size_t buffer_crl_dist_point_size = 1024;
@@ -205,7 +206,8 @@ void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnu
     int dist_points_index= 0;
     int ret;
     while (1) {
-        ret = gnutls_x509_crt_get_crl_dist_points(certificate, dist_points_index, buffer_crl_dist_point, &buffer_crl_dist_point_size, &revocation_reasons, NULL);
+        ret = gnutls_x509_crt_get_crl_dist_points(certificate, dist_points_index, buffer_crl_dist_point, 
+                                                  &buffer_crl_dist_point_size, &revocation_reasons, NULL);
 
         if (ret == GNUTLS_E_SHORT_MEMORY_BUFFER) {
             /* If buffer for storing URL of Distribution point is not big enough, reallocate it with returned required size. */

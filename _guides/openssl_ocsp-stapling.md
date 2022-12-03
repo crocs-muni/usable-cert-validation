@@ -97,7 +97,8 @@ After the stapled OCSP Response has been retrieved, validate the certificates in
 #include <openssl/ocsp.h>
 
 /* Convert the retrieved stapled OCSP Response to the OpenSSL native structure. */
-OCSP_RESPONSE *stapled_ocsp_response = d2i_OCSP_RESPONSE(NULL, (const unsigned char **) &ocsp_response_stapled_DER, ocsp_response_stapled_size);
+OCSP_RESPONSE *stapled_ocsp_response = d2i_OCSP_RESPONSE(NULL, (const unsigned char **) &ocsp_response_stapled_DER, 
+                                                         ocsp_response_stapled_size);
 if (stapled_ocsp_response == NULL) {
     exit(EXIT_FAILURE);
 

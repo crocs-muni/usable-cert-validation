@@ -362,7 +362,8 @@ if (X509_STORE_set_default_paths(store) != 1) {
 }
 
 /* Verify the signature of basic OCSP Response with validation of issuer's certificate. */
-/* If we want to just verify the signature of OCSP response and we dont want to validate the server's certificate, use flag OCSP_TRUSTOTHER and the X509_STORE wont be needed. */
+/* If we want to just verify the signature of OCSP response and we dont want to validate the server's certificate, */
+/* use flag OCSP_TRUSTOTHER and the X509_STORE wont be needed. */
 if (OCSP_basic_verify(ocsp_response_basic, cert_chain_stack, store, 0) != 1) {
     /* Verification of signature of the OCSP Response has failed. */
 }

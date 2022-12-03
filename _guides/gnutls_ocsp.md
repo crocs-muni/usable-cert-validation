@@ -488,7 +488,8 @@ time_t revocation_time;
 /* If cert_status is GNUTLS_OCSP_CERT_REVOKED, then this variable holds gnutls_x509_crl_reason_t enum value. */
 unsigned int revocation_reason;
 
-if (gnutls_ocsp_resp_get_single(ocsp_response, index, &hash_algorithm, &issuer_name_hash, &issuer_key_hash, &serial_number, &cert_status, NULL, NULL, &revocation_time, &revocation_reason) < 0) {
+if (gnutls_ocsp_resp_get_single(ocsp_response, index, &hash_algorithm, &issuer_name_hash, &issuer_key_hash, &serial_number, 
+                                &cert_status, NULL, NULL, &revocation_time, &revocation_reason) < 0) {
     exit(EXIT_FAILURE);
 }
 
