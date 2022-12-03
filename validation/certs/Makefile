@@ -43,6 +43,8 @@ VRESULTS_DIR=$(VDIR)/vresults
 VRESULTS_FILE=$(VDIR)/vresults.yml
 # port counter
 PORT_CTR_FILE=$(VDIR)/.port
+# Python TLS server
+PYTHON_SERVER=$(SERVERS_DIR)/server.py
 
 # All individual chain script directories
 CHAINS_ALL=$(notdir $(wildcard $(CHAINS_DIR)/*))
@@ -77,7 +79,7 @@ $(BUILD_DIR)/%/$(CHAIN_FILENAME): $(ROOT_KEY_FILE) $(CHAINS_DIR)/%/$(GENERATE).p
 	@printf "[ OK ]\n"
 
 # After building the chain, we run the validation script on it
-$(VRESULTS_DIR)/%.yml: $(BUILD_DIR)/%/$(CHAIN_FILENAME)
+$(VRESULTS_DIR)/%.yml: $(BUILD_DIR)/%/$(CHAIN_FILENAME) $(PYTHON_SERVER)
 	@mkdir -p $(VRESULTS_DIR)
 	@printf "Validating chain: %-50s" $(basename $(@F))
 	@$(VSCRIPT) --certs_dir $(CURDIR) \
