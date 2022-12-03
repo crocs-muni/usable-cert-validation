@@ -34,6 +34,11 @@
                             {% for guide in guides %}
                                 <a class="dropdown-item" href="{% if page.title != guide.title %}/guides/{{ guide.slug }}{% else %}#{{ guide.slug }}{% endif %}">
                                 {{ library.title }}</a>
+                                {% assign subGuides = site.guides | where: "library", library.name %}
+                                {% for subGuide in subGuides %}
+                                    <a class="dropdown-item" href="{% if page.title != subGuide.title %}/guides/{{ subGuide.slug }}{% else %}#{{ guide.slug }}{% endif %}">
+                                    <span class="fas fa-fw fa-angle-right"></span> {{ subGuide.title }}</a>
+                                {% endfor %}
                             {% endfor %}
                         {% endfor %}
                     </div>

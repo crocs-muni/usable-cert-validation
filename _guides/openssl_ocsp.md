@@ -1,17 +1,21 @@
 ---
 layout:     default
-title:      "Developer guide: OpenSSL, Revocation with OCSP"
+title:      "OCSP revocation"
 slug:       openssl-ocsp
+library:    openssl
 ---
 
+{% assign libraryData = site.data.libraries | where: "name", page.library | first %}
 <div class="section"><div class="container" markdown="1">
 
 {:#{{ page.slug }}}
 
-# {{ page.title }}
+# {{ libraryData.title }}: {{ page.title }}
 
 {:.lead}
 This guide covers the implementation of certificate revocation status checking using the Online Certificate Status Protocol (OCSP).
+
+{% include navigation-guides.html library=libraryData %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">

@@ -1,17 +1,21 @@
 ---
 layout:     default
-title:      "Developer guide: OpenSSL, Certificate Transparency"
+title:      "Certificate Transparency"
 slug:       openssl-cert-transparency
+library:    openssl
 ---
 
+{% assign libraryData = site.data.libraries | where: "name", page.library | first %}
 <div class="section"><div class="container" markdown="1">
 
 {:#{{ page.slug }}}
 
-# {{ page.title }}
+# {{ libraryData.title }}: {{ page.title }}
 
 {:.lead}
 This guide describes how to obtain a Signed Certificate Timestamp (SCT) from a certificate and its subsequent verification. The SCT serves as proof that the certificate was appended to the public log.
+
+{% include navigation-guides.html library=libraryData %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">

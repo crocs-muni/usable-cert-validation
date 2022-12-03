@@ -1,0 +1,9 @@
+<div class="guides-div">
+<a class="btn btn-primary" href="/guides/{{ include.library.name }}"><span class="fas fa-fw fa-reply"></span> Back to {{ include.library.title }} guide</a>
+{% assign subGuides = site.guides | where: "library", include.library.name %}
+{% for subGuide in subGuides %}
+    {% if subGuide.slug != page.slug %}
+        <a class="btn btn-secondary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+    {% endif %}
+{% endfor %}
+</div>
