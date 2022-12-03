@@ -30,15 +30,15 @@ CRLs on [Wikipedia](https://en.wikipedia.org/wiki/Certificate_revocation_list).
 **Summary of this guide:**
 
 1. Retrieve the TLS server’s certificate chain with its size
-   - after retrieving the whole TLS server's certificate chain from the SSL session instance, perform the revocation check on each certificate from the chain.
+   - After retrieving the whole TLS server's certificate chain from the SSL session instance, perform the revocation check on each certificate from the chain.
 2. Initialize the structures and variables required to download the CRL
 3. Download the CRL lists from all possible URL links found
-   - parse all crl distribution point URLs for each certificate from the certificate chain
-   - download all CRL lists for each certificate from found URLs
-4. Verify the signature of single downloaded CRL
-   - after each download of the CRL list, it is necessary to verify its signature
+   - Parse all CRL distribution point URLs for each certificate from the certificate chain.
+   - Download all CRL lists for each certificate from found URLs.
+4. Verify the signature of a single downloaded CRL
+   - After each download of the CRL list, it is necessary to verify its signature.
 5. Check the revocation status of a single certificate
-   - after successful verification of the downloaded CRL's signature, the revocation status of the provided certificate can be examined against the current CRL
+   - After successful verification of the downloaded CRL's signature, the revocation status of the provided certificate can be examined against the current CRL.
 6. Deinitialize
 
 The only prerequisite for this guide is that the `SSL *s_connection` variable has already been initialized. This variable represents the current TLS session or connection, which could have already been established or is currently in the TLS handshake phase. For more information, see our [guide](/guides/openssl) on how to initiate a secure TLS connection.
@@ -90,7 +90,7 @@ for (int index = 0; index < cert_chain_stack_size - 1; index++) {
 
 ## 2. Initialize the structures and variables required to download the CRL
 
-Before it is possible to start downloading CRL lists from crl distribution points, it is necessary to prepare some variables.
+Before it is possible to start downloading CRL lists from CRL distribution points, it is necessary to prepare some variables.
 
 To store one CRL list after its download, we use a custom structure named `datum_t`.
 
@@ -101,7 +101,7 @@ struct datum_t {
 };
 ```
 
-To download the CRL, it is necessary to establish an out-of-band connection with the server on which the given CRL is located. In our example, the cURL library is used for this purpose. Curl is able to send HTTP GET Request to the server and save the downloaded CRL to the programs' memory.
+To download the CRL, it is necessary to establish an out-of-band connection with the server on which the given CRL is located. In our example, the cURL library is used for this purpose. cURL can send the HTTP GET request to the server and save the downloaded CRL to the programs' memory.
 
 ```c
 #include <curl/curl.h>
@@ -129,7 +129,7 @@ if (dist_points_stack == NULL) {
 }
 ```
 
-We provide a simple example of a callback function used by curl (assigned to curl with the option `CURLOPT_WRITEFUNCTION`) during the download process of the CRLs. This function gets invoked whenever a new chunk of CRL data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
+We provide a simple example of a callback function used by cURL (assigned to cURL with the option `CURLOPT_WRITEFUNCTION`) during the download process of the CRLs. This function gets invoked whenever a new chunk of CRL data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
 
 ```c
 size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
@@ -163,7 +163,7 @@ size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
 
 ## 3. Download the CRL lists from all possible URL links found
 
-After receiving a list containing URL links to crl distribution points (in the form of STACK_OF structure), iteration through this list is performed in order to download all the CRLs.
+After receiving a list containing URL links to CRL distribution points (in the form of STACK_OF structure), iteration through this list is performed to download all the CRLs.
 
 ```c
 /* Iterate through the stack of the distribution points. */
@@ -225,7 +225,7 @@ for (int index = 0; index < sk_DIST_POINT_num(dist_points_stack); index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 4. Verify the signature of single downloaded CRL
+## 4. Verify the signature of a single downloaded CRL
 
 After successfully downloading each CRL list, it is necessary to validate its signature. This signature is validated using the issuer's public key, which issued the certificate currently checking and, thus, signed the current CRL list.
 

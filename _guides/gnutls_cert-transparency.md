@@ -30,13 +30,13 @@ Certificate Transparency on [Wikipedia](https://en.wikipedia.org/wiki/Certificat
 **Summary of this guide:**
 
 1. Retrieve the server's certificate chain with its size
-   - from the certificate chain, we can parse any certificate we want to verify with its issuer’s certificate.
+   - From the certificate chain, we can parse any certificate we want to verify with its issuer’s certificate.
 2. Verify each certificate in the certificate chain
 3. Retrieve the list of Signed Certificate Timestamps (SCTs) from the certificate
-   - we will extract the SCTs from the certificate's extension, which is identified by the appropriate OID
+   - We will extract the SCTs from the certificate's extension, which is identified by the appropriate OID.
 4. Verify each SCT from the SCT list
-   - for each SCT from the list, its signature, signature algorithm, timestamp and ID of the public log are extracted
-   - the signature is verified against the public key of the public log when we know the id of this log and the signature algorithm which was used
+   - For each SCT from the list, its signature, signature algorithm, timestamp and ID of the public log are extracted.
+   - The signature is verified against the public key of the public log when we know the id of this log and the signature algorithm which was used.
 5. Deinitialize
 
 The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](/guides/gnutls) on how to initiate a secure TLS connection.
@@ -92,7 +92,7 @@ for (int i=0; i < server_chain_size; i++) {
 
 ## Optional: Pretty print any certificate from the certificate chain
 
-After obtaining the certificate chain, it is possible to print any certificate from the chain to the stdout. Possible printing options are `GNUTLS_CRT_PRINT_FULL`, `GNUTLS_CRT_PRINT_ONELINE`,   `GNUTLS_CRT_PRINT_UNSIGNED_FULL`, `GNUTLS_CRT_PRINT_COMPACT`, `GNUTLS_CRT_PRINT_FULL_NUMBERS`.
+After obtaining the certificate chain, it is possible to print any certificate from the chain to the standard output. Possible printing options are `GNUTLS_CRT_PRINT_FULL`, `GNUTLS_CRT_PRINT_ONELINE`,   `GNUTLS_CRT_PRINT_UNSIGNED_FULL`, `GNUTLS_CRT_PRINT_COMPACT`, `GNUTLS_CRT_PRINT_FULL_NUMBERS`.
 
 ```c
 /* For example, get the leaf server's certificate from the chain. */
@@ -114,7 +114,7 @@ gnutls_free(server_cert_pretty.data);
 
 ## 2. Verify each certificate in the certificate chain
 
-Verification of each certificate from TLS server's certificate chain should be performed (except the root one).
+Verification of each certificate from the TLS server's certificate chain should be performed (except the root one).
 
 ```c
 gnutls_x509_crt_t certificate;

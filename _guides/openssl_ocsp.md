@@ -30,19 +30,19 @@ OCSP on [Wikipedia](https://en.wikipedia.org/wiki/Online_Certificate_Status_Prot
 **Summary of this guide:**
 
 1. Retrieve the TLS server’s certificate chain with its size
-   - from the certificate chain, we can parse any certificate we want to verify with its issuer’s certificate.
-   - OCSP verification should be performed on all certificates present in the certificate chain (except the root one)
-2. Extract the URL Address of OCSP Responder
-   - extract the URL address of the OCSP Responder from the certificate’s extension called ‘authority information access’.
+   - From the certificate chain, we can parse any certificate we want to verify with its issuer’s certificate.
+   - OCSP verification should be performed on all certificates present in the certificate chain (except the root one).
+2. Extract the URL Address of the OCSP Responder
+   - Extract the URL address of the OCSP Responder from the certificate’s extension called _authority information access_.
 3. Generate the OCSP Request
-   - in the OCSP request, we will include certificates whose revocation status we are interested in
-   - also, a nonce extension should be added to the OCSP request as a protection against replay attacks
+   - In the OCSP request, we will include certificates for which the revocation status is needed.
+   - Furthermore, a nonce extension should be added to the OCSP request as protection against replay attacks.
 4. Send the OCSP Request and retrieve the OCSP Response
-   - cURL library is used for sending the OCSP Request to the specified URL (from the previous steps)
-   - the OCSP response is immediately retrieved
+   - cURL library is used for sending the OCSP Request to the specified URL (from the previous steps).
+   - The OCSP response is immediately retrieved.
 5. Verify the status and signature of the OCSP Response
 6. Extract the revocation status from the OCSP Response
-   - if signature verification of the OCSP response from the previous step has successfully passed, we can extract the revocation status of the certificates we have included into the OCSP request
+   - If signature verification of the OCSP response from the previous step has successfully passed, we can extract the revocation status of the certificates we have included in the OCSP request.
 7. Deinitialize
 
 The only prerequisite for this guide is that the `SSL *s_connection` variable has already been initialized. This variable represents the current TLS session or connection, which could have already been established or is currently in the TLS handshake phase. For more information, see our [guide](/guides/openssl) on how to initiate a secure TLS connection.
@@ -94,7 +94,7 @@ for (int index = 0; index < cert_chain_stack_size - 1; index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 2. Extract the URL Address of OCSP Responder
+## 2. Extract the URL Address of the OCSP Responder
 
 After obtaining a single certificate with the certificate of its issuer, extract the URL address of OCSP Responder from the certificate's authority information access extension.
 
@@ -118,7 +118,7 @@ char *ocsp_uri = sk_OPENSSL_STRING_value(ocsp_uris_stack, 0);
 
 ### Relevant links
 
-- [X509_get1_ocsp](https://abi-laboratory.pro/index.php?view=symbol_view&l=openssl&v=1.0.2e&obj=c93f7&s=X509_get1_ocsp) (not oficially documented)
+- [X509_get1_ocsp](https://abi-laboratory.pro/index.php?view=symbol_view&l=openssl&v=1.0.2e&obj=c93f7&s=X509_get1_ocsp) (not officially documented)
 - [OpenSSL Stacks](https://man.openbsd.org/STACK_OF.3) (OpenBSD docs)
 
 </div></div>
@@ -168,7 +168,7 @@ if (OCSP_request_add1_nonce(ocsp_request, NULL, 0) != 1) {
 
 {:.text-success}
 
-## Optional: Print the OCSP Request in DER format into file
+## Optional: Print the OCSP Request in DER format into a file
 
 The created DER encoded file containing the OCSP request can be inspected with the shell command `openssl ocsp -reqin ocsp_req.der -text`.
 
@@ -194,7 +194,7 @@ Send the generated OCSP Request to the OCSP Responder's URL. Subsequently, the O
 
 This step establishes an out-of-band connection with the OCSP Responder.
 
-In our example, the cURL library is used to establish such a connection. Curl is able to send an HTTP POST Request with the OCSP Request header.
+In our example, the cURL library is used to establish such a connection. cURL can send an HTTP POST Request with the OCSP Request header.
 
 To store the OCSP Response, we use a custom structure named `datum_t`. `*Data` will point to the DER encoded bytes of the retrieved OCSP Response, while `size` will hold the size of the OCSP Response.
 
@@ -261,7 +261,7 @@ if (ocsp_response == NULL) {
 }
 ```
 
-We provide a simple example of a callback function used by curl (assigned to curl with the option `CURLOPT_WRITEFUNCTION`) during the process of receiving the OCSP Response. This function gets invoked whenever a new chunk of data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
+We provide a simple example of a callback function used by cURL (assigned to cURL with the option `CURLOPT_WRITEFUNCTION`) during the process of receiving the OCSP Response. This function gets invoked whenever a new chunk of data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
 
 ```c
 size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
@@ -296,7 +296,7 @@ size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
 
 {:.text-success}
 
-## Optional: Print the received OCSP Response in DER format into file
+## Optional: Print the received OCSP Response in DER format into a file
 
 The created DER encoded file containing the OCSP Response can be inspected with the shell command `openssl ocsp -respin ocsp_resp.der -text -noverify`.
 

@@ -83,7 +83,7 @@ if (rr == NULL) {
 }
 ```
 
-If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
+If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establish the TLS connection on top of the TCP/IP connection.
 
 ### Relevant links
 
@@ -137,7 +137,7 @@ if (SSL_CTX_set_default_verify_paths(ctx) != 1) {
 
 ## Alternative: Setting an arbitrary trust anchor
 
-In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows:
+In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows:
 
 ```c
 /* Both the file path and the directory path can be set to NULL if they are not used */
@@ -253,7 +253,7 @@ int (*callback)(SSL *, void*) = &custom_callback;
 SSL_CTX_set_tlsext_status_cb(context, callback);
 ```
 
-where `custom_callback` function has the following declaration:
+where the `custom_callback` function has the following declaration:
 
 ```c
 int custom_callback(SSL *s_connection, void *arg) {
@@ -335,7 +335,7 @@ if (SSL_connect(ssl) != 1) {
 
 ## Optional: Checking the result of peer certificate validation
 
-If certificate validation fails, `SSL_connect()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [page](https://x509errors.org/#openssl).
+If certificate validation fails, `SSL_connect()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [dedicated page](/#openssl).
 
 ```c
 /* Retrieve the error code of the error that occured during certificate validation. */
@@ -353,7 +353,7 @@ fprintf(stderr, "%s", message);
 * [`SSL_get_verify_result`](https://www.openssl.org/docs/manmaster/man3/SSL_get_verify_result.html) (OpenSSL docs)
 * [`X509_verify_cert_error_string`](https://www.openssl.org/docs/manmaster/man3/X509_verify_cert_error_string.html) (OpenSSL docs)
 * [Certificate validation errors](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) (OpenSSL docs)
-* [Certificate validation errors](https://x509errors.org/#openssl) (x509errors.org)
+* [Certificate validation errors](/#openssl) (x509errors.org)
 * [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
 
 </div></div>

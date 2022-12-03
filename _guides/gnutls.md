@@ -83,7 +83,7 @@ if (rr == NULL) {
 }
 ```
 
-If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
+If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establish the TLS connection on top of the TCP/IP connection.
 
 ### Relevant links
 
@@ -96,7 +96,7 @@ If everything went well, `sockfd` is now a descriptor of a valid, connected sock
 
 ## Creating a session context structure
 
-Before we connect, a session context structure has to be created and initialized. It will store all the necessary configuration and settings.
+Before we connect, a session context structure has to be created and initialized. It will store all the necessary configurations and settings.
 
 ```c
 #include <gnutls/gnutls.h>
@@ -175,7 +175,7 @@ if (r = gnutls_server_name_set(session, GNUTLS_NAME_DNS, "x509errors.org", strle
 
 ## Alternative: Setting a custom trust anchor
 
-In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows (any of the two procedures can be skipped). This must be done _before_ we link the credentials structure to the session context.
+In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows (any of the two procedures can be skipped). This must be done _before_ we link the credentials structure to the session context.
 
 ```c
 /* Set a custom trusted CA for certificate validation from file. The certificate must be in PEM format. */
@@ -208,7 +208,7 @@ if (gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, creds) < 0) {
 
 ## Optional: Checking revocation using local CRLs
 
-In case when the file containing the certificate revocation list (CRL) is stored locally, it is possible to add this file to the gnutls credentials structure. GnuTLS will use this CRL to validate the certificates during the TLS handshake. It is also possible to add multiple CRL files by calling the appropriate API call multiple times. Supported formats are PEM and DER.
+In case when the file containing the certificate revocation list (CRL) is stored locally, it is possible to add this file to the GnuTLS credentials structure. GnuTLS will use this CRL to validate the certificates during the TLS handshake. It is also possible to add multiple CRL files by calling the appropriate API call multiple times. Supported formats are PEM and DER.
 
 In our example, we assume that the CRL file is stored in a file called `crl.pem`.
 
@@ -231,7 +231,7 @@ if (gnutls_certificate_set_x509_crl_file(creds, "crl.pem", GNUTLS_X509_FMT_PEM) 
 
 ## Optional: Sending an OCSP status request to the server
 
-One of the modern methods of revocation checking is via OCSP-stapling, when the server sends revocation information "stapled" in the TLS handshake. GnuTLS checks such revocation information by default, but the server will not send it unless we explicitly tell it to do so.
+One of the modern methods of revocation checking is via OCSP stapling when the server sends revocation information "stapled" in the TLS handshake. GnuTLS checks such revocation information by default, but the server will not send it unless we explicitly tell it to do so.
 
 {% include alert.html type="danger"
     content="Note that if the server does not support OCSP stapling, it may not send the certificate status, and this will not result in a failure. It will only fail if the server certificate contains the OCSP \"must-staple\" extension."
@@ -260,7 +260,7 @@ if (gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
 ## Alternative: Setting custom verification callback
 
 By default, GnuTLS validates the peer's certificate but does not check the revocation status. If a custom certificate validation logic or checking the revocation status of the certificates during the TLS handshake is required, it is possible to set a custom verification function.
-The prototype of this callback function is `int (*callback)(gnutls_session_t)`. The  callback  function should return 0 for the handshake to continue or non-zero to terminate. An official example can also be found [here](https://gnutls.org/manual/gnutls.html#Legacy-client-example-with-X_002e509-certificate-support).
+The prototype of this callback function is `int (*callback)(gnutls_session_t)`. The callback function should return 0 for the handshake to continue or non-zero to terminate. An official example can also be found [here](https://gnutls.org/manual/gnutls.html#Legacy-client-example-with-X_002e509-certificate-support).
 
 ```c
 /* Set the hostname to the session structure, so it will be accessible during our custom verification callback. */
@@ -387,7 +387,7 @@ gnutls_free(out.data);
 * [`gnutls_session_get_verify_cert_status`](https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fget_005fverify_005fcert_005fstatus) (GnuTLS docs)
 * [`gnutls_certificate_type_get`](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005ftype_005fget-1) (GnuTLS docs)
 * [`gnutls_certificate_verification_status_print`](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fverification_005fstatus_005fprint) (GnuTLS docs)
-* [Certificate validation errors](https://x509errors.org/gnutls#gnutls) (x509errors.org)
+* [Certificate validation errors](/gnutls#gnutls) (x509errors.org)
 * [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
 
 </div></div>

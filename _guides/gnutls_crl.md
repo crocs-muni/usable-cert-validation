@@ -31,14 +31,13 @@ CRLs on [Wikipedia](https://en.wikipedia.org/wiki/Certificate_revocation_list).
 
 1. Retrieve the TLS server's certificate chain with its size
 2. Initialize an empty trusted list
-   - `gnutls_x509_trust_list_t` structure is used to represent the trusted list
-   - general structure, which should be filled with **trusted** CA certificates and **trusted** CRLs.
-   - one of its tasks is to validate that the given certificate is not present in one of the CRLs which were added to the trusted list
+   - The `gnutls_x509_trust_list_t` structure is used to represent the trusted list and should be filled with **trusted** CA certificates and **trusted** CRLs.
+   - One of its tasks is to validate that the given certificate is not present in one of the CRLs which were added to the trusted list.
 3. Fill the trusted list with trusted CA certificates
-   - in our example, default system trusted CA certificates are used
+   - In our example, default system-trusted CA certificates are used.
 4. Fill the trusted list with trusted CRLs
-   - in our example, CRLs are downloaded from the distribution point extensions for each certificate in the chain
-   - for each downloaded CRL, its signature should be verified, so the CRL can be considered trusted and subsequently added to the trusted list
+   - In our example, CRLs are downloaded from the distribution point extensions for each certificate in the chain.
+   - For each downloaded CRL, its signature should be verified, so the CRL can be considered trusted and subsequently added to the trusted list.
 5. Verify the TLS server's certificate chain against the filled trusted list
 6. Deinitialize
 
@@ -93,7 +92,7 @@ for (int i=0; i < server_chain_size; i++) {
 
 ## Optional: Pretty print any certificate from the certificate chain
 
-After obtaining the certificate chain, it is possible to print any certificate from the chain to the stdout. Possible printing options are `GNUTLS_CRT_PRINT_FULL`, `GNUTLS_CRT_PRINT_ONELINE`,   `GNUTLS_CRT_PRINT_UNSIGNED_FULL`, `GNUTLS_CRT_PRINT_COMPACT`, `GNUTLS_CRT_PRINT_FULL_NUMBERS`.
+After obtaining the certificate chain, it is possible to print any certificate from the chain to the standard output. Possible printing options are `GNUTLS_CRT_PRINT_FULL`, `GNUTLS_CRT_PRINT_ONELINE`,   `GNUTLS_CRT_PRINT_UNSIGNED_FULL`, `GNUTLS_CRT_PRINT_COMPACT`, `GNUTLS_CRT_PRINT_FULL_NUMBERS`.
 
 ```c
 /* For example, get the leaf server's certificate from the chain */
@@ -130,7 +129,7 @@ gnutls_x509_trust_list_init(&trusted_list, 0);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3. Fill the trusted list with trusted CA's certificates
+## 3. Fill the trusted list with trusted CAs certificates
 
 Fill the trusted list with the certificates of trusted certificate authorities (CAs). For this purpose, the default system certificates are used.
 
@@ -151,7 +150,7 @@ if (gnutls_x509_trust_list_add_system_trust(trusted_list, 0, 0) <= 0) {
 
 ## 4. Fill the trusted list with trusted CRLs
 
-During this step, the trusted list should be filled with trusted CRLs. These trusted CRLs are downloaded from URLs that are stored in the crl distribution point extension of X509 certificate. Downloading takes place through all certificates in the certification chain (excluding the root one), where each certificate could contain multiple distribution points. After downloading each CRL, it is necessary to verify its signature.
+During this step, the trusted list should be filled with trusted CRLs. These trusted CRLs are downloaded from URLs that are stored in the CRL distribution point extension of X.509 certificate. Downloading takes place through all certificates in the certification chain (excluding the root one), where each certificate could contain multiple distribution points. After downloading each CRL, it is necessary to verify its signature.
 
 ```c
 gnutls_x509_crt_t certificate;
@@ -165,7 +164,7 @@ for (int index = 0; index < server_chain_size - 1; index++) {
 }
 ```
 
-To download the CRL, it is necessary to establish an out-of-band connection with the server on which the given CRL is located. In our example, the cURL library is used for this purpose. Curl is able to send HTTP GET Request to the server and save the downloaded CRL to the programs' memory.
+To download the CRL, it is necessary to establish an out-of-band connection with the server on which the given CRL is located. In our example, the cURL library is used for this purpose. cURL can send the HTTP GET request to the server and save the downloaded CRL to the programs' memory.
 
 ```c
 #include <curl/curl.h>
@@ -278,7 +277,7 @@ void download_crls_single_certificate(gnutls_x509_trust_list_t trusted_list, gnu
 }
 ```
 
-We provide a simple example of a callback function used by curl (assigned to curl with the option `CURLOPT_WRITEFUNCTION`) during the download process of the CRLs. This function gets invoked whenever a new chunk of CRL data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
+We provide a simple example of a callback function used by cURL (assigned to cURL with the option `CURLOPT_WRITEFUNCTION`) during the download process of the CRLs. This function gets invoked whenever a new chunk of CRL data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
 
 ```c
 size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {

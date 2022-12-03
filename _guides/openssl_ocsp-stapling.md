@@ -30,12 +30,12 @@ OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
 **Summary of this guide:**
 
 1. Enable OCSP-Stapling
-   - this step is performed **before** the TLS handshake
+   - This step is performed **before** the TLS handshake.
 2. Verify that the stapled OCSP Response was sent together with the certificates
-   - this step is performed **during** (recommended) or after the TLS handshake
-   - the `SSL_CTX_set_tlsext_status_cb` API call is used to set a custom callback, which will be called during the TLS handshake, and thus, the following steps should be performed in this custom callback
+   - This step is performed **during** (recommended) or after the TLS handshake.
+   - The `SSL_CTX_set_tlsext_status_cb` API call is used to set a custom callback, which will be called during the TLS handshake, and thus, the following steps should be performed in this custom callback.
 3. Process the retrieved stapled OCSP Response
-   - this includes verifying the status and signature of the stapled OCSP response and examining the revocation status of the certificates included in the OCSP response
+   - This includes verifying the status and signature of the stapled OCSP response and examining the revocation status of the certificates included in the OCSP response.
 4. Deinitialize
 
 </div></div>
@@ -91,7 +91,7 @@ if (ocsp_response_stapled_size == -1) {
 
 ## 3. Process the retrieved stapled OCSP Response
 
-After the stapled OCSP Response has been retrieved, validate the certificates included in this response by performing standard OCSP revocation check. Our guide on how to perform OCSP revocation check can be found [here](/guides/openssl-ocsp).
+After the stapled OCSP Response has been retrieved, validate the certificates included in this response by performing a standard OCSP revocation check. Our guide on how to perform an OCSP revocation check can be found [here](/guides/openssl-ocsp).
 
 ```c
 #include <openssl/ocsp.h>

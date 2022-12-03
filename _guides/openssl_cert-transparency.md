@@ -31,7 +31,7 @@ Certificate Transparency on [Wikipedia](https://en.wikipedia.org/wiki/Certificat
 
 1. Retrieve the Signed Certificate Timestamp (SCT) List from the session instance
 2. Create and initialize a structure containing records about public log servers
-3. Create and initialize a structure containg CT policy
+3. Create and initialize a structure containing a CT policy
 4. Validate the entire SCT list
 5. Deinitialize
 
@@ -135,14 +135,14 @@ The script shown above serves only as a demonstration example. The official list
 ### Relevant links
 
 * [Google's list of public logs](https://www.certificate-transparency.org/known-logs)
-* [Python program to convert the log list to OpenSSL's format](https://github.com/google/certificate-transparency/blob/master/python/utilities/log_list/print_log_list.py)
+* [Python program to convert the log list to OpenSSL format](https://github.com/google/certificate-transparency/blob/master/python/utilities/log_list/print_log_list.py)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
 {:.text-success}
 
-## Optional: Pretty the entire SCT list to stdout
+## Optional: Pretty the entire SCT list to the standard output
 
 The retrieved SCT list can also be printed to standard output in a human-readable form. In case when individual SCT was issued by a public log that is stored in the CTLOG_STORE structure, then the name of this public log is also printed together with its ID.
 
@@ -168,9 +168,9 @@ BIO_free(out);
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3. Create and initialize a structure containg CT policy
+## 3. Create and initialize a structure containing a CT policy
 
-The last step before SCTs can be validated is the creation of a policy evaluation context structure called `CT_POLICY_EVAL_CTX`. OpenSSL uses this structure to evaluate whether individual SCT fulfils a Certificate Transparency (CT) policy.
+The last step before SCTs can be validated is the creation of a policy evaluation context structure called `CT_POLICY_EVAL_CTX`. OpenSSL uses this structure to evaluate whether individual SCT fulfills a Certificate Transparency (CT) policy.
 
 ```c
 /* Initialize empty CT POLICY structure. */
@@ -209,7 +209,7 @@ CT_POLICY_EVAL_CTX_set_time(ct_policy_eval, (time(NULL) + 300) * 1000);
 
 ## 4. Validate the entire SCT list
 
-After filling all the necessary structures, it is possible to validate the entire SCT list.
+After filling in all the necessary structures, it is possible to validate the entire SCT list.
 
 ```c
 /* Perform validation check at entire STC list. */
@@ -235,7 +235,7 @@ else if (ret_value == 1) {
 
 {:.text-danger}
 
-## Alternative: Validate each SCT item from SCT list separately
+## Alternative: Validate each SCT item from the SCT list separately
 
 An alternative to validating the entire SCT list at once is to validate each SCT from the SCT list separately and one at a time. In case of validation failure, it is possible to examine the exact reason why the validation failed.
 

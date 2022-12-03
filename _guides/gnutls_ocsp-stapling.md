@@ -30,11 +30,11 @@ OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
 **Summary of this guide:**
 
 1. Enable OCSP-Stapling
-   - enable OCSP stapling by calling the appropriate API call. It must be called during the session configuration and **before** the TLS handshake is performed.
-   - after enabling, the TLS client should request the stapled OCSP response from the TLS server.
+   - Enable OCSP stapling by calling the appropriate API call. It must be called during the session configuration and **before** the TLS handshake is performed.
+   - After enabling, the TLS client should request the stapled OCSP response from the TLS server.
 2. Verify that the stapled OCSP Response was sent together with the certificates
 3. Retrieve the stapled OCSP Response
-   - **during or after** the TLS handshake
+   - This can be done **during or after** the TLS handshake.
 4. Deinitialize
 
 </div></div>
@@ -42,7 +42,7 @@ OCSP-Stapling on [Wikipedia](https://en.wikipedia.org/wiki/OCSP_stapling).
 
 ## 1. Enable OCSP-Stapling
 
-This step must be performed before the TLS Handshake. With this API call, client will request OCSP response from the server during the TLS handshake. Status request TLS extension is used.
+This step must be performed before the TLS Handshake. With this API call, the client will request an OCSP response from the server during the TLS handshake. Status request TLS extension is used.
 
 ```c
 /* Enable OCSP-Stapling, using TLS extension. */
@@ -90,7 +90,7 @@ else {
 
 It is recommended to verify every stapled OCSP Response sent by the TLS server to the TLS client. In case of any invalid OCSP response, the connection should be immediately terminated.
 
-The single OCSP Response can be verified, for example, according to our [OCSP guide](https://x509errors.org/guides/gnutls-ocsp).
+The single OCSP Response can be verified, for example, according to our [OCSP guide](/guides/gnutls-ocsp).
 
 ```c
 /* Retrieve the stapled OCSP Response in DER format for each certificate from the chain. */

@@ -30,20 +30,20 @@ OCSP on [Wikipedia](https://en.wikipedia.org/wiki/Online_Certificate_Status_Prot
 **Summary of this guide:**
 
 1. Retrieve the server's certificate chain
-   - from the certificate chain, we can parse any certificate we want to verify with its issuer's certificate.
+   - From the certificate chain, we can parse any certificate we want to verify with its issuer's certificate.
 2. Verify each certificate in the certificate chain
-   - OCSP verification should be performed on all certificates present in the certificate chain (except the root one)
-3. Extract the URL Address of the OCSP Responder
-   - extract the URL address of the OCSP Responder from the certificate's extension called 'authority information access'.
+   - OCSP verification should be performed on all certificates present in the certificate chain (except the root one).
+3. Extract the URL address of the OCSP Responder
+   - Extract the URL address of the OCSP Responder from the certificate's extension called _authority information access_.
 4. Generate the OCSP Request
-   - in the OCSP request, we will include certificates whose revocation status we are interested in
-   - also, a nonce extension should be added to the OCSP request as a protection against replay attacks
+   - In the OCSP request, we will include certificates for which the revocation status is needed.
+   - Furthermore, a nonce extension should be added to the OCSP request as protection against replay attacks.
 5. Send the OCSP Request and retrieve the OCSP Response
-   - cURL library is used for sending the OCSP Request to the specified URL (from the previous steps)
-   - the OCSP response is immediately retrieved
+   - cURL library is used for sending the OCSP Request to the specified URL (from the previous steps).
+   - The OCSP response is immediately retrieved.
 6. Verify the status and signature of the OCSP Response
 7. Extract the revocation status from the OCSP Response
-   - if signature verification of the OCSP response from the previous step has successfully passed, we can extract the revocation status of the certificates we have included into the OCSP request
+   - If signature verification of the OCSP response from the previous step has successfully passed, we can extract the revocation status of the certificates we have included in the OCSP request.
 8. Deinitialize
 
 The only prerequisite for this guide is that the `gnutls_session_t session` variable has already been initialized. This session variable represents the current TLS session, which could have already been established, or the session is currently in the TLS handshake phase. For more information, see our [guide](/guides/gnutls) on how to initiate a secure TLS connection.
@@ -99,7 +99,7 @@ for (int i=0; i < server_chain_size; i++) {
 
 ## Optional: Pretty print any certificate from the certificate chain
 
-After obtaining the certificate chain, it is possible to print any certificate from the chain to the stdout. Possible printing options are `GNUTLS_CRT_PRINT_FULL`, `GNUTLS_CRT_PRINT_ONELINE`,   `GNUTLS_CRT_PRINT_UNSIGNED_FULL`, `GNUTLS_CRT_PRINT_COMPACT`, `GNUTLS_CRT_PRINT_FULL_NUMBERS`.
+After obtaining the certificate chain, it is possible to print any certificate from the chain to the standard output. Possible printing options are `GNUTLS_CRT_PRINT_FULL`, `GNUTLS_CRT_PRINT_ONELINE`,   `GNUTLS_CRT_PRINT_UNSIGNED_FULL`, `GNUTLS_CRT_PRINT_COMPACT`, `GNUTLS_CRT_PRINT_FULL_NUMBERS`.
 
 ```c
 /* For example, get the leaf server's certificate from the chain. */
@@ -121,7 +121,7 @@ gnutls_free(server_cert_pretty.data);
 
 ## 2. Verify each certificate in the certificate chain
 
-Verification of each certificate from TLS server's certificate chain should be performed (except the root one).
+Verification of each certificate from the TLS server's certificate chain should be performed (except the root one).
 
 ```c
 /* For each certificate in certificate chain (except the root one), perform OCSP revocation check. */
@@ -142,7 +142,7 @@ for (int index = 0; index < chain_size - 1; index++) {
 </div></div>
 <div class="section"><div class="container" markdown="1">
 
-## 3. Extract the URL Adress of OCSP Responder
+## 3. Extract the URL address of the OCSP Responder
 
 After obtaining a single certificate with the certificate of its issuer, extract the URL address of OCSP Responder from the certificate's authority information access extension.
 
@@ -247,8 +247,7 @@ if (gnutls_ocsp_req_get_nonce(ocsp_req, NULL, &nonce_req) < 0) {
 
 ## Optional: Pretty print information about the OCSP Request
 
-After generating the OCSP Request, we can print the request to stdout.
-Possible obtions are `GNUTLS_OCSP_PRINT_FULL`, `GNUTLS_OCSP_PRINT_COMPACT`.
+After generating the OCSP Request, we can print the request to the standard output. Possible options are `GNUTLS_OCSP_PRINT_FULL`, `GNUTLS_OCSP_PRINT_COMPACT`.
 
 ```c
 gnutls_datum_t ocsp_req_pretty_print = { 0 };
@@ -272,7 +271,7 @@ Send the generated OCSP Request to the OCSP Responder's URL. Subsequently, the O
 
 This step establishes an out-of-band connection with the OCSP Responder.
 
-In our example, the cURL library is used to establish such a connection. Curl is able to send an HTTP POST Request with the OCSP Request header.
+In our example, the cURL library is used to establish such a connection. cURL can send an HTTP POST Request with the OCSP Request header.
 
 ```c
 /* Export OCSP Request from gnutls_ocsp_req_t structure to gnutls_datum_t structure. */
@@ -324,7 +323,7 @@ if (gnutls_ocsp_resp_import(ocsp_response, &ocsp_response_datum) < 0) {
 }
 ```
 
-We provide a simple example of a callback function used by curl (assigned to curl with the option `CURLOPT_WRITEFUNCTION`) during the process of receiving the OCSP Response. This function gets invoked whenever a new chunk of data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
+We provide a simple example of a callback function used by cURL (assigned to cURL with the option `CURLOPT_WRITEFUNCTION`) during the process of receiving the OCSP Response. This function gets invoked whenever a new chunk of data has been received and needs to be saved. More information can be found [here](https://curl.se/libcurl/c/CURLOPT_WRITEFUNCTION.html).
 
 ```c
 size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
@@ -362,8 +361,7 @@ size_t get_data(void *buffer, size_t size, size_t nmemb, void *userp) {
 
 ## Optional: Pretty print information about the OCSP Response
 
-After obtaining the OCSP Response, we can print the response to stdout.
-Possible obtions are `GNUTLS_OCSP_PRINT_FULL`, `GNUTLS_OCSP_PRINT_COMPACT`.
+After obtaining the OCSP Response, we can print the response to the standard output. Possible options are `GNUTLS_OCSP_PRINT_FULL`, `GNUTLS_OCSP_PRINT_COMPACT`.
 
 ```c
 gnutls_datum_t ocsp_response_pretty_print;
@@ -436,7 +434,7 @@ if (verify_result != 0) {
 
 ## Optional: Checking the result of OCSP Response signature verification
 
-If OCSP Response verification has failed, it is possible to examine exact reason why the verification failed.
+If OCSP Response verification has failed, it is possible to examine the exact reason why the verification failed.
 
 ```c
 if (verify_result & GNUTLS_OCSP_VERIFY_SIGNER_NOT_FOUND) {
