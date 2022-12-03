@@ -1,8 +1,9 @@
 ---
-layout:     default
-title:      "Certificate Transparency"
-slug:       gnutls-cert-transparency
-library:    gnutls
+layout:         default
+title:          "GnuTLS: Certificate Transparency"
+title-short:    "Certificate Transparency"
+slug:           gnutls-cert-transparency
+library:        gnutls
 ---
 
 {% assign libraryData = site.data.libraries | where: "name", page.library | first %}
@@ -10,7 +11,7 @@ library:    gnutls
 
 {:#{{ page.slug }}}
 
-# {{ libraryData.title }}: {{ page.title }}
+# {{ page.title }}
 
 {:.lead}
 This guide describes how to obtain a Signed Certificate Timestamp (SCT) from a certificate and its subsequent verification. The SCT serves as proof that the certificate was appended to the public log.

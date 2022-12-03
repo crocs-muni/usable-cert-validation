@@ -1,8 +1,9 @@
 ---
-layout:     default
-title:      "OCSP Stapling"
-slug:       openssl-ocsp-stapling
-library:    openssl
+layout:         default
+title:          "OpenSSL: OCSP Stapling"
+title-short:    "OCSP Stapling"
+slug:           openssl-ocsp-stapling
+library:        openssl
 ---
 
 {% assign libraryData = site.data.libraries | where: "name", page.library | first %}
@@ -10,7 +11,7 @@ library:    openssl
 
 {:#{{ page.slug }}}
 
-# {{ libraryData.title }}: {{ page.title }}
+# {{ page.title }}
 
 {:.lead}
 This guide covers the implementation of certificate revocation status checking using the Online Certificate Status Protocol (OCSP) Stapling revocation scheme.

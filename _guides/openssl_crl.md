@@ -1,8 +1,9 @@
 ---
-layout:     default
-title:      "CRL revocation"
-slug:       openssl-crl
-library:    openssl
+layout:         default
+title:          "OpenSSL: CRL revocation"
+title-short:    "CRL revocation"
+slug:           openssl-crl
+library:        openssl
 ---
 
 {% assign libraryData = site.data.libraries | where: "name", page.library | first %}
@@ -10,7 +11,7 @@ library:    openssl
 
 {:#{{ page.slug }}}
 
-# {{ libraryData.title }}: {{ page.title }}
+# {{ page.title }}
 
 {:.lead}
 This guide covers the implementation of certificate revocation status checking using the Certificate Revocation List (CRL) revocation scheme.

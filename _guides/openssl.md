@@ -1,6 +1,6 @@
 ---
 layout:     default
-title:      "Developer guide: OpenSSL"
+title:      "OpenSSL: TLS guide"
 slug:       openssl
 ---
 <div class="section"><div class="container" markdown="1">
@@ -25,7 +25,7 @@ In addition to this guide, we have also implemented OpenSSL guides for the follo
 {% if subGuides.size > 0 %}
 <div class="guides-div">
 {% for subGuide in subGuides %}
-<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
 {% endfor %}
 </div>
 {% endif %}
@@ -270,7 +270,7 @@ In addition to the [OCSP-Stapling](/guides/openssl-ocsp-stapling) scheme, we hav
 {% if subGuides.size > 0 %}
 <div class="guides-div mb-3">
 {% for subGuide in subGuides %}
-<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
 {% endfor %}
 </div>
 {% endif %}

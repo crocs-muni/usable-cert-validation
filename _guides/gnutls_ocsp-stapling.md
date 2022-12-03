@@ -1,8 +1,9 @@
 ---
-layout:     default
-title:      "Revocation with OCSP Stapling"
-slug:       gnutls-ocsp-stapling
-library:    gnutls
+layout:         default
+title:          "GnuTLS: OCSP Stapling"
+title-short:    "OCSP Stapling"
+slug:           gnutls-ocsp-stapling
+library:        gnutls
 ---
 
 {% assign libraryData = site.data.libraries | where: "name", page.library | first %}
@@ -10,7 +11,7 @@ library:    gnutls
 
 {:#{{ page.slug }}}
 
-# {{ libraryData.title }}: {{ page.title }}
+# {{ page.title }}
 
 {:.lead}
 This guide covers the implementation of certificate revocation status checking using the Online Certificate Status Protocol (OCSP) Stapling revocation scheme. Official documentation of GnuTLS dealing with this topic can be found [here](https://www.gnutls.org/manual/gnutls.html#OCSP-stapling).

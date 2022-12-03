@@ -1,8 +1,9 @@
 ---
-layout:     default
-title:      "Revocation with CRL"
-slug:       gnutls-crl
-library:    gnutls
+layout:         default
+title:          "GnuTLS: CRL revocation"
+title-short:    "CRL revocation"
+slug:           gnutls-crl
+library:        gnutls
 ---
 
 {% assign libraryData = site.data.libraries | where: "name", page.library | first %}
@@ -10,7 +11,7 @@ library:    gnutls
 
 {:#{{ page.slug }}}
 
-# {{ libraryData.title }}: {{ page.title }}
+# {{ page.title }}
 
 {:.lead}
 This guide covers the implementation of certificate revocation status checking using the Certificate Revocation List (CRL) revocation scheme. Official documentation of GnuTLS dealing with this topic can be found [here](https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html#Verifying-X_002e509-certificate-paths), and a similar example from GnuTLS can be found [here](https://www.gnutls.org/manual/html_node/Advanced-certificate-verification-example.html#Advanced-certificate-verification-example).

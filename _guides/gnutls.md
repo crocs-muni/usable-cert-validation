@@ -1,6 +1,6 @@
 ---
 layout:     default
-title:      "Developer guide: GnuTLS"
+title:      "GnuTLS: TLS guide"
 slug:       gnutls
 ---
 <div class="section"><div class="container" markdown="1">
@@ -25,7 +25,7 @@ In addition to this guide, we have also implemented GnuTLS guides for the follow
 {% if subGuides.size > 0 %}
 <div class="guides-div">
 {% for subGuide in subGuides %}
-<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
 {% endfor %}
 </div>
 {% endif %}

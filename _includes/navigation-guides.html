@@ -3,7 +3,7 @@
 {% assign subGuides = site.guides | where: "library", include.library.name %}
 {% for subGuide in subGuides %}
     {% if subGuide.slug != page.slug %}
-        <a class="btn btn-secondary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+        <a class="btn btn-secondary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
     {% endif %}
 {% endfor %}
 </div>

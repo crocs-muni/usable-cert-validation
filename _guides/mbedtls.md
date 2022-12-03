@@ -1,6 +1,6 @@
 ---
 layout:     default
-title:      "Developer guide: Mbed TLS"
+title:      "Mbed TLS: TLS guide"
 slug:       mbedtls
 ---
 <div class="section"><div class="container" markdown="1">
@@ -30,7 +30,7 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 {% if subGuides.size > 0 %}
 <div class="guides-div">
 {% for subGuide in subGuides %}
-<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
 {% endfor %}
 </div>
 {% endif %}
