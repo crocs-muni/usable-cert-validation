@@ -14,7 +14,10 @@
 #include "ct_check.h"
 #include "ocsp_revoc.h"
 #include "ocsp_stapling_revoc.h"
+#include "options.h"
 #include "utils.h"
+
+struct short_options actual_options = {0};
 
 /*
  * GNUTLS_E_* - macros for error codes, returned value of gnutls_* functions
@@ -82,7 +85,8 @@ int unsecure_connect_to_server(char *hostname) {
 
   struct addrinfo *adresses;
 
-  if ((ret_status = getaddrinfo(hostname, "https", &hints, &adresses)) != 0) {
+  if ((ret_status = getaddrinfo(hostname, actual_options.port, &hints,
+                                &adresses)) != 0) {
     fprintf(stderr, "Function 'getaddrinfo' has failed: %s\n",
             gai_strerror(ret_status));
     exit(EXIT_FAILURE);
@@ -140,10 +144,10 @@ int unsecure_connect_to_server(char *hostname) {
  * terminated
  */
 int revocation_check_callback(gnutls_session_t session) {
-  int ct_check_result;
-  int crl_check_result;
-  int ocsp_check_result;
-  int ocsp_stapling_check_result;
+  int ct_check_result = REVOC_CHECK_NOT_PERFORMED;
+  int crl_check_result = REVOC_CHECK_NOT_PERFORMED;
+  int ocsp_check_result = REVOC_CHECK_NOT_PERFORMED;
+  int ocsp_stapling_check_result = REVOC_CHECK_NOT_PERFORMED;
   char *hostname;
   gnutls_certificate_type_t cert_type;
   /* ORed flags of enum gnutls_certificate_status_t (0 if trusted, non-zero if
@@ -200,27 +204,40 @@ int revocation_check_callback(gnutls_session_t session) {
   /* After performing certificate verification check, perform revocation check!
    */
 
-  /* Uncomment in order to print defails about every certificate from the chain.
-   */
-  if (print_certificate_chain_info(session) != REVOC_CHECK_SUCCESS) {
+  /* Print defails about every certificate from the chain. */
+  if (actual_options.print_cert_chain_info &&
+      print_certificate_chain_info(session) != REVOC_CHECK_SUCCESS) {
     return GNUTLS_E_CERTIFICATE_ERROR;
   }
 
   /* Perform CRL revocation check (with usage of trusted list)! */
-  crl_check_result = crl_revoc_check(session);
+  if (actual_options.is_crl_check_enabled) {
+    crl_check_result = crl_revoc_check(session);
+  }
 
   /* Perform OCSP revocation check! */
-  ocsp_check_result = ocsp_revoc_check(session);
+  if (actual_options.is_ocsp_check_enabled) {
+    ocsp_check_result = ocsp_revoc_check(session);
+  }
 
   /* Perform OCSP-Stapling revocation check! */
-  ocsp_stapling_check_result = ocsp_stapling_check(session);
+  if (actual_options.is_ocsp_stapling_check_enabled) {
+    ocsp_stapling_check_result = ocsp_stapling_check(session);
+  }
 
   /* Perform Certificate Transparency (SCT) check! */
-  ct_check_result = ct_check(session);
+  if (actual_options.is_certificate_transparency_check_enabled) {
+    ct_check_result = ct_check(session);
+  }
 
-  if (crl_check_result != REVOC_CHECK_SUCCESS ||
-      ocsp_check_result != REVOC_CHECK_SUCCESS ||
-      ocsp_stapling_check_result != REVOC_CHECK_SUCCESS) {
+  /* Terminate the connection if some X.509 certificate from the certificate
+   * chain is revoked. */
+  if ((crl_check_result != REVOC_CHECK_NOT_PERFORMED &&
+       crl_check_result != REVOC_CHECK_SUCCESS) ||
+      (ocsp_check_result != REVOC_CHECK_NOT_PERFORMED &&
+       ocsp_check_result != REVOC_CHECK_SUCCESS) ||
+      (ocsp_stapling_check_result != REVOC_CHECK_NOT_PERFORMED &&
+       ocsp_stapling_check_result != REVOC_CHECK_SUCCESS)) {
     return GNUTLS_E_CERTIFICATE_ERROR;
   }
 
@@ -427,12 +444,8 @@ void close_connection(int client_fd, gnutls_session_t session,
 }
 
 int main(int argc, char **argv) {
-  if (argc != 2) {
-    printf("\nUsage: gnutls_client [hostname]\n\n");
-    exit(EXIT_FAILURE);
-  }
-
-  char *hostname = argv[1];
+  char *hostname = NULL;
+  parse_options(argc, argv, &hostname, &actual_options);
 
   printf("Received hostname from the command line: %s\n", hostname);
 

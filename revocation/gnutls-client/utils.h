@@ -8,6 +8,7 @@
 #define REVOC_CHECK_SUCCESS 0
 #define REVOC_CHECK_FAILURE 1
 #define REVOC_CHECK_INTERNAL_ERROR 2
+#define REVOC_CHECK_NOT_PERFORMED 3
 
 void check_result_of_cert_validation(gnutls_session_t session);
 
