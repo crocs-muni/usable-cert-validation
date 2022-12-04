@@ -5,6 +5,7 @@ validation/clients/*/build/
 
 # Revocation clients (binary, temporary files)
 revocation/openssl-client/openssl_client
+revocation/gnutls-client/gnutls_client
 revocation/*/*.der
 
 # Built certificates and validation files 
