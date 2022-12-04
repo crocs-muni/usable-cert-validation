@@ -5,10 +5,10 @@ all: openssl_client
 format:
 	clang-format --style=file --fallback-style=Google -i *.c *.h
 
-openssl_client: main.c crl_revoc.c ocsp_revoc.c ocsp_stapling_revoc.c ct_check.c utils.c
-	gcc -o openssl_client main.c crl_revoc.c ocsp_revoc.c ocsp_stapling_revoc.c ct_check.c utils.c -lssl -lcrypto -lcurl
+openssl_client: main.c crl_revoc.c ocsp_revoc.c ocsp_stapling_revoc.c ct_check.c utils.c options.c
+	gcc -o openssl_client main.c crl_revoc.c ocsp_revoc.c ocsp_stapling_revoc.c ct_check.c utils.c options.c -lssl -lcrypto -lcurl
 
 clean:
-	$(RM) openssl_client
+	$(RM) openssl_client ocsp_req.der ocsp_resp.der ocsp_resp_stapled.der
 
 .PHONY: all format clean
