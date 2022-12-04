@@ -18,7 +18,8 @@
             </button>
             {% assign guides = site.guides | where: "slug", page.library %}
             {% for guide in guides %}
-                <a class="btn btn-primary" href="/guides/{{ page.library }}"><span class="fas fa-fw fa-file-code"></span> See TLS developer guide</a>
+                {% assign library = site.data.libraries | where: "name", page.library | first %}
+                <a class="btn btn-primary" href="/guides/{{ page.library }}"><span class="fas fa-fw fa-file-code"></span> See TLS guide for {{ library.title }}</a>
             {% endfor %}
         </p>
     </div>

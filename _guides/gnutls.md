@@ -1,11 +1,12 @@
 ---
 layout:     default
-title:      "Developer guide: GnuTLS"
+title:      "GnuTLS: TLS guide"
 slug:       gnutls
 ---
 <div class="section"><div class="container" markdown="1">
 
 {:#{{ page.slug }}}
+
 # {{ page.title }}
 
 {:.lead}
@@ -17,9 +18,17 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 * We work with the API in C of GnuTLS, version 3.7.1.
 * We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
 
-{% include alert.html type="warning"
-    content="Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption."
-%}
+{:.lead}
+In addition to this guide, we have also implemented GnuTLS guides for the following topics:
+
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
+{% endfor %}
+</div>
+{% endif %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -74,7 +83,7 @@ if (rr == NULL) {
 }
 ```
 
-If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
+If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establish the TLS connection on top of the TCP/IP connection.
 
 ### Relevant links
 
@@ -87,7 +96,7 @@ If everything went well, `sockfd` is now a descriptor of a valid, connected sock
 
 ## Creating a session context structure
 
-Before we connect, a session context structure has to be created and initialized. It will store all the necessary configuration and settings.
+Before we connect, a session context structure has to be created and initialized. It will store all the necessary configurations and settings.
 
 ```c
 #include <gnutls/gnutls.h>
@@ -163,9 +172,10 @@ if (r = gnutls_server_name_set(session, GNUTLS_NAME_DNS, "x509errors.org", strle
 <div class="section"><div class="container" markdown="1">
 
 {:.text-danger}
+
 ## Alternative: Setting a custom trust anchor
 
-In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows (any of the two procedures can be skipped). This must be done _before_ we link the credentials structure to the session context.
+In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows (any of the two procedures can be skipped). This must be done _before_ we link the credentials structure to the session context.
 
 ```c
 /* Set a custom trusted CA for certificate validation from file. The certificate must be in PEM format. */
@@ -195,9 +205,33 @@ if (gnutls_credentials_set(session, GNUTLS_CRD_CERTIFICATE, creds) < 0) {
 <div class="section"><div class="container" markdown="1">
 
 {:.text-success}
+
+## Optional: Checking revocation using local CRLs
+
+In case when the file containing the certificate revocation list (CRL) is stored locally, it is possible to add this file to the GnuTLS credentials structure. GnuTLS will use this CRL to validate the certificates during the TLS handshake. It is also possible to add multiple CRL files by calling the appropriate API call multiple times. Supported formats are PEM and DER.
+
+In our example, we assume that the CRL file is stored in a file called `crl.pem`.
+
+```c
+/* Validate the certificates against supplied CRL during the TLS handshake. */
+/* Function returns number of processed CRLs or negative error code. */
+if (gnutls_certificate_set_x509_crl_file(creds, "crl.pem", GNUTLS_X509_FMT_PEM) <= 0) {
+    exit(EXIT_FAILURE);
+}
+```
+
+### Relevant links
+
+* [gnutls_certificate_set_x509_crl_file](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fset_005fx509_005fcrl_005ffile-1) (GnuTLS docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
+
+{:.text-success}
+
 ## Optional: Sending an OCSP status request to the server
 
-One of the modern methods of revocation checking is via OCSP-stapling, when the server sends revocation information "stapled" in the TLS handshake. GnuTLS checks such revocation information by default, but the server will not send it unless we explicitly tell it to do so.
+One of the modern methods of revocation checking is via OCSP stapling when the server sends revocation information "stapled" in the TLS handshake. GnuTLS checks such revocation information by default, but the server will not send it unless we explicitly tell it to do so.
 
 {% include alert.html type="danger"
     content="Note that if the server does not support OCSP stapling, it may not send the certificate status, and this will not result in a failure. It will only fail if the server certificate contains the OCSP \"must-staple\" extension."
@@ -205,7 +239,7 @@ One of the modern methods of revocation checking is via OCSP-stapling, when the 
 
 ```c
 /* Send the status request extension to the server during the TLS handshake. */
-if (r = gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
+if (gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
     exit(EXIT_FAILURE);
 }
 ```
@@ -217,6 +251,78 @@ if (r = gnutls_ocsp_status_request_enable_client(session, NULL, 0, NULL) < 0) {
 * [OCSP stapling](https://www.gnutls.org/manual/html_node/OCSP-stapling.html) (GnuTLS docs)
 * [OCSP "must-staple" extension](https://datatracker.ietf.org/doc/html/rfc7633) (RFC 7633)
 * [Certificate Status Request TLS Extension](https://datatracker.ietf.org/doc/html/rfc6066#section-8) (RFC 6066)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
+
+{:.text-danger}
+
+## Alternative: Setting custom verification callback
+
+By default, GnuTLS validates the peer's certificate but does not check the revocation status. If a custom certificate validation logic or checking the revocation status of the certificates during the TLS handshake is required, it is possible to set a custom verification function.
+The prototype of this callback function is `int (*callback)(gnutls_session_t)`. The callback function should return 0 for the handshake to continue or non-zero to terminate. An official example can also be found [here](https://gnutls.org/manual/gnutls.html#Legacy-client-example-with-X_002e509-certificate-support).
+
+```c
+/* Set the hostname to the session structure, so it will be accessible during our custom verification callback. */
+gnutls_session_set_ptr(session, (void *) hostname);
+
+/* Set our custom verification function. */
+/* Callback will be executed right after the certificate chain has been received, during the TLS handshake. */
+int (*f)(gnutls_session_t) = &custom_callback_function;
+gnutls_session_set_verify_function(session, f);
+```
+
+We also provide a simple example of such a function. When using a custom verification callback, it is always necessary to validate the certificates manually. After successful validation, the revocation check of all certificates in the chain should be performed.
+
+We have covered guides for checking the revocation status for all certificates in the chain using [CRL](/guides/gnutls-crl), [OCSP](/guides/gnutls-ocsp) and [OCSP-Stapling](/guides/gnutls-ocsp-stapling) schemes. We have also covered a partial guide for checking the [Certificate Transparency](/guides/gnutls-cert-transparency) criteria for each certificate in the chain.
+
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div mb-3">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title }}</a>
+{% endfor %}
+</div>
+{% endif %}
+
+```c
+int custom_callback_function(gnutls_session_t session) {
+
+    /* Retrieve the result of peer's certificate validation. */
+    /* Set to 0 if certificate is trusted, non-zero if problem. */
+    unsigned int certificate_validation_status;
+
+    /* Retrieve the previosly set hostname from the session. */
+    char *hostname = gnutls_session_get_ptr(session);
+
+    /* Validate the peer's certificate with its hostname. */
+    if (gnutls_certificate_verify_peers3(session, hostname, &certificate_validation_status) < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    /* Retrieve the certificate type (X509 in most cases). */
+    gnutls_certificate_type_t cert_type;
+    if ((cert_type = gnutls_certificate_type_get(session)) != GNUTLS_CRT_X509) {
+        exit(EXIT_FAILURE);
+    }
+
+    /* Check the result of validation. */
+    /* If validation failed, we want to immediately terminate the TLS connection by returning non-zero value. */
+    if (certificate_validation_status != 0) {
+        return GNUTLS_E_CERTIFICATE_VERIFICATION_ERROR;
+    }
+
+    /* After performing certificate verification check, revocation check should be performed! */
+}
+```
+
+### Relevant links
+
+* [gnutls_session_set_ptr](https://gnutls.org/manual/gnutls.html#gnutls_005fsession_005fset_005fptr-1) (GnuTLS docs)
+* [gnutls_session_set_verify_function](https://gnutls.org/manual/gnutls.html#gnutls_005fsession_005fset_005fverify_005ffunction-1) (GnuTLS docs)
+* [gnutls_session_get_ptr](https://gnutls.org/manual/gnutls.html#gnutls_005fsession_005fget_005fptr-1) (GnuTLS docs)
+* [gnutls_certificate_verify_peers3](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005fverify_005fpeers3-1) (GnuTLS docs)
+* [`gnutls_certificate_type_get`](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005ftype_005fget-1) (GnuTLS docs)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -257,6 +363,7 @@ if (r < 0) {
 <div class="section"><div class="container" markdown="1">
 
 {:.text-success}
+
 ## Optional: Checking the result of peer certificate validation
 
 If certificate validation fails, `gnutls_handshake()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.gnutls.org/manual/html_node/Verifying-X_002e509-certificate-paths.html#gnutls_005fcertificate_005fstatus_005ft) or on our [page](https://x509errors.org/gnutls#gnutls).
@@ -278,9 +385,9 @@ gnutls_free(out.data);
 ### Relevant links
 
 * [`gnutls_session_get_verify_cert_status`](https://gnutls.org/manual/gnutls.html#index-gnutls_005fsession_005fget_005fverify_005fcert_005fstatus) (GnuTLS docs)
-* [`gnutls_certificate_type_get2`](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005ftype_005fget2) (GnuTLS docs)
+* [`gnutls_certificate_type_get`](https://gnutls.org/manual/gnutls.html#gnutls_005fcertificate_005ftype_005fget-1) (GnuTLS docs)
 * [`gnutls_certificate_verification_status_print`](https://gnutls.org/manual/gnutls.html#index-gnutls_005fcertificate_005fverification_005fstatus_005fprint) (GnuTLS docs)
-* [Certificate validation errors](https://x509errors.org/gnutls#gnutls) (x509errors.org)
+* [Certificate validation errors](/gnutls#gnutls) (x509errors.org)
 * [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
 
 </div></div>

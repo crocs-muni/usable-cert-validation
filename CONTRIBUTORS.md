@@ -4,9 +4,10 @@ The project is developed at the [Centre for Research on Cryptography and Securit
 
 * Martin Ukrop, 2019–today, project lead, graphic design
 * Pavol Žáčik, 2019–today, example certificates, error mapping
+* Marián Svitek, 2021–today, revocation implementation, revocation developer guides
 * Štepán Horáček, 2021-2021, example certificates
 * Eric Valčík, 2020–2021, bug fixes and pull requests to other libraries
 * Matěj Grabovský, 2019–2020, feedback, TLS clients, bug fixes
 * Michaela balážová, 2019–2020, improved error messages
 
-The authors are grateful for the financial support by [Red Hat Czech](https://research.redhat.com/) and [Kiwi.com](https://www.kiwi.com/).
+The authors are grateful for the financial support from [Red Hat Czech](https://research.redhat.com/) and [Kiwi.com](https://www.kiwi.com/).

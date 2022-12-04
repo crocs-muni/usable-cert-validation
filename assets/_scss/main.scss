@@ -183,9 +183,9 @@ blockquote {
     text-decoration: none;
 }
 
-.navbar .nav-link.active, 
-.navbar .nav-link.show, 
-.navbar .active > .nav-link, 
+.navbar .nav-link.active,
+.navbar .nav-link.show,
+.navbar .active > .nav-link,
 .navbar .show > .nav-link {
     font-weight: bold;
 }
@@ -246,7 +246,7 @@ footer .footer-right {
     line-height: 2rem;
 }
 
-.error-box .card h3:first-child { 
+.error-box .card h3:first-child {
     margin-top: 0px;
 }
 
@@ -311,7 +311,7 @@ footer .footer-right {
     background: -webkit-linear-gradient(
         rgba(250, 0, 0, 0) 0%,
         rgba(255, 255, 255, 1) 100%
-    ); 
+    );
     background-image: -moz-linear-gradient(
         rgba(250, 0, 0, 0) 0%,
         rgba(255, 255, 255, 1) 100%
@@ -328,8 +328,8 @@ footer .footer-right {
         rgba(250, 0, 0, 0) 0%,
         rgba(255, 255, 255, 1) 100%
     );
-} 
-section {position:relative}  
+}
+section {position:relative}
 
 img.crocs {
     width: 100%;
@@ -340,4 +340,14 @@ img.crocs {
 .highlight pre {
     padding: 1.5em 2em;
     background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Container for guides links */
+
+.guides-div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    column-gap: 1.0rem;
+    row-gap: 0.5rem;
 }

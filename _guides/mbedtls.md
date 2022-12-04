@@ -1,11 +1,12 @@
 ---
 layout:     default
-title:      "Developer guide: Mbed TLS"
+title:      "Mbed TLS: TLS guide"
 slug:       mbedtls
 ---
 <div class="section"><div class="container" markdown="1">
 
 {:#{{ page.slug }}}
+
 # {{ page.title }}
 
 {:.lead}
@@ -24,6 +25,15 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 {% include alert.html type="danger"
     content="Note: Mbed TLS does not support _online_ revocation checking of any kind. Use another library if that is your requirement."
 %}
+
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
+{% endfor %}
+</div>
+{% endif %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -139,7 +149,7 @@ Trusted root certs are usually found within a directory such as `/etc/ssl/certs`
     content="When using Mbed TLS, it is necessary to concatenate all trusted CA certificates into one file in the PEM format."
 %}
 
-In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. In that case, use arbitrary trusted CA certificate files instead.
+In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing or within company intranets. In that case, use arbitrary trusted CA certificate files instead.
 
 ```c
 /* Structure to load trusted root certs into. */
@@ -165,12 +175,13 @@ mbedtls_ssl_conf_ca_chain(&conf, &ca_certs, NULL);
 <div class="section"><div class="container" markdown="1">
 
 {:.text-success}
+
 ## Optional: Checking revocation using local CRLs
 
 Mbed TLS natively provides only _offline_ revocation checking. That is, the revocation list must already be present locally. If the CRL is contained in `crl.pem`, we include it in the configuration as follows.
 
 {:.text-muted}
-In the most recent versions (Mbed TLS 3.7), it may be possible to implement online revocation checks manually. We will include it in the guide when this version becomes more widely adapted.
+In the most recent versions (Mbed TLS 3.7), it may be possible to implement online revocation checks manually. We will include it in the guide when this version becomes more widely adopted.
 
 ```c
 /* Structure to load the CRL into. */
@@ -227,9 +238,10 @@ if (mbedtls_ssl_handshake(&ssl) != 0) {
 <div class="section"><div class="container" markdown="1">
 
 {:.text-success}
+
 ## Optional: Checking the result of peer certificate validation
 
-If certificate validation fails, `mbedtls_ssl_handshake()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://tls.mbed.org/api/group__x509__module.html) or on our [page](https://x509errors.org/mbedtls#mbedtls).
+If certificate validation fails, `mbedtls_ssl_handshake()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://tls.mbed.org/api/group__x509__module.html) or on our [dedicated page](/mbedtls#mbedtls).
 
 ```c
 /* Manually retrieve the result of certificate validation. */
@@ -247,7 +259,7 @@ fprintf(stderr, "%s", message_buffer);
 * [`mbedtls_x509_crt_verify_info`](https://tls.mbed.org/api/group__x509__module.html#gae88f1d8e6696eb2beeffe0a708219e6b) (Mbed TLS docs)
 * [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
 * [Certificate validation errors](https://tls.mbed.org/api/group__x509__module.html) (MbedTLS docs)
-* [Certificate validation errors](https://x509errors.org/mbedtls#mbedtls) (x509errors.org)
+* [Certificate validation errors](/mbedtls#mbedtls) (x509errors.org)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">

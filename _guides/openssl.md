@@ -1,11 +1,12 @@
 ---
 layout:     default
-title:      "Developer guide: OpenSSL"
+title:      "OpenSSL: TLS guide"
 slug:       openssl
 ---
 <div class="section"><div class="container" markdown="1">
 
 {:#{{ page.slug }}}
+
 # {{ page.title }}
 
 {:.lead}
@@ -17,9 +18,17 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 * We work with the API in C of OpenSSL, version 1.1.1.
 * We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
 
-{% include alert.html type="warning"
-    content="Note: For now, the guide _does not_ cover revocation checking and advanced techniques that may follow after the connection is already established, e.g. session resumption."
-%}
+{:.lead}
+In addition to this guide, we have also implemented OpenSSL guides for the following topics:
+
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
+{% endfor %}
+</div>
+{% endif %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -74,7 +83,7 @@ if (rr == NULL) {
 }
 ```
 
-If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establishing the TLS connection on top of the TCP/IP connection.
+If everything went well, `sockfd` is now a descriptor of a valid, connected socket. We can proceed to establish the TLS connection on top of the TCP/IP connection.
 
 ### Relevant links
 
@@ -125,9 +134,10 @@ if (SSL_CTX_set_default_verify_paths(ctx) != 1) {
 <div class="section"><div class="container" markdown="1">
 
 {:.text-danger}
+
 ## Alternative: Setting an arbitrary trust anchor
 
-In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing, or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows:
+In some cases, it might be useful to trust an arbitrary certificate authority. This could be the case during testing or within company intranets. If we trust a CA located in `trusted_ca.pem` and other authorities located in `trusted_dir`, we can easily change the trust setting as follows:
 
 ```c
 /* Both the file path and the directory path can be set to NULL if they are not used */
@@ -144,6 +154,46 @@ if (SSL_CTX_load_verify_locations(ctx, "trusted_ca.pem", "trusted_dir") != 1) {
 <div class="section"><div class="container" markdown="1">
 
 {:.text-success}
+
+## Optional: Request the stapled OCSP Response from the TLS server
+
+A TLS client application can request a TLS server to send it an OCSP response (known as OCSP-Stapling) during the TLS handshake.
+
+```c
+if (SSL_CTX_set_tlsext_status_type(context, TLSEXT_STATUSTYPE_ocsp) != 1) {
+    exit(EXIT_FAILURE);
+}
+```
+
+### Relevant links
+
+* [SSL_CTX_set_tlsext_status_type](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_tlsext_status_type.html) (OpenSSL docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
+
+{:.text-success}
+
+## Optional: Enable processing of Signed Certificate Timestamps (SCTs)
+
+Enable the processing of Signed Certificate Timestamps, which is performed by default using the predefined Certificate Transparency (CT) validation callback. The validation of SCTs supports two modes, one of which must be selected. When mode `SSL_CT_VALIDATION_PERMISSIVE` is on, then the TLS handshake result is not affected by the validation status of any SCT. On the other hand, when mode `SSL_CT_VALIDATION_STRICT` is on together with the previously set verification mode `SSL_VERIFY_PEER`, then the TLS handshake will be aborted with the `X509_V_ERR_NO_VALID_SCTS` error code if the peer presents no valid SCT.
+
+```c
+/* Enables OCSP stapling as well because SCTs could be delivered through OCSP Stapling, TLS Extensions or X509 Extensions. */
+if (SSL_CTX_enable_ct(context, SSL_CT_VALIDATION_STRICT) != 1) {
+    exit(EXIT_FAILURE);
+}
+```
+
+### Relevant links
+
+* [SSL_CTX_enable_ct](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_enable_ct.html) (OpenSSL docs)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
+
+{:.text-success}
+
 ## Optional: Custom certificate validation settings
 
 Optionally, you may want to put additional constraints on certificate validation. OpenSSL allows for this by modifying the `verify params` structure. In this example, we enforce strict certificate validation and put requirements on the IP address contained in the _Subject Alternative Name_ extension of the server certificate. All possible settings and flags can be found in the original [documentation](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html)
@@ -174,13 +224,61 @@ if (X509_VERIFY_PARAM_set_flags(vpm, flags) != 1) {
 if (X509_VERIFY_PARAM_set1_ip_asc(vpm, "192.168.2.1") != 1) {
     exit(EXIT_FAILURE);
 }
+
+/* Save the modified verify param structure back to the CTX context structure. */
+if (SSL_CTX_set1_param(context, verify_param_struct) != 1) {
+    EXIT(EXIT_FAILURE);
+}
 ```
 
 ### Relevant links
 
 * [`SSL_CTX_get0_param`](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_get0_param.html) (OpenSSL docs)
 * [`X509_VERIFY_PARAM_set_flags`](https://www.openssl.org/docs/manmaster/man3/X509_VERIFY_PARAM_set_flags.html) (OpenSSL docs)
+* [SSL_CTX_set1_param](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set1_param.html) (OpenSSL docs)
 * [Subject Alternative Name Extension](https://datatracker.ietf.org/doc/html/rfc5280#section-4.2.1.6) (RFC 5280)
+
+</div></div>
+<div class="section"><div class="container" markdown="1">
+
+{:.text-danger}
+
+## Alternative: Setting custom verification callback
+
+It is possible to set a custom verification callback by calling the `SSL_CTX_set_tlsext_status_cb` API call. This callback function will be invoked during the TLS handshake after the certificate chain has been successfully validated. The prototype of this callback function is `int (*callback)(SSL *, void *)`. The first argument is the SSL session instance, and the second argument is a value previously set by calling the `SSL_CTX_set_tlsext_status_arg` API call. The return value of this callback function should be positive when it is required for the TLS handshake to continue. Otherwise, the TLS handshake will fail, and the connection should be terminated immediately.
+
+```c
+/* Function callback called during the TLS handshake after the certificate chain has been verified. */
+int (*callback)(SSL *, void*) = &custom_callback;
+SSL_CTX_set_tlsext_status_cb(context, callback);
+```
+
+where the `custom_callback` function has the following declaration:
+
+```c
+int custom_callback(SSL *s_connection, void *arg) {
+    /* Perform revocation check by using CRL, OCSP or OCSP-Stapling check. */
+    /* Perform any action required to run during the TLS handshake. */
+}
+```
+
+According to the official OpenSSL documentation, the primary purpose of this callback function is to validate and process a stapled OCSP response. However, since this function is called during the TLS handshake, after successful validation of the certificate chain, it can also be used for checking the revocation status of the certificates from the certificate chain.
+
+In addition to the [OCSP-Stapling](/guides/openssl-ocsp-stapling) scheme, we have also covered guides for checking the revocation status for all certificates in the chain using [CRL](/guides/openssl-crl) or [OCSP](/guides/openssl-ocsp) revocation schemes. We have also covered a guide for checking the [Certificate Transparency](/guides/openssl-cert-transparency) criteria for each certificate in the chain.
+
+{% assign subGuides = site.guides | where: "library", page.slug %}
+{% if subGuides.size > 0 %}
+<div class="guides-div mb-3">
+{% for subGuide in subGuides %}
+<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
+{% endfor %}
+</div>
+{% endif %}
+
+### Relevant links
+
+* [SSL_CTX_set_tlsext_status_cb](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_tlsext_status_cb.html) (OpenSSL docs)
+* [SSL_CTX_set_tlsext_status_arg](https://www.openssl.org/docs/manmaster/man3/SSL_CTX_set_tlsext_status_arg.html) (OpenSSL docs)
 
 </div></div>
 <div class="section"><div class="container" markdown="1">
@@ -234,9 +332,10 @@ if (SSL_connect(ssl) != 1) {
 <div class="section"><div class="container" markdown="1">
 
 {:.text-success}
+
 ## Optional: Checking the result of peer certificate validation
 
-If certificate validation fails, `SSL_connect()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [page](https://x509errors.org/#openssl).
+If certificate validation fails, `SSL_connect()` will always fail with the same error message. In that case, it is often useful to examine the specific certificate validation error as follows. You can find explanations of certificate validation messages in the official [documentation](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) or on our [dedicated page](/#openssl).
 
 ```c
 /* Retrieve the error code of the error that occured during certificate validation. */
@@ -254,7 +353,7 @@ fprintf(stderr, "%s", message);
 * [`SSL_get_verify_result`](https://www.openssl.org/docs/manmaster/man3/SSL_get_verify_result.html) (OpenSSL docs)
 * [`X509_verify_cert_error_string`](https://www.openssl.org/docs/manmaster/man3/X509_verify_cert_error_string.html) (OpenSSL docs)
 * [Certificate validation errors](https://www.openssl.org/docs/manmaster/man3/X509_STORE_CTX_get_error.html) (OpenSSL docs)
-* [Certificate validation errors](https://x509errors.org/#openssl) (x509errors.org)
+* [Certificate validation errors](/#openssl) (x509errors.org)
 * [Certificate path validation](https://datatracker.ietf.org/doc/html/rfc5280#section-6) (RFC 5280)
 
 </div></div>

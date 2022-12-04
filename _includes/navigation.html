@@ -13,15 +13,16 @@
 
         <div class="collapse navbar-collapse" id="navbar">
             <ul class="navbar-nav ml-auto">
-                <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
-                    <a class="nav-link" href="{% if page.library %}#home{% else %}/#home{% endif %}">Intro</a>
-                </li>
                 <li class="nav-item dropdown" data-toggle="collapse" data-target=".navbar-collapse.show">
                     <a class="nav-link dropdown-toggle" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Libraries</a>
                     <div class="dropdown-menu" aria-labelledby="dropdown01">
                         {% for library in site.data.libraries %}
-                          <a class="dropdown-item" href=
-                          "{% if page.library != library.name %}/{% if library.name != 'openssl' %}{{ library.name }}{% endif %}{% endif %}#{{ library.name }}">
+                          <a class="dropdown-item" href="
+                          {%- if library.name == 'openssl' -%}
+                            /{%- if page.slug == 'index' -%}#{{ library.name }}{%- endif -%}
+                          {%- else -%}
+                            /{{ library.name }}{%- if page.slug == library.name -%}#{{ library.name }}{%- endif -%}
+                          {%- endif -%}">
                           {{ library.title }}</a>
                         {% endfor %}
                     </div>
@@ -32,8 +33,13 @@
                         {% for library in site.data.libraries %}
                             {% assign guides = site.guides | where: "slug", library.name %}
                             {% for guide in guides %}
-                                <a class="dropdown-item" href="{% if page.title != guide.title %}/guides/{{ guide.slug }}{% else %}#{{ guide.slug }}{% endif %}">
+                                <a class="dropdown-item" href="{% if page.slug != guide.slug %}/guides/{{ guide.slug }}{% else %}#{{ guide.slug }}{% endif %}">
                                 {{ library.title }}</a>
+                                {% assign subGuides = site.guides | where: "library", library.name %}
+                                {% for subGuide in subGuides %}
+                                    <a class="dropdown-item" href="{% if page.slug != subGuide.slug %}/guides/{{ subGuide.slug }}{% else %}#{{ subGuide.slug }}{% endif %}">
+                                    <span class="fas fa-fw fa-angle-right"></span> {{ subGuide.title }}</a>
+                                {% endfor %}
                             {% endfor %}
                         {% endfor %}
                     </div>
@@ -42,7 +48,7 @@
                     <a class="nav-link" href="{% if page.slug != 'faq' %}/faq{% else %}#faq{% endif %}">FAQ</a>
                 </li>
                 <li class="nav-item" data-toggle="collapse" data-target=".navbar-collapse.show">
-                    <a class="nav-link" href="{% if page.slug == 'faq' %}/{% endif %}#about">About</a>
+                    <a class="nav-link" href="{% if page.slug != 'index' %}/{% endif %}#about">About</a>
                 </li>
             </ul>
         </div>
