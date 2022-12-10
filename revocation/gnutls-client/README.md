@@ -6,9 +6,9 @@ TLS client program that securely connects to the specified server using the TLS 
 
 The functionality of this TLS client program could be described by the following steps:
 
-1. The program processes the supplied options from the command line, which can be used to modify the program's behaviour.
+1. The program processes the supplied options from the command line, which can be used to modify the program's behavior.
 
-2. Using the standard C sockets that are part of the standard C library, the client tries to connect to the specified server using the TCP protocol. The server is specified by its hostname, which is supplied as a program's required argument. By default, port 443 is used, but it can be customised too.
+2. Using the standard C sockets that are part of the standard C library, the client tries to connect to the specified server using the TCP protocol. The server is specified by its hostname, which is supplied as a program's required argument. By default, port 443 is used, but it can be customized too.
 
 3. After successfully establishing the TCP connection, the client tries to establish a secure TLS connection. In order for the TLS connection to be successfully established, validation of the certification chain and subsequent revocation check of each X.509 certificate from the certificate chain must be performed. Both of these checks are performed during the TLS handshake, where the revocation check is triggered only if the previous validation of the certificate chain was successful. In case when the validation of the certificate chain or any certificate from the certificate chain is revoked, the TLS connection will not be established, and the entire connection will be terminated.
 
@@ -24,16 +24,16 @@ The following switches that modify the behavior of the program are supported:
     - Prints detail information about each certificate from the certificate chain.
 3. `--crl-check`
     - The CRL revocation scheme is performed during the revocation checks.
-    - Implementation guide can be found at [x509errors.org](https://x509errors.org/guides/gnutls-crl).
+    - An implementation guide can be found at [x509errors.org](https://x509errors.org/guides/gnutls-crl).
 4. `--ocsp-check`
     - The OCSP revocation scheme is performed during the revocation checks.
-    - Implementation guide can be found at [x509errors.org](https://x509errors.org/guides/ocsp-crl).
+    - An implementation guide can be found at [x509errors.org](https://x509errors.org/guides/ocsp-crl).
 5. `--ocsp-stapling-check`
     - The OCSP-stapling revocation scheme is performed during the revocation checks.
-    - Implementation guide can be found at [x509errors.org](https://x509errors.org/guides/gnutls-ocsp-stapling).
+    - An implementation guide can be found at [x509errors.org](https://x509errors.org/guides/gnutls-ocsp-stapling).
 6. `--certificate-transparency-check`
-    - Additionally to the revocation checks, the SCTs validation is also performed.
-    - Implementation guide can be found at [x509errors.org](https://x509errors.org/guides/gnutls-cert-transparency).
+    - In addition to to the revocation checks, the SCTs validation is also performed.
+    - An implementation guide can be found at [x509errors.org](https://x509errors.org/guides/gnutls-cert-transparency).
 7. `-h, --help`
     - Display help utility and exit program.
 
@@ -64,8 +64,8 @@ The entire program is divided into the following files:
 
 To build the GnuTLS revocation client, the following libraries as dependencies are required:
 
-- gnutls (version 3.7.8 used)
-- curl (version 7.85.0 used)
+- GnuTLS (version 3.7.8 used)
+- cURL (version 7.85.0 used)
 
 The folder with the client also contains a simple `makefile`. For compiling the source code to the resulting binary, run the command `make`. To clean the client binary and auto-generated files (.DER files), run `make clean`. To format source code files, run the command `make format`. If no explicit `.clang-format` configuration file is provided, the fallback Google style is used by default.
 
@@ -81,8 +81,6 @@ The folder with the client also contains a simple `makefile`. For compiling the 
 
 ## Authors
 
-This TLS revocation client is part of the "Usable X.509 errors" project led by [Martin Ukrop](https://crocs.fi.muni.cz/people/mukrop) at the [Centre for Research on Cryptography and Security](https://www.fi.muni.cz/research/crocs/) of [Masaryk University](http://www.muni.cz/) in Brno, Czech Republic.
-
-The "Usable X.509 errors" project's main page is x509errors.org, while the official GitHub repository is located [here](https://github.com/crocs-muni/usable-cert-validation).
+This TLS revocation client is part of the "Usable X.509 errors" project. For more information, see the project's main website at [x509errors.org](https://x509errors.org). The official GitHub repository is located [here](https://github.com/crocs-muni/usable-cert-validation). The project is led by [Martin Ukrop](https://crocs.fi.muni.cz/people/mukrop) at the [Centre for Research on Cryptography and Security](https://www.fi.muni.cz/research/crocs/) of [Masaryk University](http://www.muni.cz/) in Brno, Czech Republic.
 
 This TLS revocation client, readme and related revocation developer guides located on the main page were created by [Marián Svitek](https://github.com/Werxis) on 5.12.2022 under the MIT license.
