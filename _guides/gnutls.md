@@ -3,6 +3,8 @@ layout:     default
 title:      "GnuTLS: TLS guide"
 slug:       gnutls
 ---
+
+{% assign libraryData = site.data.libraries | where: "name", page.slug | first %}
 <div class="section"><div class="container" markdown="1">
 
 {:#{{ page.slug }}}
@@ -18,17 +20,7 @@ The guide covers basic aspects of initiating a secure TLS connection, including 
 * We work with the API in C of GnuTLS, version 3.7.1.
 * We assume the server to communicate with is at `x509errors.org` and accepts TLS connections on a standard port `443`.
 
-{:.lead}
-In addition to this guide, we have also implemented GnuTLS guides for the following topics:
-
-{% assign subGuides = site.guides | where: "library", page.slug %}
-{% if subGuides.size > 0 %}
-<div class="guides-div">
-{% for subGuide in subGuides %}
-<a class="btn btn-primary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
-{% endfor %}
-</div>
-{% endif %}
+{% include navigation-guides.html library=libraryData %}
 
 </div></div>
 <div class="section"><div class="container" markdown="1">

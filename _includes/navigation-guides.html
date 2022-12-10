@@ -1,9 +1,16 @@
 <div class="guides-div">
-<a class="btn btn-primary" href="/guides/{{ include.library.name }}"><span class="fas fa-fw fa-reply"></span> Back to {{ include.library.title }} guide</a>
+{% if page.slug == include.library.name %}
+<p class="lead">In addition to this guide, we have also implemented OpenSSL guides for the following topics:</p>
+{% else %}
+    <a class="btn btn-primary" href="/guides/{{ include.library.name }}"><span class="fas fa-fw fa-reply"></span> Back to {{ include.library.title }} guide</a>
+{% endif %}
 {% assign subGuides = site.guides | where: "library", include.library.name %}
 {% for subGuide in subGuides %}
     {% if subGuide.slug != page.slug %}
-        <a class="btn btn-secondary" href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
+        <a class="btn {% if page.slug == include.library.name %} btn-primary {% else %} btn-outline-primary {% endif%}" 
+           href="/guides/{{ subGuide.slug }}"><span class="fas fa-fw fa-file-code"></span> {{ subGuide.title-short }}</a>
     {% endif %}
 {% endfor %}
+<p class="lead">The source code from all guides is also available as a stand-alone CLI client with options to test multiple revocation schemes:</p>
+<a class="btn btn-secondary" href="/assets/clients/{{ include.library.name }}-client.zip"><span class="fas fa-fw fa-file-archive"></span> TLS client source code</a>
 </div>
