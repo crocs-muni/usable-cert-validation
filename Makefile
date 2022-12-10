@@ -2,6 +2,7 @@
 MAPPING_FOLDER=_data/mapping
 ERRORS_FOLDER=_data/errors
 VALIDATION_FOLDER=validation
+REVOCATION_FOLDER=revocation
 
 VERBOSITY=">/dev/null 2>&1"
 
@@ -27,6 +28,10 @@ debug:
 		  ERRORS_DIR=$(CURDIR)/$(ERRORS_FOLDER) \
 		  DEBUG="--debug"
 
+# Create ZIP files with revocation clients
+revocation:
+	@make --directory=$(REVOCATION_FOLDER)
+
 # Test generated certificates for assigned errors
 #$(ERRORS_FOLDER)/*/*.yml:
 #	@printf "Testing certificates for %-70s" $(@D)/$(@F)
@@ -43,7 +48,7 @@ humans.txt: CONTRIBUTORS.md
 
 # === Web build, test and deploy targets  ===
 
-build: validation generated-files
+build: revocation validation generated-files
 	@echo "Building the website using Jekyll ..."
 	@if [ "$(BRANCH)" = "master" ]; then echo "=== Production build ($(BRANCH)) ==="; else echo "=== Development build ($(BRANCH)) ==="; fi
 	@if [ "$(BRANCH)" = "master" ]; then JEKYLL_ENV=production bundle exec jekyll build; else bundle exec jekyll build; fi
@@ -70,7 +75,8 @@ clean:
 	rm -rf humans.txt
 	rm -rf $(MAPPING_FOLDER)
 	make --directory=$(VALIDATION_FOLDER) clean
+	make --directory=$(REVOCATION_FOLDER) clean
 
 # === Target flags  ===
 
-.PHONY: all install validation debug generated-files build local test deploy-preview deploy-production clean
+.PHONY: all install validation debug revocation generated-files build local test deploy-preview deploy-production clean

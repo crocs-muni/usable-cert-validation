@@ -7,6 +7,8 @@ validation/clients/*/build/
 revocation/openssl-client/openssl_client
 revocation/gnutls-client/gnutls_client
 revocation/*/*.der
+revocation/*/LICENSE.md
+assets/clients/
 
 # Built certificates and validation files 
 validation/certs/build/
