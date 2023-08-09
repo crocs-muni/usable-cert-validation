@@ -1,4 +1,4 @@
-dist: focal    # Ubuntu 20.04 LTS
+dist: jammy    # Ubuntu 22.04 LTS
 language: ruby
 gemfile: Gemfile
 
