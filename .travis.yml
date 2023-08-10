@@ -17,7 +17,7 @@ addons:
     - python3-pip
 
 jdk:
-  - openjdk16
+  - openjdk17
 
 # Restore file times for better GNU Make optimizations
 before_install: 
