@@ -1,7 +1,9 @@
 require 'html-proofer'
 
 options = {
-    :assume_extension => true,
+    :assume_extension => '.html',
+    :enforce_https => false,
+    :allow_missing_href => true,
     :check_favicon => true,
     :check_html => true,
     :check_img_http => true,
@@ -9,7 +11,8 @@ options = {
 }
 
 options_external = {
-    :assume_extension => true,
+    :assume_extension => '.html',
+    :enforce_https => false,
     :external_only => true,
     :typhoeus => {
         :connecttimeout => 30,    # default: 10
@@ -17,7 +20,9 @@ options_external = {
     },
     :cache => {
         :storage_dir => '.cache/.htmlproofer',
-        :timeframe => '7d'
+        :timeframe => {
+            :external => '7d'
+        }
     },
     # :log_level => :debug
 }
